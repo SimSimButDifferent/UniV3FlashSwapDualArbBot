@@ -1,0 +1,59 @@
+Arguments: 
+  /home/simsim/.nvm/versions/node/v20.10.0/bin/node /mnt/c/Users/pc1/AppData/Roaming/npm/node_modules/yarn/bin/yarn.js init
+
+PATH: 
+  /home/simsim/.vscode-server/bin/863d2581ecda6849923a2118d93a088b0745d9d6/bin/remote-cli:/home/simsim/.nvm/versions/node/v20.10.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Python312/Scripts/:/mnt/c/Python312/:/mnt/c/Python311/Scripts/:/mnt/c/Python311/:/mnt/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/mnt/c/Program Files (x86)/Common Files/Oracle/Java/javapath:/mnt/c/Program Files/Eclipse Adoptium/jdk-17.0.3.7-hotspot/bin:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files (x86)/Git/cmd:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/110/Tools/Binn/:/mnt/c/Program Files (x86)/Microsoft SQL Server/120/Tools/Binn/:/mnt/c/Program Files/Microsoft SQL Server/120/Tools/Binn/:/mnt/c/Program Files/Microsoft SQL Server/120/DTS/Binn/:/mnt/c/Program Files (x86)/Windows Kits/8.1/Windows Performance Toolkit/:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files/upvpn/bin:/mnt/c/Program Files/nodejs/:/mnt/c/Users/pc1/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/pc1/AppData/Local/atom/bin:/mnt/c/users/pc1/.local/bin:/mnt/c/users/pc1/appdata/local/packages/pythonsoftwarefoundation.python.3.10_qbz5n2kfra8p0/localcache/local-packages/python310/scripts:/mnt/c/Users/pc1/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/pc1/.dotnet/tools:/mnt/c/Users/pc1/AppData/Roaming/npm:/snap/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  20.10.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (/mnt/c/Users/pc1/AppData/Roaming/npm/node_modules/yarn/lib/cli.js:137150:13)
+      at Interface.emit (node:events:514:28)
+      at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1125:18)
+      at ReadStream.onkeypress (node:internal/readline/interface:264:20)
+      at ReadStream.emit (node:events:514:28)
+      at emitKeys (node:internal/readline/utils:371:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+      at ReadStream.emit (node:events:514:28)
+      at addChunk (node:internal/streams/readable:545:12)
+
+npm manifest: 
+  {
+    "name": "web3refresherl7",
+    "version": "1.0.0",
+    "description": "flashloan-tri-arbitrage-bot",
+    "main": "index.js",
+    "author": "Simeon Campbell",
+    "license": "MIT",
+    "devDependencies": {
+      "hardhat": "^2.22.2",
+      "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+      "@nomicfoundation/hardhat-ethers": "^3.0.5",
+      "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
+      "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+      "@nomicfoundation/hardhat-verify": "^2.0.2",
+      "@typechain/ethers-v6": "^0.5.1",
+      "@typechain/hardhat": "^9.1.0",
+      "@types/chai": "^4.3.11",
+      "@types/mocha": "^10.0.6",
+      "chai": "^4.3.10",
+      "hardhat-deploy": "^0.11.44",
+      "hardhat-gas-reporter": "^1.0.9",
+      "solidity-coverage": "^0.8.5"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

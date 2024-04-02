@@ -1,0 +1,13 @@
+node_modules
+package.json
+img
+artifacts
+cache
+coverage
+.env
+.*
+README.md
+coverage.json
+fund.js
+FundMe.staging.js
+.solcover
