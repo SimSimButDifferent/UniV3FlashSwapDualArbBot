@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0 <0.8.24;
+pragma solidity >=0.5.0 <0.9.0;
 
 // Interface for Uniswap V3 Factory
 interface IUniswapV3Factory {
@@ -53,29 +53,29 @@ interface IUniswapV3Pool {
      * @return tickCumuatives The current tick cumulative of the pool
      * @return secondsPerLiquidityCumulativeX128s The current seconds per liquidity cumulative of the pool
      */
-    function observe(
-        uint32[] secondsAgos
-    )
-        external
-        view
-        returns (
-            int56[] tickCumulatives,
-            uint160[] secondsPerLiquidityCumulativeX128s
-        );
+    // function observe(
+    //     uint32[] secondsAgos
+    // )
+    //     external
+    //     view
+    //     returns (
+    //         int56[] tickCumulatives,
+    //         uint160[] secondsPerLiquidityCumulativeX128s
+    //     );
 
-    /**
-     * @notice Swap token0 for token1, or token1 for token0
-     * @notice from IUniswapV3PoolActions
-     * @return amount0 The amount of token0 swapped
-     * @return amount1 The amount of token1 swapped
-     */
-    function swap(
-        address recipient,
-        bool zeroForOne,
-        int256 amountSpecified,
-        uint160 sqrtPriceLimitX96,
-        bytes data
-    ) external returns (int256 amount0, int256 amount1);
+    // /**
+    //  * @notice Swap token0 for token1, or token1 for token0
+    //  * @notice from IUniswapV3PoolActions
+    //  * @return amount0 The amount of token0 swapped
+    //  * @return amount1 The amount of token1 swapped
+    //  */
+    // function swap(
+    //     address recipient,
+    //     bool zeroForOne,
+    //     int256 amountSpecified,
+    //     uint160 sqrtPriceLimitX96,
+    //     bytes data
+    // ) external returns (int256 amount0, int256 amount1);
 }
 
 // Interface for Uniswap V3 Quoter
