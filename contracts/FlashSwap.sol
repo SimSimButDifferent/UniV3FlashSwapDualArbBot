@@ -16,14 +16,14 @@ interface IUniswapV2Callee {
 
 contract FlashSwap is IUniswapV2Callee {
     // WETH contract
-    address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    // Uniswap V2 Factory
+    address private constant WETH = 0x4200000000000000000000000000000000000006;
+    // Uniswap V2 Factory Base Mainnet
     address private constant FACTORY =
-        0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+        0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6;
 
     event Log(string message, uint val);
 
-    function testFlashSwap(address _tokenBorrow, uint _amount) external {
+    function flashSwap(address _tokenBorrow, uint _amount) external {
         address pair = IUniswapV2Factory(FACTORY).getPair(_tokenBorrow, WETH);
         require(pair != address(0), "!pair");
 
