@@ -2,36 +2,48 @@ const { expect } = require("chai")
 const { ethers, network } = require("hardhat")
 const helpers = require("@nomicfoundation/hardhat-toolbox/network-helpers")
 const { mainnet } = require("../context/UniswapContractAddresses.json")
+const ABI = require("../context/mainnetTokens.json")
 
 describe("FlashSwap", function () {
-    let FlashSwap, flashSwap, usdcContractAddress, borrowAmount, signer
+    let FlashSwap, flashSwap, allowanceAmount
+    const address = "0x13e003a57432062e4EdA204F687bE80139AD622f"
 
     beforeEach(async function () {
-        const address = "0xa14516A145aad726b09E13572A79c10Ee17772a1"
-
         await helpers.impersonateAccount(address)
 
-        signer = await ethers.getSigner(address)
+        const signer = await ethers.getSigner(address)
 
         FlashSwap = await ethers.getContractFactory("FlashSwap")
-        flashSwap = await FlashSwap.deploy()
-
-        // Find a USDC whale with more ETH
-        usdcContractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-
-        // borrow amount in USDC which has 6 0's
-        borrowAmount = 1000000000
+        flashSwap = await FlashSwap.connect(signer).deploy(mainnet.usdcEthPool)
     })
 
     describe("testFlashSwap", function () {
         it("Should execute FlashSwap", async function () {
-            console.log(signer)
+            await helpers.impersonateAccount(address)
 
-            // const tx = await flashSwap
-            //     .connect(signer)
-            //     .flash(usdcContractAddress, borrowAmount)
+            const signer = await ethers.getSigner(address)
 
-            // await tx.wait()
+            console.log(address)
+            await helpers.impersonateAccount(address)
+
+            // Create a contract instance for the token
+            const Usdc = new ethers.Contract(
+                ABI.UsdcContractAddress,
+                ABI.UsdcAbi,
+                signer,
+            )
+
+            // Set an allowance for the FlashSwap contract
+            allowanceAmount = ethers.parseUnits("100000", 6) // Example amount, adjust as needed
+            await Usdc.approve(flashSwap.target, allowanceAmount)
+
+            console.log(allowanceAmount.toString())
+            const balance = await Usdc.balanceOf(signer.address)
+            console.log(balance.toString())
+
+            const tx = await flashSwap.flash(allowanceAmount, 0)
+
+            await tx.wait()
         })
     })
 })

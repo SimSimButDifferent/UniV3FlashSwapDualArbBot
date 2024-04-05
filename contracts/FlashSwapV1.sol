@@ -3,6 +3,7 @@
 pragma solidity 0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 contract FlashSwap {
     struct FlashCallbackData {
@@ -14,11 +15,15 @@ contract FlashSwap {
     IUniswapV3Pool private immutable pool;
     IERC20 private immutable token0;
     IERC20 private immutable token1;
+    ISwapRouter private immutable uniswapV3Router;
 
     constructor(address _pool) {
         pool = IUniswapV3Pool(_pool);
         token0 = IERC20(pool.token0());
         token1 = IERC20(pool.token1());
+        uniswapV3Router = ISwapRouter(
+            0xE592427A0AEce92De3Edee1F18E0157C05861564
+        );
     }
 
     function flash(uint256 amount0, uint256 amount1) external {
@@ -29,6 +34,10 @@ contract FlashSwap {
                 caller: msg.sender
             })
         );
+        if (amount0 > 0)
+            token0.approve(address(uniswapV3Router), ((amount0 * 100) / 997)); //amount multiplied by 1.03
+        if (amount1 > 0)
+            token1.approve(address(uniswapV3Router), ((amount1 * 100) / 997)); //amount multiplied by 1.03
 
         pool.flash(address(this), amount0, amount1, data);
     }

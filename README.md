@@ -1,8 +1,8 @@
 ## Project Outline
 
-I have decided to try to build a dual arbitrage bot, that trades discrepencies on price on single pairs using the FlashSwap functionality from UniswapV2.
+I have decided to try to build a dual-dex arbitrage bot, that trades discrepencies on price on single pairs using the FlashSwap functionality from UniswapV2.
 
-## Example 
+## Example
 
 **If Eth is 4000 on uniswap and 3900 on Sushiswap the bot should:**
 
@@ -18,17 +18,13 @@ The trade should not execute if after all fees and gas taken into account the tr
 
 ## Part 1: Inheritance in Solidity
 
-- **Concept of Inheritance**:
-    
-    - Inheritance allows a contract to acquire properties and methods of another contract. It's a fundamental principle of object-oriented programming applied within Solidity to promote code reuse and simplify maintenance.
-- **Implementing Inheritance**:
-    
-    - Solidity supports single and multiple inheritances. Use the `is` keyword for deriving a contract from one or more parent contracts. Highlight how inherited functions can be overridden with new implementations.
-- **Visibility and Function Modifiers**:
-    
-    - Discuss the impact of inheritance on function visibility (`public`, `private`, `internal`, `external`) and how modifiers (`virtual`, `override`) are used in the context of inherited contracts.
-- **Example of Inheritance**:
-
+-   **Concept of Inheritance**:
+    -   Inheritance allows a contract to acquire properties and methods of another contract. It's a fundamental principle of object-oriented programming applied within Solidity to promote code reuse and simplify maintenance.
+-   **Implementing Inheritance**:
+    -   Solidity supports single and multiple inheritances. Use the `is` keyword for deriving a contract from one or more parent contracts. Highlight how inherited functions can be overridden with new implementations.
+-   **Visibility and Function Modifiers**:
+    -   Discuss the impact of inheritance on function visibility (`public`, `private`, `internal`, `external`) and how modifiers (`virtual`, `override`) are used in the context of inherited contracts.
+-   **Example of Inheritance**:
 
 ```solidity
 contract Base {
@@ -47,16 +43,13 @@ contract Derived is Base {
 
 ## Part 2: Interfaces in Solidity
 
-- **Understanding Interfaces**:
-    
-    - Interfaces define a contract's external interface without implementing any logic. They're essential for creating flexible and interoperable contracts.
-- **Defining and Using Interfaces**:
-    
-    - Show how to declare an interface and how contracts can implement an interface to adhere to a specific API. Interfaces ensure compatibility between different components of a dApp or between different dApps.
-- **Interfaces vs. Inheritance**:
-    
-    - Compare and contrast interfaces with inheritance, discussing when to use each. Interfaces offer a way to enforce a contract to adhere to a certain protocol, while inheritance shares code directly between contracts.
-- **Example Using Interfaces**:
+-   **Understanding Interfaces**:
+    -   Interfaces define a contract's external interface without implementing any logic. They're essential for creating flexible and interoperable contracts.
+-   **Defining and Using Interfaces**:
+    -   Show how to declare an interface and how contracts can implement an interface to adhere to a specific API. Interfaces ensure compatibility between different components of a dApp or between different dApps.
+-   **Interfaces vs. Inheritance**:
+    -   Compare and contrast interfaces with inheritance, discussing when to use each. Interfaces offer a way to enforce a contract to adhere to a certain protocol, while inheritance shares code directly between contracts.
+-   **Example Using Interfaces**:
 
 ```solidity
 interface IGreeter {
@@ -72,6 +65,7 @@ contract Greeter is IGreeter {
 ```
 
 ## Assignments and Practical Exercises
+
 **Assignment 1:**
 
 Analyze a popular smart contract framework (e.g., OpenZeppelin) to identify how they use inheritance and interfaces to provide reusable contract libraries. Discuss the benefits of their approach.
