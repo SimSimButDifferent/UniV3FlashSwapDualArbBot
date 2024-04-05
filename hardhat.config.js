@@ -4,6 +4,7 @@ require("ethers")
 require("hardhat-deploy")
 require("dotenv").config()
 
+const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 // const BASE_SEPOLIA_RPC_URL = process.env.BASE_SEPOLIA_RPC_URL
 const BASE_MAINNET_RPC_URL = process.env.BASE_MAINNET_RPC_URL
@@ -19,11 +20,19 @@ module.exports = {
     networks: {
         hardhat: {
             forking: {
-                url: BASE_MAINNET_RPC_URL,
-                blockNumber: 12713565,
+                url: MAINNET_RPC_URL,
+                blockNumber: 19586495,
             },
             chainId: 31337,
             blockConfirmations: 1,
+            gas: "auto",
+            gasPrice: "auto",
+        },
+        mainnet: {
+            url: MAINNET_RPC_URL,
+            accounts: PRIVATE_KEY_2 !== undefined ? [PRIVATE_KEY_2] : [],
+            chainId: 1,
+            blockConfirmations: 6,
         },
         localhost: {
             chainId: 31337,

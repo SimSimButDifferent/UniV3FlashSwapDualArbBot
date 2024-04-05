@@ -1,15 +1,18 @@
 const hre = require("hardhat")
 const { network } = require("hardhat")
 const { developmentChains } = require("../helper-hardhat-config")
+const { mainnet } = require("../context/UniswapContractAddresses.json")
 
 async function main() {
     if (developmentChains.includes(network.name)) {
+        const args = [mainnet.usdcEthPool]
+
         // Deploy the FlashSwap Contract
         const FlashSwap = await hre.ethers.getContractFactory("FlashSwap")
 
         console.log("Deploying FlashSwap...")
 
-        const flashSwap = await FlashSwap.deploy()
+        const flashSwap = await FlashSwap.deploy(mainnet.usdcEthPool)
         const flashSwapAddress = flashSwap.target
         console.log(`FlashSwap deployed to: ${flashSwapAddress}`)
         console.log("--------------------------------------------------")
@@ -20,13 +23,13 @@ async function main() {
         process.env.ETHERSCAN_API_KEY
     ) {
         // Deploy the FlashSwap
-        const FlashSwap = await hre.ethers.getContractFactory("FlashSwap")
+        const FlashSwap = await hre.ethers.getContractFactory("FlashSwap", args)
 
         console.log("Deploying FlashSwap...")
 
         const desiredConfirmations = 6
 
-        const flashSwap = await FlashSwap.deploy()
+        const flashSwap = await FlashSwap.deploy(mainnet.usdcEthPool)
         const flashSwapAddress = flashSwap.target
         console.log(`FlashSwap deployed to: ${flashSwapAddress}`)
 

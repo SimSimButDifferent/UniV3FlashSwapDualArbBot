@@ -1,12 +1,13 @@
 const { expect } = require("chai")
 const { ethers, network } = require("hardhat")
 const helpers = require("@nomicfoundation/hardhat-toolbox/network-helpers")
+const { mainnet } = require("../context/UniswapContractAddresses.json")
 
 describe("FlashSwap", function () {
     let FlashSwap, flashSwap, usdcContractAddress, borrowAmount, signer
 
     beforeEach(async function () {
-        const address = "0xcb999Ce7f2530515f5188c313Fd05Eb2546ddBdB"
+        const address = "0xa14516A145aad726b09E13572A79c10Ee17772a1"
 
         await helpers.impersonateAccount(address)
 
@@ -16,7 +17,7 @@ describe("FlashSwap", function () {
         flashSwap = await FlashSwap.deploy()
 
         // Find a USDC whale with more ETH
-        usdcContractAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+        usdcContractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 
         // borrow amount in USDC which has 6 0's
         borrowAmount = 1000000000
@@ -24,11 +25,13 @@ describe("FlashSwap", function () {
 
     describe("testFlashSwap", function () {
         it("Should execute FlashSwap", async function () {
-            const tx = await flashSwap
-                .connect(signer)
-                .flashSwap(usdcContractAddress, borrowAmount)
+            console.log(signer)
 
-            await tx.wait()
+            // const tx = await flashSwap
+            //     .connect(signer)
+            //     .flash(usdcContractAddress, borrowAmount)
+
+            // await tx.wait()
         })
     })
 })

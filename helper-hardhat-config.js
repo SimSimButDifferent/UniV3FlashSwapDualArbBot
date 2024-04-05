@@ -1,7 +1,11 @@
 const hre = require("hardhat")
 const { ethers } = require("hardhat")
+// const { mainnet } = require("./context/UniswapContractAddresses.json")
 
 const networkConfig = {
+    1: {
+        name: "mainnet",
+    },
     31377: {
         name: "localhost",
     },
