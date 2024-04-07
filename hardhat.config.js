@@ -3,6 +3,7 @@ require("@nomicfoundation/hardhat-ethers")
 require("ethers")
 require("hardhat-deploy")
 require("dotenv").config()
+require("@nomicfoundation/hardhat-foundry")
 
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL

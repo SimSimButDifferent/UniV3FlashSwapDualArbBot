@@ -8,6 +8,7 @@
     "devDependencies": {
         "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
         "@nomicfoundation/hardhat-ethers": "^3.0.5",
+        "@nomicfoundation/hardhat-foundry": "^1.1.1",
         "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
         "@nomicfoundation/hardhat-toolbox": "^4.0.0",
         "@nomicfoundation/hardhat-verify": "^2.0.2",
@@ -16,6 +17,7 @@
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
         "chai": "^4.3.10",
+        "forge-std": "foundry-rs/forge-std",
         "hardhat": "^2.22.2",
         "hardhat-deploy": "^0.11.44",
         "hardhat-gas-reporter": "^1.0.9",
