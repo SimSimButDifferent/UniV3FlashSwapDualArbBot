@@ -1,5 +1,5 @@
-[profile.hardhat]
-contracts = 'contracts'
+[profile.default]
+src = 'contracts'
 out = 'out'
 libs = ['node_modules', 'lib']
 test = 'test'
