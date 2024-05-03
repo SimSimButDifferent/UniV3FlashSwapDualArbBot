@@ -16,7 +16,7 @@ The script should then calculate if the trade will be profitable before executin
 **To get started...**
 
 ```bash
-git clone https://github.com/SimSimButDifferent/UniswapV3Foundry.git
+git clone https://github.com/SimSimButDifferent/UniStablecoinFlashSwapArbBot.git
 
 yarn
 
