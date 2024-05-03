@@ -1,7 +1,0 @@
-{
-    "mainnet": {
-        "uniswapV3Router": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
-        "uniswapV3Factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-        "usdcEthPool": "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"
-    }
-}

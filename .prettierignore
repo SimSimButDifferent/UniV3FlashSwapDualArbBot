@@ -1,13 +1,48 @@
-node_modules
-package.json
-img
-artifacts
-cache
-coverage
+abi.json
 .env
-.*
-README.md
-coverage.json
-fund.js
-FundMe.staging.js
-.solcover
+/.vscode
+.next
+.node_modules
+package.json
+postcss.config.json
+tailwind.config.ts
+tsconfig.ts
+yarn.lock
+.json
+global.d.ts
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+global.d.ts
