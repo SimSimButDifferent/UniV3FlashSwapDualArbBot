@@ -1,6 +1,17 @@
-## Uniswap V3 testing boilerplate.
+## Uniswap V3 Stablecoin Flashswap Arbitrage bot.
 
-Building a functional testing environment that i can use as a clone to build any projects that use the Uniswap V3 protocol. Using the SDK and smart contracts together to build things.
+This project is broken down into 2 main parts.
+
+**Flashswap function smart contract + Arbitrage scanner**
+
+The idea is for the script to scan the pools for current prices and find profitable routes for profitable arbitrage.
+
+- Find a profitable route.
+- Is the route profitable after gas + fees?
+- Format the route for input into the flashswap function.
+- Execute Flashswap smart contract function.
+  
+The script should then calculate if the trade will be profitable before executing the flashswap function.
 
 **To get started...**
 
