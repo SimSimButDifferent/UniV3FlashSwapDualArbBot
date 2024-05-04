@@ -1,5 +1,5 @@
 const { ethers } = require("ethers")
-const { getProvider } = require("./getProvider")
+const { getProvider } = require("../getProvider")
 
 // Artifacts
 const {
@@ -11,11 +11,11 @@ const {
 const {
     abi: FactoryAbi,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json")
-require("./getProvider")
+require("../getProvider")
 
-const { abi: ERC20_ABI } = require("../../out/IERC20.sol/IERC20.json")
+const { abi: ERC20_ABI } = require("../../../out/IERC20.sol/IERC20.json")
 
-const { weth9Abi: WETH_ABI } = require("../../mainnetTokens.json")
+const { weth9Abi: WETH_ABI } = require("../../../mainnetTokens.json")
 
 // Contract addresses
 const QUOTER2_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"

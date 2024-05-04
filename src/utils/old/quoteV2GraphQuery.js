@@ -99,25 +99,43 @@ async function quoteV2GraphQuery(poolAddress, tokenIn, tokenOut, poolNumber) {
         decimalsOut,
     )
 
-    // // Log the amount of tokenOut that will be received
-    // console.log("")
-    // console.log(`PAIR: ${token0Symbol}/${token1Symbol}`)
-    // console.log("")
-    // console.log(
-    //     `Quoted Amount of ${tokenInName} Out for ${formattedAmountIn} ${tokenOutName} :`,
-    //     formattedAmountOut,
-    // )
-    // console.log("")
-    // console.log(`Gas estimate: ${gasEstimate}`)
-    // console.log("")
-    // console.log(`Price Before: ${price}`)
-    // console.log(`Price After:  ${priceAfter}`)
-    // console.log("")
-    // console.log("Percent Change: ", (percentageChange * 100).toFixed(3), "%")
-    // console.log("-------------------------------")
-    // console.log("")
+    // Log the amount of tokenOut that will be received
+    console.log("")
+    console.log(`PAIR: ${token0Symbol}/${token1Symbol}`)
+    console.log("")
+    console.log(
+        `Quoted Amount of ${tokenInName} Out for ${formattedAmountIn} ${tokenOutName} :`,
+        formattedAmountOut,
+    )
+    console.log("")
+    console.log(`Gas estimate: ${gasEstimate}`)
+    console.log("")
+    console.log(`Price Before: ${price}`)
+    console.log(`Price After:  ${priceAfter}`)
+    console.log("")
+    console.log("Percent Change: ", (percentageChange * 100).toFixed(3), "%")
+    console.log("-------------------------------")
+    console.log("")
 
     return formattedAmountOut, gasEstimate, price, priceAfter
 }
+async function main(pools) {
+    let quote
+
+    for (let i = 0; i < pools.length; i++) {
+        quote = quoteV2GraphQuery(
+            pools[i].id,
+            pools[i].token0.id,
+            pools[i].token1.id,
+            i,
+        )
+        console.log("hi")
+    }
+}
+
+main(pools).catch((error) => {
+    console.error(error)
+    process.exitCode = 1
+})
 
 exports.quoteV2GraphQuery = quoteV2GraphQuery
