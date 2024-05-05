@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat")
 const { FeeAmount } = require("@uniswap/v3-sdk")
-const { getProvider } = require("./getProvider")
+const { getProvider } = require("../getProvider")
 
 const IUniswapV3FactoryABI = require("@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json")
 const IUniswapPoolABI = require("@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json")
@@ -16,7 +16,7 @@ const {
     UNI_TOKEN,
     AAVE_TOKEN,
     CRV_TOKEN,
-} = require("../utils/constants")
+} = require("../constants")
 
 const feeLow = FeeAmount.LOW
 const feeMed = FeeAmount.MEDIUM

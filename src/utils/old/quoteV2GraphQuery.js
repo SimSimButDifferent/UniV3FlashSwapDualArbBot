@@ -6,9 +6,9 @@ const {
     abi: PoolAbi,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 
-const { getProvider } = require("./getProvider")
-const { sqrtToPrice } = require("./utilities")
-const pools = require("./jsonPoolData/pools.js")
+const { getProvider } = require("../getProvider.js")
+const { sqrtToPrice } = require("../utilities.js")
+const pools = require("../jsonPoolData/pools.js")
 
 // Quoter Address
 

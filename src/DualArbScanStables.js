@@ -1,12 +1,40 @@
 require("./utils/getProvider")
-const { pools } = require("./utils/jsonPoolData/pools")
-const { initPools } = require("./utils/InitPools")
-const { quoteV2GraphQuery } = require("./utils/quoteV2GraphQuery")
+const {
+    data: poolsData,
+} = require("./utils/jsonPoolData/uniswapStablecoinPools")
+const { initPools } = require("./utils/old/InitPools")
+
 const { sqrtToPrice } = require("./utils/utilities")
 
 QUOTER_2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
+const pools = poolsData.pools
+
 async function dualArbScanStables(pools) {
+    // // Print the pool data
+
+    for (let i = 0; i < pools.length; i++) {
+        const pool = pools[i]
+        const token0 = pool.token0
+        const token1 = pool.token1
+        const feeTier = pool.feeTier
+        const liquidity = pool.liquidity
+        const token0decimals = token0.decimals
+        const token1decimals = token1.decimals
+
+        // Get the price of the pool
+        const price = sqrtToPrice(pool.sqrtPriceX96)
+        if (token0decimals >= token1decimals) {
+            console.log(
+                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, token0decimals)} - Address: ${pool.id}`,
+            )
+        } else {
+            console.log(
+                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, 18)} Address: ${pool.id}`,
+            )
+        }
+    }
+
     // // Initialize the pools
     // const poolsArray = await initPools(pools)
 
@@ -14,9 +42,9 @@ async function dualArbScanStables(pools) {
     // let slot0Array = []
     // for (let i = 0; i < poolsArray.length; i++) {
     //     // const slot0Array = []
-    //     const slot0 = await poolsArray[i].slot0()
-    //     slot0Array.push(slot0)
-    //     // console.log(slot0Array[i])
+    //     // const slot0 = await poolsArray[i].slot0()
+    //     // slot0Array.push(slot0)
+    //     console.log(poolsArray[i].liquidity)
     // }
 
     // // Get the sqrtPriceX96
@@ -25,51 +53,6 @@ async function dualArbScanStables(pools) {
     // }
 
     // // console.log(pools)
-    let pool,
-        token0,
-        token1,
-        fee,
-        poolAddress,
-        tokenIn,
-        tokenOut,
-        poolNumber,
-        quote,
-        sqrtPrice,
-        price
-
-    for (let i = 0; i < pools.length; i++) {
-        pool = pools[i]
-        token0 = pool.token0.symbol
-        token1 = pool.token1.symbol
-        fee = pool.feeTier
-        poolAddress = pool.id
-        tokenIn = pool.token0.id
-        tokenOut = pool.token1.id
-        poolNumber = i
-
-        quote = await quoteV2GraphQuery(poolAddress, tokenIn, tokenOut, i)
-        sqrtPrice = quote.sqrtPriceX96
-
-        if (token0 === "USDT") {
-            price = sqrtToPrice(
-                sqrtPrice,
-                pool.token1.decimals,
-                pool.token0.decimals,
-                true,
-            )
-        } else {
-            price = sqrtToPrice(
-                sqrtPrice,
-                pool.token0.decimals,
-                pool.token1.decimals,
-                false,
-            )
-        }
-
-        console.log(
-            `Pool: ${token0}/${token1} Fee: ${fee} SqrtPrice: ${sqrtPrice} Price: ${price}`,
-        )
-    }
 }
 
 dualArbScanStables(pools)
