@@ -27,18 +27,18 @@ const FACTORY_ADDRESS = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
  * @returns {Promise<void>}
  * @description Quote the amount of tokenOut that will be received for the amountIn of tokenIn
  */
-async function quoteV2(params) {
+async function quoteV2(params, tokenIn) {
     // Create a new provider
     const provider = getProvider()
 
     // Create a new instance of the Factory contract
     const factory = new ethers.Contract(FACTORY_ADDRESS, FactoryAbi, provider)
 
-    const tokenIn = params.in.address
-    const tokenOut = params.out.address
+    const token0Address = params.token0.address
+    const token1Address = params.token1.address
     const fee = params.poolFee
 
-    const poolAddress = factory.getPool(tokenIn, tokenOut, fee)
+    const poolAddress = factory.getPool(token0Address, token1Address, fee)
 
     const poolContract = new ethers.Contract(poolAddress, PoolAbi, provider)
 
@@ -50,19 +50,11 @@ async function quoteV2(params) {
 
     const token0IsInput = token0 === tokenIn
 
-    let token0Symbol
-    let token1Symbol
+    const token0Symbol = params.token0.symbol
+    const token1Symbol = params.token1.symbol
 
-    if (token0 === tokenIn) {
-        token0Symbol = params.in.symbol
-        token1Symbol = params.out.symbol
-    } else {
-        token0Symbol = params.out.symbol
-        token1Symbol = params.in.symbol
-    }
-
-    const decimalsIn = params.in.decimals
-    const decimalsOut = params.out.decimals
+    const decimalsT0 = params.token0.decimals
+    const decimalsT1 = params.token1.decimals
 
     // Create a new instance of the Quoter contract
     const quoter2 = new ethers.Contract(
@@ -73,8 +65,8 @@ async function quoteV2(params) {
 
     // Create a params object
     const paramsObj = {
-        tokenIn: tokenIn,
-        tokenOut: tokenOut,
+        tokenIn: token0Address,
+        tokenOut: token1Address,
         fee: fee,
         amountIn: params.amountIn,
         sqrtPriceLimitX96: 0,
@@ -89,14 +81,14 @@ async function quoteV2(params) {
 
     const price = sqrtToPrice(
         sqrtPriceLimitX96,
-        decimalsIn,
-        decimalsOut,
+        decimalsT0,
+        decimalsT1,
         token0IsInput,
     )
     const priceAfter = sqrtToPrice(
         sqrtPriceLimitX96After,
-        decimalsIn,
-        decimalsOut,
+        decimalsT0,
+        decimalsT1,
         token0IsInput,
     )
 
@@ -107,19 +99,19 @@ async function quoteV2(params) {
 
     const formattedAmountIn = ethers.utils.formatUnits(
         params.amountIn.toString(),
-        params.in.decimals,
+        params.token0.decimals,
     )
     const formattedAmountOut = ethers.utils.formatUnits(
         output.amountOut.toString(),
-        params.out.decimals,
+        params.token1.decimals,
     )
 
     // Log the amount of tokenOut that will be received
     console.log("")
-    console.log(`PAIR: ${token0Symbol}/${token1Symbol}`)
+    console.log(`PAIR: ${token0Symbol}/${token1Symbol} - FEE: ${fee}`)
     console.log("")
     console.log(
-        `Quoted Amount of ${params.in.name} Out for ${formattedAmountIn} ${params.out.name} :`,
+        `Quoted Amount of ${params.token0.name} Out for ${formattedAmountIn} ${params.token1.name} :`,
         formattedAmountOut,
     )
     console.log("")
@@ -135,13 +127,17 @@ async function quoteV2(params) {
     return formattedAmountOut, gasEstimate, price, priceAfter
 }
 
-quoteV2(CurrentConfig.WETHUSDC).catch((error) => {
-    console.error("Error in main function:", error)
-    process.exitCode = 1
-})
-quoteV2(CurrentConfig.USDTUSDC)
+quoteV2(CurrentConfig.USDCUSDT100, CurrentConfig.USDCUSDT100.token0.address)
+quoteV2(CurrentConfig.USDCUSDT100, CurrentConfig.USDCUSDT100.token1.address)
 
-quoteV2(CurrentConfig.WBTCUSDT)
+quoteV2(CurrentConfig.USDCUSDT500, CurrentConfig.USDCUSDT500.token0.address)
+
+quoteV2(CurrentConfig.USDCUSDT3000, CurrentConfig.USDCUSDT3000.token0.address)
+
+// quoteV2(CurrentConfig.USDCUSDT3000).catch((error) => {
+//     console.error("Error in main function:", error)
+//     process.exitCode = 1
+// })
 
 // quoteV2(CurrentConfig.LINKUSDT)
 

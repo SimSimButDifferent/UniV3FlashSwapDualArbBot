@@ -16,11 +16,23 @@ const CurrentConfig = {
         mainnet: ALCHEMY_MAINNET_API,
     },
 
-    USDTUSDC: {
-        token0: USDT_TOKEN,
-        token1: USDC_TOKEN,
+    USDCUSDT100: {
+        token0: USDC_TOKEN,
+        token1: USDT_TOKEN,
+        poolFee: FeeAmount.LOWEST,
+        amountIn: ethers.utils.parseUnits("1000", 6),
+    },
+    USDCUSDT500: {
+        token0: USDC_TOKEN,
+        token1: USDT_TOKEN,
+        poolFee: FeeAmount.LOW,
+        amountIn: ethers.utils.parseUnits("1000", 6),
+    },
+    USDCUSDT3000: {
+        token0: USDC_TOKEN,
+        token1: USDT_TOKEN,
         poolFee: FeeAmount.MEDIUM,
-        amountIn: ethers.utils.parseUnits("1", 6),
+        amountIn: ethers.utils.parseUnits("1000", 6),
     },
 }
 

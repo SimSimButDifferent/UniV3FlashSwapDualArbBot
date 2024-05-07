@@ -4,7 +4,7 @@
       {
         "id": "0x3416cf6c708da44db2624d63ea0aaef7113527c6",
         "feeTier": "100",
-        "liquidity": "133620019485638617",
+        "liquidity": "132849897828602773",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -21,24 +21,7 @@
       {
         "id": "0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf",
         "feeTier": "500",
-        "liquidity": "8690393518375760",
-        "token0": {
-          "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-          "symbol": "USDC",
-          "name": "USD Coin",
-          "decimals": "6"
-        },
-        "token1": {
-          "id": "0xdac17f958d2ee523a2206206994597c13d831ec7",
-          "symbol": "USDT",
-          "name": "Tether USD",
-          "decimals": "6"
-        }
-      },
-      {
-        "id": "0xbb256c2f1b677e27118b0345fd2b3894d2e6d487",
-        "feeTier": "10000",
-        "liquidity": "11933971584",
+        "liquidity": "5812762166019896",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",

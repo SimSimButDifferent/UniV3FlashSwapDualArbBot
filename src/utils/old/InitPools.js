@@ -4,11 +4,10 @@ const {
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 
 const { getProvider } = require("../getProvider.js")
-const poolsArray = require("../jsonPoolData/pools.js")
 
 async function initPools(poolsArray) {
     const provider = getProvider()
-    const pools = []
+    const InitPools = []
     for (let i = 0; i < poolsArray.length; i++) {
         const poolContract = new ethers.Contract(
             poolsArray[i].id,
@@ -16,9 +15,9 @@ async function initPools(poolsArray) {
             provider,
         )
 
-        pools.push(poolContract)
+        InitPools.push(poolContract)
     }
-    return pools
+    return InitPools
 }
 
 exports.initPools = initPools

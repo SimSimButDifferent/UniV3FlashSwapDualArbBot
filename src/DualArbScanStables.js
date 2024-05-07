@@ -23,7 +23,7 @@ async function dualArbScanStables(pools) {
         const token1decimals = token1.decimals
 
         // Get the price of the pool
-        const price = sqrtToPrice(pool.sqrtPriceX96)
+        // const price = sqrtToPrice(pool.sqrtPriceX96)
         if (token0decimals >= token1decimals) {
             console.log(
                 `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, token0decimals)} - Address: ${pool.id}`,
@@ -33,19 +33,20 @@ async function dualArbScanStables(pools) {
                 `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, 18)} Address: ${pool.id}`,
             )
         }
+        console.log(liquidity)
     }
 
-    // // Initialize the pools
-    // const poolsArray = await initPools(pools)
+    // Initialize the pools
+    const poolsArray = await initPools(pools)
 
-    // // Get the slot0 data
-    // let slot0Array = []
-    // for (let i = 0; i < poolsArray.length; i++) {
-    //     // const slot0Array = []
-    //     // const slot0 = await poolsArray[i].slot0()
-    //     // slot0Array.push(slot0)
-    //     console.log(poolsArray[i].liquidity)
-    // }
+    // Get the slot0 data
+    let slot0Array = []
+    for (let i = 0; i < poolsArray.length; i++) {
+        const slot0Array = []
+        const slot0 = await poolsArray[i].slot0()
+        slot0Array.push(slot0)
+        console.log(await slot0Array[i].sqrtPriceX96.toString())
+    }
 
     // // Get the sqrtPriceX96
     // for (let i = 0; i < slot0Array.length; i++) {

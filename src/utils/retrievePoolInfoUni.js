@@ -6,7 +6,8 @@ async function retrieveUniswapStablecoinPools() {
     {
       pools(where: {
         token0_in: ["0xdac17f958d2ee523a2206206994597c13d831ec7", "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
-        token1_in: ["0xdac17f958d2ee523a2206206994597c13d831ec7", "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"]
+        token1_in: ["0xdac17f958d2ee523a2206206994597c13d831ec7", "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+        liquidity_gt: "100000000000"
       }, first: 1000) {
         id
         feeTier
