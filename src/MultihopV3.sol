@@ -4,12 +4,15 @@ pragma abicoder v2;
 
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/IQuoterV2.sol";
 
 contract MultihopV3 {
     ISwapRouter public immutable swapRouter;
+    IQuoterV2 public immutable quoter;
 
     constructor(ISwapRouter _swapRouter) {
         swapRouter = _swapRouter;
+        quoter = IQuoterV2(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6);
     }
 
     /// @notice swapExactInputMultihop swaps a fixed amount of inputToken for a maximum possible amount of outputToken through an intermediary pool.

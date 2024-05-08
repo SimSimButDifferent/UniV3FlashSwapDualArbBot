@@ -3,7 +3,7 @@ const {
     abi: PoolAbi,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 
-const { getProvider } = require("../getProvider.js")
+const { getProvider } = require("./getProvider.js")
 
 async function initPools(poolsArray) {
     const provider = getProvider()

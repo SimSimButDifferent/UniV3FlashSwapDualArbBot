@@ -2,7 +2,7 @@ require("./utils/getProvider")
 const {
     data: poolsData,
 } = require("./utils/jsonPoolData/uniswapStablecoinPools")
-const { initPools } = require("./utils/old/InitPools")
+const { initPools } = require("./utils/InitPools")
 
 const { sqrtToPrice } = require("./utils/utilities")
 
