@@ -10,11 +10,21 @@ import "./MultihopV3.sol";
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
 contract UniswapV3FlashSwap {
+    address private immutable owner;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
     uint160 private constant MIN_SQRT_RATIO = 4295128739;
     uint160 private constant MAX_SQRT_RATIO =
         1461446703485210103287273052203988822378723970342;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
 
     // DAI / WETH 0.3% swap fee (2000 DAI / WETH)
     // DAI / WETH 0.05% swap fee (2100 DAI / WETH)
@@ -29,7 +39,7 @@ contract UniswapV3FlashSwap {
         address tokenIn,
         address tokenOut,
         uint256 amountIn
-    ) external {
+    ) external onlyOwner {
         bool zeroForOne = tokenIn < tokenOut;
         // 0 -> 1 => sqrt price decrease
         // 1 -> 0 => sqrt price increase

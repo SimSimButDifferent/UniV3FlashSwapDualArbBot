@@ -16,16 +16,23 @@ interface IQuoter {
 
 contract ArbQuote {
     IQuoter public quoter;
+    address private immutable owner;
 
     constructor(address quoterAddress) {
         quoter = IQuoter(quoterAddress);
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
     }
 
     function arbQuote(
         address[] memory path,
         uint24[] memory fees,
         uint256 amountIn
-    ) external view returns (uint256 amountOut, uint256 gasEstimate) {
+    ) external view onlyOwner returns (uint256 amountOut, uint256 gasEstimate) {
         require(path.length > 1, "Path must have at least two tokens");
         require(
             path.length == fees.length + 1,

@@ -30,7 +30,7 @@ const quoter2 = new ethers.Contract(
 )
 
 async function arbQuote(path, fees, amountIn) {
-    const MultiHop = new ethers.getContractFactory("MultiHop")
+    const MultiHop = ethers.getContractFactory("MultiHop")
     const multiHop = await MultiHop.deploy(SWAP_ROUTER_02_ADDRESS)
     await multiHop.deployed()
     const swapPath = [path[0], fees[0], path[1], fees[1], path[2]]

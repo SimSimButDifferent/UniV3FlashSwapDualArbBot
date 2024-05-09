@@ -9,10 +9,17 @@ import "@uniswap/v3-periphery/contracts/interfaces/IQuoterV2.sol";
 contract MultihopV3 {
     ISwapRouter public immutable swapRouter;
     IQuoterV2 public immutable quoter;
+    address public immutable owner;
 
     constructor(ISwapRouter _swapRouter) {
         swapRouter = _swapRouter;
         quoter = IQuoterV2(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6);
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
     }
 
     /// @notice swapExactInputMultihop swaps a fixed amount of inputToken for a maximum possible amount of outputToken through an intermediary pool.
@@ -24,7 +31,7 @@ contract MultihopV3 {
         uint256 amountIn,
         address[] memory path,
         uint24[] memory fees
-    ) external returns (uint256 amountOut) {
+    ) external onlyOwner returns (uint256 amountOut) {
         require(path.length > 1, "Path must have at least two tokens");
         require(
             path.length == fees.length + 1,
