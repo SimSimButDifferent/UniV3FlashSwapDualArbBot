@@ -20,6 +20,7 @@ const {
 const {
     abi: ArbQuoteAbi,
 } = require("../../artifacts/src/ArbQuote.sol/ArbQuote.json")
+const { BigNumber } = require("ethers")
 
 const ARB_QUOTE_ADDRESS_ANVIL = "0xf93b0549cd50c849d792f0eae94a598fa77c7718"
 
@@ -44,29 +45,18 @@ const arbQuoteContract = new ethers.Contract(
 )
 
 async function arbQuote(path, fees, amountIn) {
-    let swapPath = ethers.utils.solidityPack(
+    const swapPath = ethers.utils.solidityPack(
         ["address", "uint24", "address", "uint24", "address"],
         [path[0], fees[0], path[1], fees[1], path[2]],
     )
 
     // Call the quoteExactInput function and get the output
-    try {
-        const output = await quoter2.callStatic.quoteExactInput(
-            swapPath,
-            amountIn,
-        )
-        // const output = await arbQuoteContract.callStatic.arbQuote(
-        //     path,
-        //     fees,
-        //     amountIn,
-        // )
-        console.log(`Amount out: ${output.toString()}`)
-    } catch (error) {
-        console.error(`Error fetching quote: ${error}`)
-        if (error.data) {
-            console.error(`Revert reason: ${error.data.message}`)
-        }
-    }
+
+    // const output = await quoter2.callStatic.quoteExactInput(swapPath, amountIn)
+    const output = await arbQuoteContract.callStatic.arbQuote(
+        swapPath,
+        amountIn,
+    )
 }
 
 arbQuote(

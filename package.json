@@ -8,9 +8,6 @@
     "license": "MIT",
     "private": false,
     "dependencies": {
-        "@types/node": "^20.12.7",
-        "@types/react": "^18.2.79",
-        "@types/react-dom": "^18.2.25",
         "@uniswap/sdk": "^3.0.3",
         "@uniswap/sdk-core": "^3.2.2",
         "@uniswap/v3-core": "^1.0.1",
@@ -19,8 +16,7 @@
         "dotenv": "^16.4.5",
         "ethers": "^5.7.2",
         "fs": "^0.0.1-security",
-        "path": "^0.12.7",
-        "typescript": "^5.4.5"
+        "path": "^0.12.7"
     },
     "devDependencies": {
         "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
@@ -32,12 +28,6 @@
         "@nomicfoundation/hardhat-toolbox": "^5.0.0",
         "@nomicfoundation/hardhat-verify": "^2.0.0",
         "@nomicfoundation/ignition-core": "^0.15.1",
-        "@typechain/ethers-v6": "^0.5.0",
-        "@typechain/hardhat": "^9.0.0",
-        "@types/chai": "^4.2.0",
-        "@types/mocha": ">=9.1.0",
-        "@typescript-eslint/eslint-plugin": "^7.7.1",
-        "@typescript-eslint/parser": "^7.7.1",
         "chai": "^4.2.0",
         "eslint": "^9.1.1",
         "eslint-config-prettier": "^9.1.0",
@@ -45,8 +35,6 @@
         "hardhat": "^2.22.1",
         "hardhat-gas-reporter": "^1.0.8",
         "prettier": "^3.2.5",
-        "solidity-coverage": "^0.8.1",
-        "ts-node": ">=8.0.0",
-        "typechain": "^8.3.0"
+        "solidity-coverage": "^0.8.1"
     }
 }

@@ -29,28 +29,14 @@ contract ArbQuote {
     }
 
     function arbQuote(
-        address[] memory path,
-        uint24[] memory fees,
+        bytes memory path,
         uint256 amountIn
     ) external view onlyOwner returns (uint256 amountOut, uint256 gasEstimate) {
-        require(path.length > 1, "Path must have at least two tokens");
-        require(
-            path.length == fees.length + 1,
-            "Path length must match fees length + 1"
-        );
-
-        // Construct the swap path dynamically.
-        bytes memory swapPath = abi.encodePacked(
-            path[0],
-            fees[0],
-            path[1],
-            fees[1],
-            path[2]
-        );
-
+        // require(path.length > 1, "Path must have at least 3 entries");
+        
         // Call quoteExactInput as a view function
         // decode the output to get the amountOut and gasEstimate
-        (amountOut, gasEstimate) = quoter.quoteExactInput(swapPath, amountIn);
+        (amountOut, gasEstimate) = quoter.quoteExactInput(path, amountIn);
 
 
 
