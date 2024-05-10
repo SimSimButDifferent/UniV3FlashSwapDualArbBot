@@ -17,6 +17,13 @@ const {
     QUOTER_CONTRACT_ADDRESS,
     SWAP_ROUTER_02_ADDRESS,
 } = require("./constants.js")
+const {
+    abi: ArbQuoteAbi,
+} = require("../../artifacts/src/ArbQuote.sol/ArbQuote.json")
+
+const ARB_QUOTE_ADDRESS_ANVIL = "0xf93b0549cd50c849d792f0eae94a598fa77c7718"
+
+// Get the pools from the JSON file
 const pools = data.pools
 
 // Create a new provider
@@ -29,11 +36,18 @@ const quoter2 = new ethers.Contract(
     provider,
 )
 
+// Create an instance of arbQuote contract
+const arbQuoteContract = new ethers.Contract(
+    ARB_QUOTE_ADDRESS_ANVIL,
+    ArbQuoteAbi,
+    provider,
+)
+
 async function arbQuote(path, fees, amountIn) {
-    const MultiHop = ethers.getContractFactory("MultiHop")
-    const multiHop = await MultiHop.deploy(SWAP_ROUTER_02_ADDRESS)
-    await multiHop.deployed()
-    const swapPath = [path[0], fees[0], path[1], fees[1], path[2]]
+    let swapPath = ethers.utils.solidityPack(
+        ["address", "uint24", "address", "uint24", "address"],
+        [path[0], fees[0], path[1], fees[1], path[2]],
+    )
 
     // Call the quoteExactInput function and get the output
     try {
@@ -41,6 +55,11 @@ async function arbQuote(path, fees, amountIn) {
             swapPath,
             amountIn,
         )
+        // const output = await arbQuoteContract.callStatic.arbQuote(
+        //     path,
+        //     fees,
+        //     amountIn,
+        // )
         console.log(`Amount out: ${output.toString()}`)
     } catch (error) {
         console.error(`Error fetching quote: ${error}`)

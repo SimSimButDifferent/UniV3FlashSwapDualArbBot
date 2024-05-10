@@ -49,8 +49,12 @@ contract ArbQuote {
         );
 
         // Call quoteExactInput as a view function
+        // decode the output to get the amountOut and gasEstimate
         (amountOut, gasEstimate) = quoter.quoteExactInput(swapPath, amountIn);
 
+
+
+        
         return (amountOut, gasEstimate);
     }
 }
