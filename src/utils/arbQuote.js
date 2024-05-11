@@ -35,7 +35,10 @@ async function arbQuote(path, fees, amountIn) {
 
     const output = await quoter2.callStatic.quoteExactInput(swapPath, amountIn)
 
-    console.log(output)
+    console.log(
+        `amountOut - ${ethers.utils.formatUnits(output.amountOut.toString(), 6)}`,
+    )
+    console.log(`gas estimate - ${output.gasEstimate.toString()}`)
 }
 
 arbQuote(
