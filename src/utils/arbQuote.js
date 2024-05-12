@@ -15,7 +15,7 @@ const {
     QUOTER2_CONTRACT_ADDRESS,
 } = require("../context/constants.js")
 
-async function arbQuote(path, fees, amountIn) {
+async function arbQuote(path, amountIn) {
     // Create a new provider
     const provider = getProvider()
 
@@ -28,7 +28,7 @@ async function arbQuote(path, fees, amountIn) {
 
     const swapPath = ethers.utils.solidityPack(
         ["address", "uint24", "address", "uint24", "address"],
-        [path[0], fees[0], path[1], fees[1], path[2]],
+        [path[0], path[1], path[2], path[3], path[4]],
     )
 
     // Call the quoteExactInput function and get the output
@@ -48,8 +48,14 @@ async function arbQuote(path, fees, amountIn) {
 }
 
 arbQuote(
-    [USDT_TOKEN.address, USDC_TOKEN.address, USDT_TOKEN.address],
-    [FeeAmount.LOW, FeeAmount.MEDIUM],
+    [
+        USDT_TOKEN.address,
+        FeeAmount.LOW,
+        USDC_TOKEN.address,
+        FeeAmount.MEDIUM,
+        USDT_TOKEN.address,
+    ],
+
     ethers.utils.parseUnits("1000", 6),
 ).catch((error) => {
     console.error(error)
