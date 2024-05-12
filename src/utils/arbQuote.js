@@ -13,7 +13,7 @@ const {
     USDT_TOKEN,
     USDC_TOKEN,
     QUOTER2_CONTRACT_ADDRESS,
-} = require("./constants.js")
+} = require("../context/constants.js")
 
 async function arbQuote(path, fees, amountIn) {
     // Create a new provider

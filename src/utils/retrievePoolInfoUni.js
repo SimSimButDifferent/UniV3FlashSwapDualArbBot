@@ -1,5 +1,5 @@
 const fs = require("fs")
-const tokens = require("./constants")
+const tokens = require("../context/constants")
 
 async function retrieveUniswapStablecoinPools() {
     const query = `
