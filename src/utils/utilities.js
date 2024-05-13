@@ -11,7 +11,43 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     return ratio
 }
 
-function findArbitrageRoutes(pools) {
+async function poolInformation(pools, poolsArray) {
+    console.log("List of pools to scan")
+    for (let i = 0; i < pools.length; i++) {
+        const pool = pools[i]
+        const token0 = pool.token0
+        const token1 = pool.token1
+        const feeTier = pool.feeTier
+        const liquidity = pool.liquidity
+        const token0decimals = token0.decimals
+        const token1decimals = token1.decimals
+
+        // Get the price of the pool
+        const slot0 = await poolsArray[i].slot0()
+        const sqrtPriceLimitX96 = slot0.sqrtPriceX96
+        const price = sqrtToPrice(
+            sqrtPriceLimitX96,
+            token0decimals,
+            token1decimals,
+            true,
+        )
+
+        // Get the price of the pool
+
+        if (token0decimals >= token1decimals) {
+            console.log(
+                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, token0decimals)} - Address: ${pool.id}`,
+            )
+        } else {
+            console.log(
+                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, 18)} Address: ${pool.id}`,
+            )
+        }
+        console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
+    }
+}
+
+async function findArbitrageRoutes(pools) {
     let routes = []
 
     // Iterate through each pool and compare it with every other pool
@@ -21,18 +57,18 @@ function findArbitrageRoutes(pools) {
             if (i !== j) {
                 // Example route: token0 -> token1 in one pool, and token1 -> token0 in another pool
                 let route1 = [
-                    pools[i].token0.symbol,
+                    pools[i].token0.id,
                     pools[i].feeTier,
-                    pools[i].token1.symbol,
+                    pools[i].token1.id,
                     pools[j].feeTier,
-                    pools[j].token0.symbol,
+                    pools[j].token0.id,
                 ]
                 let route2 = [
-                    pools[i].token1.symbol,
+                    pools[i].token1.id,
                     pools[i].feeTier,
-                    pools[i].token0.symbol,
+                    pools[i].token0.id,
                     pools[j].feeTier,
-                    pools[j].token1.symbol,
+                    pools[j].token1.id,
                 ]
 
                 // Add routes to the routes array
@@ -46,5 +82,4 @@ function findArbitrageRoutes(pools) {
     return { routes }
 }
 
-exports.sqrtToPrice = sqrtToPrice
-exports.findArbitrageRoutes = findArbitrageRoutes
+module.exports = { sqrtToPrice, poolInformation, findArbitrageRoutes }

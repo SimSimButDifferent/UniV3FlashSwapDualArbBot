@@ -1,5 +1,4 @@
 const fs = require("fs")
-const tokens = require("../context/constants")
 
 async function retrieveUniswapStablecoinPools() {
     const query = `
@@ -42,7 +41,7 @@ async function retrieveUniswapStablecoinPools() {
     // Write the response to a file
 
     fs.writeFileSync(
-        "src/utils/jsonPoolData/uniswapStablecoinPools.json",
+        "src/jsonPoolData/uniswapStablecoinPools.json",
         JSON.stringify(jsonDict, null, 2),
     )
 

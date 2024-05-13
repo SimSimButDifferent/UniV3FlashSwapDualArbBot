@@ -1,19 +1,12 @@
 const { ethers } = require("hardhat")
-const { FeeAmount } = require("@uniswap/v3-sdk")
+
 const {
     abi: Quoter2Abi,
 } = require("@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json")
-const {
-    abi: PoolAbi,
-} = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 
 const { getProvider } = require("./getProvider.js")
-const { sqrtToPrice } = require("./utilities.js")
-const {
-    USDT_TOKEN,
-    USDC_TOKEN,
-    QUOTER2_CONTRACT_ADDRESS,
-} = require("../context/constants.js")
+
+const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
 async function arbQuote(path, amountIn) {
     // Create a new provider
@@ -39,27 +32,19 @@ async function arbQuote(path, amountIn) {
 
     const gasEstimate = output.gasEstimate.toString()
 
+    console.log("")
+    console.log("-----------------------")
+    console.log(
+        `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), 6)}`,
+    )
     console.log(
         `amountOut - ${ethers.utils.formatUnits(output.amountOut.toString(), 6)}`,
     )
     console.log(`gas estimate - ${output.gasEstimate.toString()}`)
+    console.log(`Path - ${path}`)
+    console.log("-----------------------")
 
     return [amountOut, gasEstimate]
 }
-
-arbQuote(
-    [
-        USDT_TOKEN.address,
-        FeeAmount.LOW,
-        USDC_TOKEN.address,
-        FeeAmount.MEDIUM,
-        USDT_TOKEN.address,
-    ],
-
-    ethers.utils.parseUnits("1000", 6),
-).catch((error) => {
-    console.error(error)
-    process.exitCode = 1
-})
 
 exports.arbQuote = arbQuote
