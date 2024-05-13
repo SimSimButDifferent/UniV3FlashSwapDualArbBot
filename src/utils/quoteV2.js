@@ -134,19 +134,4 @@ quoteV2(CurrentConfig.USDCUSDT500, CurrentConfig.USDCUSDT500.token0.address)
 
 quoteV2(CurrentConfig.USDCUSDT3000, CurrentConfig.USDCUSDT3000.token0.address)
 
-// quoteV2(CurrentConfig.USDCUSDT3000).catch((error) => {
-//     console.error("Error in main function:", error)
-//     process.exitCode = 1
-// })
-
-// quoteV2(CurrentConfig.LINKUSDT)
-
-// quoteV2(CurrentConfig.UNIUSDT)
-
-// quoteV2(CurrentConfig.AAVEUSDC)
-
-// quoteV2(CurrentConfig.CRVUSDT)
-
-// quoteV2(CurrentConfig.USDTAAVE)
-
 exports.quoteV2 = quoteV2

@@ -5,19 +5,15 @@ const {
 
 const { getProvider } = require("./getProvider.js")
 
-async function initPools(poolsArray) {
+async function initPools(pools) {
     const provider = getProvider()
-    const InitPools = []
-    for (let i = 0; i < poolsArray.length; i++) {
-        const poolContract = new ethers.Contract(
-            poolsArray[i].id,
-            PoolAbi,
-            provider,
-        )
+    const poolsArray = []
+    for (let i = 0; i < pools.length; i++) {
+        const poolContract = new ethers.Contract(pools[i].id, PoolAbi, provider)
 
-        InitPools.push(poolContract)
+        poolsArray.push(poolContract)
     }
-    return InitPools
+    return poolsArray
 }
 
 exports.initPools = initPools
