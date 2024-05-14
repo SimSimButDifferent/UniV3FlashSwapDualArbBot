@@ -11,6 +11,7 @@ async function retrieveUniswapStablecoinPools() {
         id
         feeTier
         liquidity
+        tick
         token0 {
           id
           symbol
