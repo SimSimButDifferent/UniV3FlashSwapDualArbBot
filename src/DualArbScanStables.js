@@ -4,17 +4,25 @@ const { data: poolsData } = require("./jsonPoolData/uniswapStablecoinPools")
 const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
 
-const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
+const {
+    poolInformation,
+    findArbitrageRoutes,
+    getGasandEthPrice,
+    gasEstimateToUsd,
+} = require("./utils/utilities")
 
 const pools = poolsData.pools
-const amountIn = ethers.utils.parseUnits("1000000", 6)
+const amountIn = ethers.utils.parseUnits("100", 6)
+const profitThreshold = ethers.utils.parseUnits("2", 6)
+let gasEstimateUsd
+let swapFeeTotalUsd
 
 async function dualArbScanStables(pools) {
     // Initialize the pools
     const poolsArray = await initPools(pools)
 
-    // Output pool information
-    await poolInformation(pools, poolsArray)
+    // // Output pool information
+    // await poolInformation(pools, poolsArray)
 
     // Get possible arbitrage routes
     const routesObj = await findArbitrageRoutes(pools)
@@ -31,6 +39,10 @@ async function dualArbScanStables(pools) {
         console.log("Scan run number: ", counter)
         // Create an array to hold all the promises returned by arbQuote
         const quotePromises = []
+        const gasPricesInUsd = []
+
+        // Get the gas price
+        const gasPrice = await getGasandEthPrice()
 
         for (let i = 0; i < routesArray.length; i++) {
             const route = routesArray[i]
@@ -39,7 +51,22 @@ async function dualArbScanStables(pools) {
         }
 
         // Wait for all promises to resolve
-        await Promise.all(quotePromises)
+        const outputs = await Promise.all(quotePromises)
+
+        for (let i = 0; i < outputs.length; i++) {
+            const gasEstimate = outputs[i][1]
+
+            gasEstimateUsd = gasEstimateToUsd(gasEstimate, gasPrice)
+            console.log(
+                `Gas estimate in USD for route ${i + 1}: ${gasEstimateUsd}`,
+            )
+        }
+
+        // if (
+        //     amountOut >
+        //     amountIn + gasEstimateUsd + swapFeeTotalUsd + profitThreshold
+        // ) {
+        // }
 
         return quotePromises
     }

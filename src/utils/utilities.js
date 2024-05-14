@@ -1,3 +1,5 @@
+const { getProvider } = require("./getProvider")
+
 function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     const numerator = sqrt ** 2
     const denominator = 2 ** 192
@@ -13,6 +15,7 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
 
 async function poolInformation(pools, poolsArray) {
     console.log("List of pools to scan")
+    console.log("-----------------------")
     for (let i = 0; i < pools.length; i++) {
         const pool = pools[i]
         const token0 = pool.token0
@@ -35,15 +38,20 @@ async function poolInformation(pools, poolsArray) {
         // Get the price of the pool
 
         if (token0decimals >= token1decimals) {
+            console.log("")
             console.log(
                 `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, token0decimals)} - Address: ${pool.id}`,
             )
+            console.log("")
         } else {
+            console.log("")
             console.log(
                 `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, 18)} Address: ${pool.id}`,
             )
+            console.log("")
         }
         console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
+        console.log("-----------------------")
     }
 }
 
@@ -82,4 +90,26 @@ async function findArbitrageRoutes(pools) {
     return { routes }
 }
 
-module.exports = { sqrtToPrice, poolInformation, findArbitrageRoutes }
+// Get gas price function
+async function getGasandEthPrice() {
+    const provider = getProvider()
+    const gasPrice = await provider.getGasPrice()
+    // const ethPriceUsd = await provider.getEtherPrice()
+    return gasPrice
+}
+
+// function to convert gasEstimate into usd value
+function gasEstimateToUsd(gasEstimate, gasPrice) {
+    const gasPriceGwei = ethers.utils.formatUnits(gasPrice, "gwei")
+    const gasEstimateEth = gasPriceGwei * gasEstimate * 0.000000001
+    // const gasEstimateUsd = gasEstimateEth * ethPriceUsd
+    return gasEstimateEth
+}
+
+module.exports = {
+    sqrtToPrice,
+    poolInformation,
+    findArbitrageRoutes,
+    getGasandEthPrice,
+    gasEstimateToUsd,
+}
