@@ -32,6 +32,11 @@ async function arbQuote(path, amountIn) {
 
     const gasEstimate = output.gasEstimate.toString()
 
+    const sqrtPriceX96AfterList = output.sqrtPriceX96AfterList.toString()
+
+    const initializedTicksCrossedList =
+        output.initializedTicksCrossedList.toString()
+
     console.log("")
     console.log("-----------------------")
     console.log(
@@ -41,10 +46,17 @@ async function arbQuote(path, amountIn) {
         `amountOut - ${ethers.utils.formatUnits(output.amountOut.toString(), 6)}`,
     )
     console.log(`gas estimate - ${output.gasEstimate.toString()}`)
+    console.log(`sqrtPriceX96AfterList - ${sqrtPriceX96AfterList}`)
+    console.log(`initializedTicksCrossed - ${initializedTicksCrossedList}`)
     console.log(`Path - ${path}`)
     console.log("-----------------------")
 
-    return [amountOut, gasEstimate]
+    return [
+        amountOut,
+        gasEstimate,
+        sqrtPriceX96AfterList,
+        initializedTicksCrossedList,
+    ]
 }
 
 exports.arbQuote = arbQuote

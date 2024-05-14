@@ -7,7 +7,7 @@ const { arbQuote } = require("./utils/arbQuote")
 const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 
 const pools = poolsData.pools
-const amountIn = ethers.utils.parseUnits("1000", 6)
+const amountIn = ethers.utils.parseUnits("1000000", 6)
 
 async function dualArbScanStables(pools) {
     // Initialize the pools
