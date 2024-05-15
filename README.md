@@ -69,7 +69,9 @@ This loops every 20 seconds, which can be set in DualArbScanStables.js
 '''javascript
 if (amountOut > amountIn + gasFeesUsd + ProfitThreshhold) {
 arbitrageOpportunity = true
-}```
+}
+
+````
 
 ```bash
 yarn hardhat run src/utils/DualArbScanStables.js
@@ -263,7 +265,7 @@ gas estimate in USD - 5.565222
 Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,500,0xdac17f958d2ee523a2206206994597c13d831ec7,3000,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
 
 -----------------------
-```
+````
 
 **Run Foundry tests**
 
