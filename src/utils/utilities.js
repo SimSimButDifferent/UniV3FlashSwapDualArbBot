@@ -1,3 +1,5 @@
+const { ethers } = require("ethers")
+const { Chainlink } = require("dev3-sdk")
 const { getProvider } = require("./getProvider")
 
 function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
@@ -90,26 +92,45 @@ async function findArbitrageRoutes(pools) {
     return { routes }
 }
 
-// Get gas price function
-async function getGasandEthPrice() {
-    const provider = getProvider()
-    const gasPrice = await provider.getGasPrice()
-    // const ethPriceUsd = await provider.getEtherPrice()
-    return gasPrice
+async function getEthPriceUsd() {
+    const ethSDK = Chainlink.instance(
+        "https://ethereum.publicnode.com",
+        Chainlink.PriceFeeds.ETH,
+    )
+
+    const roundData = await ethSDK.getFromOracle(ethSDK.feeds.ETH_USD)
+    const ethPriceUsdBigInt = roundData.answer
+    // const ethPriceUsd = ethers.utils
+    //     .formatUnits(ethPriceUsdBigInt, "8")
+    //     .toString()
+
+    return ethPriceUsdBigInt
 }
 
 // function to convert gasEstimate into usd value
-function gasEstimateToUsd(gasEstimate, gasPrice) {
-    const gasPriceGwei = ethers.utils.formatUnits(gasPrice, "gwei")
-    const gasEstimateEth = gasPriceGwei * gasEstimate * 0.000000001
-    // const gasEstimateUsd = gasEstimateEth * ethPriceUsd
-    return gasEstimateEth
+async function gasEstimateToUsd(gas) {
+    const provider = getProvider()
+
+    const gasPrice = BigInt(await provider.getGasPrice())
+    const gasEstimate = BigInt(gas)
+
+    const ethPriceUsd = ethers.utils.formatUnits(await getEthPriceUsd(), "8")
+
+    const gasTotal = gasPrice * gasEstimate
+
+    const gasEstimateEth = Number(BigInt(gasTotal)) / 1e18
+
+    const gasEstimateUsd = gasEstimateEth * Number(ethPriceUsd)
+
+    console.log("Gas estimate in ETH: ", gasEstimateEth)
+    console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
+
+    return gasEstimateUsd.toFixed(6)
 }
 
 module.exports = {
     sqrtToPrice,
     poolInformation,
     findArbitrageRoutes,
-    getGasandEthPrice,
     gasEstimateToUsd,
 }

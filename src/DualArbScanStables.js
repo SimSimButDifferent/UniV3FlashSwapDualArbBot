@@ -7,7 +7,7 @@ const { arbQuote } = require("./utils/arbQuote")
 const {
     poolInformation,
     findArbitrageRoutes,
-    getGasandEthPrice,
+    // getGasandEthPrice,
     gasEstimateToUsd,
 } = require("./utils/utilities")
 
@@ -41,8 +41,8 @@ async function dualArbScanStables(pools) {
         const quotePromises = []
         const gasPricesInUsd = []
 
-        // Get the gas price
-        const gasPrice = await getGasandEthPrice()
+        // // Get the gas price
+        // const gasPrice = await getGas()
 
         for (let i = 0; i < routesArray.length; i++) {
             const route = routesArray[i]
@@ -54,13 +54,12 @@ async function dualArbScanStables(pools) {
         const outputs = await Promise.all(quotePromises)
 
         for (let i = 0; i < outputs.length; i++) {
-            const gasEstimate = outputs[i][1]
+            gasEstimateUsd = outputs[i][1]
 
-            gasEstimateUsd = gasEstimateToUsd(gasEstimate, gasPrice)
-            console.log(
-                `Gas estimate in USD for route ${i + 1}: ${gasEstimateUsd}`,
-            )
+            gasPricesInUsd.push(gasEstimateToUsd(gasEstimateUsd))
         }
+
+        const gasEstimates = await Promise.all(gasPricesInUsd)
 
         // if (
         //     amountOut >
