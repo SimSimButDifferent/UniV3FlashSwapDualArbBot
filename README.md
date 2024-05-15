@@ -64,14 +64,10 @@ Calculates all possible routes and runs quoteExactInput() on all of them asyncro
 
 Then calculates wether there is an arbitrage opportunity
 
-This loops every 20 seconds, which can be set in DualArbScanStables.js
-
-'''javascript
+````javascript
 if (amountOut > amountIn + gasFeesUsd + ProfitThreshhold) {
 arbitrageOpportunity = true
-}
-
-````
+}```
 
 ```bash
 yarn hardhat run src/utils/DualArbScanStables.js
