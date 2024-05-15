@@ -6,11 +6,11 @@ This project is broken down into 2 main parts.
 
 The idea is for the script to scan the pools for current prices and find profitable routes for profitable arbitrage.
 
-- Find a profitable route.
-- Is the route profitable after gas + fees?
-- Format the route for input into the flashswap function.
-- Execute Flashswap smart contract function.
-  
+-   Find a profitable route.
+-   Is the route profitable after gas + fees?
+-   Format the route for input into the flashswap function.
+-   Execute Flashswap smart contract function.
+
 The script should then calculate if the trade will be profitable before executing the flashswap function.
 
 **To get started...**
@@ -44,44 +44,228 @@ anvil --fork-url FORK_URL --fork-block-number 19721861 --fork-chain-id 1 --chain
 
 ### Some commands to run
 
-**Get a Quote**
+**RetrievePoolInfoUni**
 
-**quoteV1(params)** function takes a pair object as defined inside **config.js**.
+Run this first to get the pools above the liquidity threshhold, which you can change in the query itself.
 
-```bash
-yarn hardhat run src/utils/quoteV1.js
+Currently - 100000000000
 
-Quoted Amount Out for Wrapped Ether : 3123.994209
-Quoted Amount Out for Wrapped Bitcoin : 63760.640759
-Quoted Amount Out for Aave Token : 86.160963
-Quoted Amount Out for Curve DAO Token : 0.44082
-Quoted Amount Out for Tether : 0.997499
-Quoted Amount Out for Uniswap : 7.716985
-Quoted Amount Out for Chainlink : 14.86376
-Done in 4.82s.
-```
-
-**get Pool address**
-
-**getPoolConstants(\_token0, \_token1, \_fee)** takes two Token objects as defined in the **constants.js**.
+As it is right now, outputs 3 USDC/USDT pools.
 
 ```bash
-yarn hardhat run src/utils/getPoolConstants.js
-
-Current pool address for Wrapped Ether / Tether is: 0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36
-Token0: Wrapped Ether
-Token1: Tether
-Current pool address for Wrapped Ether / USDC is: 0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8
-Token0: Wrapped Ether
-Token1: USDC
-Current pool address for Aave Token / USDC is: 0xdceaf5d0E5E0dB9596A47C0c4120654e80B1d706
-Token0: Aave Token
-Token1: USDC
-Current pool address for Wrapped Ether / Dai is: 0xC2e9F25Be6257c210d7Adf0D4Cd6E3E881ba25f8
-Token0: Wrapped Ether
-Token1: Dai
-Done in 5.72s.
+yarn hardhat run src/utils/retrievePoolInfoUni.js
 ```
+
+## Scan for Arbitrage
+
+**DualArbScanStables.js** function takes a json object as defined inside **uniswapStablecoinPools.json**.
+
+Calculates all possible routes and runs quoteExactInput() on all of them asyncronously.
+
+Then calculates wether there is an arbitrage opportunity
+
+This loops every 20 seconds, which can be set in DualArbScanStables.js
+
+'''javascript
+if (amountOut > amountIn + gasFeesUsd + ProfitThreshhold) {
+arbitrageOpportunity = true
+}
+
+````
+
+```bash
+yarn hardhat run src/utils/DualArbScanStables.js
+
+List of pools to scan
+-----------------------
+
+USDC/USDT - Fee tier(100) Liquidity = 70912458575.083396 - Address: 0x3416cf6c708da44db2624d63ea0aaef7113527c6
+
+USDC/USDT - Price: 1.0003141979334498
+-----------------------
+
+USDC/USDT - Fee tier(500) Liquidity = 2694509583.371948 - Address: 0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf
+
+USDC/USDT - Price: 1.0001893274877116
+-----------------------
+
+USDC/USDT - Fee tier(3000) Liquidity = 1922257.962926 - Address: 0xee4cf3b78a74affa38c6a926282bcd8b5952818d
+
+USDC/USDT - Price: 1.0004035343479618
+-----------------------
+
+Scanning for arbitrage opportunities
+
+Scan run number:  1
+
+No arbitrage opportunity found in Route:  1
+
+-----------------------
+
+Route: 1
+amountIn - 100.0
+amountOut - 99.927524
+MinimumAmountOut: 107.365228
+gas estimate - 179928
+gas estimate in USD - 5.365228
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,100,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,500,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  11
+
+-----------------------
+
+Route: 11
+amountIn - 100.0
+amountOut - 99.623642
+MinimumAmountOut: 107.565222
+gas estimate - 186635
+gas estimate in USD - 5.565222
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,3000,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,500,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  5
+
+-----------------------
+
+Route: 5
+amountIn - 100.0
+amountOut - 99.952476
+MinimumAmountOut: 107.367464
+gas estimate - 180003
+gas estimate in USD - 5.367464
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,500,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,100,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  10
+
+-----------------------
+
+Route: 10
+amountIn - 100.0
+amountOut - 99.666316
+MinimumAmountOut: 107.564715
+gas estimate - 186618
+gas estimate in USD - 5.564715
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,3000,0xdac17f958d2ee523a2206206994597c13d831ec7,500,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+
+No arbitrage opportunity found in Route:  9
+
+-----------------------
+
+Route: 9
+amountIn - 100.0
+amountOut - 99.675958
+MinimumAmountOut: 107.566445
+gas estimate - 186676
+gas estimate in USD - 5.566445
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,3000,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,100,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  7
+
+-----------------------
+
+Route: 7
+amountIn - 100.0
+amountOut - 99.666319
+MinimumAmountOut: 107.564715
+gas estimate - 186618
+gas estimate in USD - 5.564715
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,500,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,3000,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  4
+
+-----------------------
+
+Route: 4
+amountIn - 100.0
+amountOut - 99.927524
+MinimumAmountOut: 107.365228
+gas estimate - 179928
+gas estimate in USD - 5.365228
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,500,0xdac17f958d2ee523a2206206994597c13d831ec7,100,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+
+No arbitrage opportunity found in Route:  3
+
+-----------------------
+
+Route: 3
+amountIn - 100.0
+amountOut - 99.693763
+MinimumAmountOut: 107.563702
+gas estimate - 186584
+gas estimate in USD - 5.563702
+Path - 0xdac17f958d2ee523a2206206994597c13d831ec7,100,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,3000,0xdac17f958d2ee523a2206206994597c13d831ec7
+
+-----------------------
+
+No arbitrage opportunity found in Route:  2
+
+-----------------------
+
+Route: 2
+amountIn - 100.0
+amountOut - 99.675956
+MinimumAmountOut: 107.566445
+gas estimate - 186676
+gas estimate in USD - 5.566445
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,100,0xdac17f958d2ee523a2206206994597c13d831ec7,3000,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+
+No arbitrage opportunity found in Route:  0
+
+-----------------------
+
+Route: 0
+amountIn - 100.0
+amountOut - 99.952477
+MinimumAmountOut: 107.367464
+gas estimate - 180003
+gas estimate in USD - 5.367464
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,100,0xdac17f958d2ee523a2206206994597c13d831ec7,500,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+
+No arbitrage opportunity found in Route:  8
+
+-----------------------
+
+Route: 8
+amountIn - 100.0
+amountOut - 99.69376
+MinimumAmountOut: 107.563702
+gas estimate - 186584
+gas estimate in USD - 5.563702
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,3000,0xdac17f958d2ee523a2206206994597c13d831ec7,100,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+
+No arbitrage opportunity found in Route:  6
+
+-----------------------
+
+Route: 6
+amountIn - 100.0
+amountOut - 99.623643
+MinimumAmountOut: 107.565222
+gas estimate - 186635
+gas estimate in USD - 5.565222
+Path - 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,500,0xdac17f958d2ee523a2206206994597c13d831ec7,3000,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+
+-----------------------
+````
 
 **Run Foundry tests**
 
@@ -130,9 +314,3 @@ Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 14.17s (15.60s CPU 
 
 Ran 1 test suite in 14.84s (14.17s CPU time): 4 tests passed, 0 failed, 0 skipped (4 total tests)
 ```
-
-### Add more tokens
-
--   Add new token objects to **constants.js**
-
--   Add pairs to **config.js** file

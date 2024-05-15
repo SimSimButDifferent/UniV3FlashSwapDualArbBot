@@ -25,8 +25,8 @@ async function dualArbScanStables(pools) {
     // Initialize the pools
     const poolsArray = await initPools(pools)
 
-    // // Output pool information
-    // await poolInformation(pools, poolsArray)
+    // Output pool information
+    await poolInformation(pools, poolsArray)
 
     // Get possible arbitrage routes
     const routesObj = await findArbitrageRoutes(pools)
