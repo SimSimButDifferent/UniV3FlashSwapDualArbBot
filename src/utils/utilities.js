@@ -122,8 +122,8 @@ async function gasEstimateToUsd(gas) {
 
     const gasEstimateUsd = gasEstimateEth * Number(ethPriceUsd)
 
-    console.log("Gas estimate in ETH: ", gasEstimateEth)
-    console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
+    // console.log("Gas estimate in ETH: ", gasEstimateEth)
+    // console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
 
     return gasEstimateUsd.toFixed(6)
 }

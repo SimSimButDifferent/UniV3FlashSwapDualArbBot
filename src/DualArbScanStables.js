@@ -7,15 +7,19 @@ const { arbQuote } = require("./utils/arbQuote")
 const {
     poolInformation,
     findArbitrageRoutes,
-    // getGasandEthPrice,
     gasEstimateToUsd,
 } = require("./utils/utilities")
 
 const pools = poolsData.pools
-const amountIn = ethers.utils.parseUnits("100", 6)
+const amountIn100 = ethers.utils.parseUnits("100", 6)
 const profitThreshold = ethers.utils.parseUnits("2", 6)
+const tokenDecimals = 6
+
 let gasEstimateUsd
-let swapFeeTotalUsd
+let route
+let amountIn
+let amountOut
+let minimumAmountOut
 
 async function dualArbScanStables(pools) {
     // Initialize the pools
@@ -39,33 +43,15 @@ async function dualArbScanStables(pools) {
         console.log("Scan run number: ", counter)
         // Create an array to hold all the promises returned by arbQuote
         const quotePromises = []
-        const gasPricesInUsd = []
-
-        // // Get the gas price
-        // const gasPrice = await getGas()
 
         for (let i = 0; i < routesArray.length; i++) {
             const route = routesArray[i]
             // Push the promise returned by arbQuote into the array
-            quotePromises.push(arbQuote(route, amountIn))
+            quotePromises.push(arbQuote(route, amountIn100, i, profitThreshold))
         }
 
         // Wait for all promises to resolve
         const outputs = await Promise.all(quotePromises)
-
-        for (let i = 0; i < outputs.length; i++) {
-            gasEstimateUsd = outputs[i][1]
-
-            gasPricesInUsd.push(gasEstimateToUsd(gasEstimateUsd))
-        }
-
-        const gasEstimates = await Promise.all(gasPricesInUsd)
-
-        // if (
-        //     amountOut >
-        //     amountIn + gasEstimateUsd + swapFeeTotalUsd + profitThreshold
-        // ) {
-        // }
 
         return quotePromises
     }
