@@ -13,6 +13,8 @@ const tokenDecimals = 6
 
 async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
+    let optimalAmountIn = amountIn
+    let maxProfit = 0
 
     // Create a new provider
     const provider = getProvider()
@@ -24,32 +26,42 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         provider,
     )
 
-    const swapPath = ethers.utils.solidityPack(
-        ["address", "uint24", "address", "uint24", "address"],
-        [path[0], path[1], path[2], path[3], path[4]],
-    )
+    async function simSwap(amountIn) {
+        const swapPath = ethers.utils.solidityPack(
+            ["address", "uint24", "address", "uint24", "address"],
+            [path[0], path[1], path[2], path[3], path[4]],
+        )
 
-    // Call the quoteExactInput function and get the output
+        // Call the quoteExactInput function and get the output
 
-    const output = await quoter2.callStatic.quoteExactInput(swapPath, amountIn)
+        const output = await quoter2.callStatic.quoteExactInput(
+            swapPath,
+            amountIn,
+        )
+        const amountOut = output.amountOut
+        const gasEstimate = output.gasEstimate.toString()
+        const gasEstimateUsd = ethers.utils.parseUnits(
+            await gasEstimateToUsd(gasEstimate),
+            tokenDecimals,
+        )
 
-    const amountOut = output.amountOut
+        // Calculate the minimum amount required to make the trade profitable / worthwhile
+        const minimumAmountOut =
+            Number(amountIn) + Number(gasEstimateUsd) + Number(profitThreshold)
 
-    const gasEstimate = output.gasEstimate.toString()
+        const profit = Number(amountOut) - minimumAmountOut
 
-    const gasEstimateUsd = ethers.utils.parseUnits(
-        await gasEstimateToUsd(gasEstimate),
-        tokenDecimals,
-    )
+        return {
+            amountOut,
+            gasEstimate,
+            gasEstimateUsd,
+            minimumAmountOut,
+            profit,
+        }
+    }
 
-    const sqrtPriceX96AfterList = output.sqrtPriceX96AfterList.toString()
-
-    const initializedTicksCrossedList =
-        output.initializedTicksCrossedList.toString()
-
-    // Calculate the minimum amount required to make the trade profitable / worthwhile
-    const minimumAmountOut =
-        Number(amountIn) + Number(gasEstimateUsd) + Number(profitThreshold)
+    const { amountOut, gasEstimate, gasEstimateUsd, minimumAmountOut } =
+        await simSwap(amountIn)
 
     // Calculate wether the arbitrage opportunity is profitable
     if (Number(amountOut) > minimumAmountOut) {
@@ -57,10 +69,13 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
 
         console.log("")
         console.log(
-            "Arbitrage opportunity found, executing trade route: ",
-            routeNumber,
+            `Arbitrage opportunity found: Route ${routeNumber}, calculating optimal amountIn... `,
         )
         console.log("")
+
+        // optAmountIn = await calculateOptimalAmountIn()
+
+        // await flashSwap(amountIn, path, routeNumber, amountOut, gasEstimate, gasEstimateUsd, sqrtPriceX96AfterList, initializedTicksCrossedList)
     } else {
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
@@ -69,20 +84,20 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     }
 
     console.log("")
-    console.log(`Route: ${routeNumber}`)
+    console.log(`Route ${routeNumber} Info:`)
     console.log(
         `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), tokenDecimals)}`,
     )
     console.log(
-        `amountOut - ${ethers.utils.formatUnits(output.amountOut.toString(), tokenDecimals)}`,
+        `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), tokenDecimals)}`,
     )
     console.log(
         `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, tokenDecimals)}`,
     )
-    console.log(`gas estimate - ${output.gasEstimate.toString()}`)
-    console.log(
-        `gas estimate in USD - ${ethers.utils.formatUnits(gasEstimateUsd, tokenDecimals)}`,
-    )
+    // console.log(`gas estimate - ${output.gasEstimate.toString()}`)
+    // console.log(
+    //     `gas estimate in USD - ${ethers.utils.formatUnits(gasEstimateUsd, tokenDecimals)}`,
+    // )
     // console.log(`sqrtPriceX96AfterList - ${sqrtPriceX96AfterList}`)
     // console.log(`initializedTicksCrossed - ${initializedTicksCrossedList}`)
     console.log(`Path - ${path}`)
@@ -96,8 +111,6 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         gasEstimateUsd,
         arbitrageOpportunity,
         minimumAmountOut,
-        sqrtPriceX96AfterList,
-        initializedTicksCrossedList,
     ]
 }
 
