@@ -21,7 +21,7 @@ let amountIn
 let amountOut
 let minimumAmountOut
 
-async function dualArbScanStables(pools) {
+async function dualArbScan(pools) {
     // Initialize the pools
     const poolsArray = await initPools(pools)
 
@@ -61,6 +61,6 @@ async function dualArbScanStables(pools) {
     setInterval(runLoop, 20000) // 20000 milliseconds = 20 seconds
 }
 
-dualArbScanStables(pools).catch((error) => {
+dualArbScan(pools).catch((error) => {
     console.error(error)
 })
