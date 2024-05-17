@@ -4,8 +4,8 @@
       {
         "id": "0x3416cf6c708da44db2624d63ea0aaef7113527c6",
         "feeTier": "100",
-        "liquidity": "70912458575083396",
-        "tick": "4",
+        "liquidity": "141378931446156540",
+        "tick": "-1",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -22,8 +22,8 @@
       {
         "id": "0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf",
         "feeTier": "500",
-        "liquidity": "2694509583371948",
-        "tick": "1",
+        "liquidity": "5814058555670747",
+        "tick": "-4",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",

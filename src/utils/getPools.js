@@ -1,6 +1,6 @@
 const fs = require("fs")
 
-async function retrieveUniswapStablecoinPools() {
+async function getPools() {
     const query = `
     {
       pools(where: {
@@ -42,13 +42,15 @@ async function retrieveUniswapStablecoinPools() {
     // Write the response to a file
 
     fs.writeFileSync(
-        "src/jsonPoolData/uniswapStablecoinPools.json",
+        "src/jsonPoolData/uniswapPools.json",
         JSON.stringify(jsonDict, null, 2),
     )
 
     return jsonDict
 }
 
-retrieveUniswapStablecoinPools()
+getPools()
     .then((data) => console.log(JSON.stringify(data, null, 2)))
     .catch((error) => console.error("Error fetching data:", error))
+
+exports.getPools = getPools

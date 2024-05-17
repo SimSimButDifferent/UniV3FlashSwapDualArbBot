@@ -1,8 +1,8 @@
 require("./utils/getProvider")
 
-const { data: poolsData } = require("./jsonPoolData/uniswapStablecoinPools")
+const { data: poolsData } = require("./jsonPoolData/uniswapPools")
 const { initPools } = require("./utils/InitPools")
-const { arbQuote } = require("./utils/arbQuote")
+const { arbQuote, simSwap } = require("./utils/arbQuote")
 
 const {
     poolInformation,
@@ -53,6 +53,12 @@ async function dualArbScan(pools) {
         // Wait for all promises to resolve
         const outputs = await Promise.all(quotePromises)
 
+        // if(outputs[i][4] > profitThreshold) {
+        //     async function optimalAmountIn(routesArray[i]){
+
+        //     } {
+        // }
+
         return quotePromises
     }
 
@@ -64,3 +70,5 @@ async function dualArbScan(pools) {
 dualArbScan(pools).catch((error) => {
     console.error(error)
 })
+
+exports.dualArbScan = dualArbScan

@@ -60,7 +60,7 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         }
     }
 
-    const { amountOut, gasEstimate, gasEstimateUsd, minimumAmountOut } =
+    const { amountOut, gasEstimate, gasEstimateUsd, minimumAmountOut, profit } =
         await simSwap(amountIn)
 
     // Calculate wether the arbitrage opportunity is profitable
@@ -107,10 +107,11 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     return [
         amountIn,
         amountOut,
-        gasEstimate,
-        gasEstimateUsd,
+        // gasEstimate,
+        // gasEstimateUsd,
         arbitrageOpportunity,
         minimumAmountOut,
+        profit,
     ]
 }
 
