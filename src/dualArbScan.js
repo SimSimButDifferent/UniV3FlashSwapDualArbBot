@@ -12,14 +12,8 @@ const {
 
 const pools = poolsData.pools
 const amountIn100 = ethers.utils.parseUnits("100", 6)
-const profitThreshold = ethers.utils.parseUnits("2", 6)
+const profitThreshold = ethers.utils.parseUnits("10", 6)
 const tokenDecimals = 6
-
-let gasEstimateUsd
-let route
-let amountIn
-let amountOut
-let minimumAmountOut
 
 async function dualArbScan(pools) {
     // Initialize the pools
@@ -37,6 +31,8 @@ async function dualArbScan(pools) {
     console.log("")
 
     let counter = 0
+    let tradeCounter = 0
+    let ProfitCounter = 0
 
     async function runLoop() {
         counter++
@@ -53,12 +49,15 @@ async function dualArbScan(pools) {
         // Wait for all promises to resolve
         const outputs = await Promise.all(quotePromises)
 
-        // if(outputs[i][4] > profitThreshold) {
-        //     async function optimalAmountIn(routesArray[i]){
+        for (let i = 0; i < outputs.length; i++) {
+            if (outputs[i][1] == true) {
+                tradeCounter++
+                ProfitCounter += outputs[i][0].profit
+            }
+        }
 
-        //     } {
-        // }
-
+        console.log("Number of trades executed: ", tradeCounter)
+        console.log("Total Profit for this session: $", ProfitCounter)
         return quotePromises
     }
 
