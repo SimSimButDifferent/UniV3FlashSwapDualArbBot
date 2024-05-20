@@ -3,73 +3,104 @@ require("./utils/getProvider")
 const { data: poolsData } = require("./jsonPoolData/uniswapPools")
 const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
-
 const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 
 const pools = poolsData.pools
-let amountIn
 const amountInUsd = "100"
 const profitThreshold = ethers.utils.parseUnits("10", 6)
+const BATCH_SIZE = 7 // Number of promises to execute in each batch
+const BATCH_INTERVAL = 10000 // Interval between batches in milliseconds
 
 async function dualArbScan(pools) {
-    // Initialize the pools
-    const poolsArray = await initPools(pools)
+    try {
+        // Initialize the pools
+        const poolsArray = await initPools(pools)
+        console.log(`Found ${poolsArray.length} pools`)
 
-    console.log(`found ${poolsArray.length} pools`)
+        // Output pool information
+        const tokenAmountsIn = await poolInformation(
+            pools,
+            poolsArray,
+            amountInUsd,
+        )
 
-    // Output pool information
-    const tokenAmountsIn = await poolInformation(pools, poolsArray, amountInUsd)
+        // Get possible arbitrage routes
+        const routesArray = await findArbitrageRoutes(
+            pools,
+            tokenAmountsIn,
+            amountInUsd,
+        )
 
-    // Get possible arbitrage routes
-    const routesArray = await findArbitrageRoutes(
-        pools,
-        tokenAmountsIn,
-        amountInUsd,
-    )
+        // Calculate how often the loop needs to run to scan all routes
+        const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)
+        const EPOCH_INTERVAL = BATCH_TOTAL * BATCH_INTERVAL
 
-    // find amountin for each route. If token0  in usd token then amountin = amountInUsd. otherwise call
+        console.log("")
+        console.log(
+            `Scanning ${routesArray.length} routes for arbitrage opportunities\n every ${EPOCH_INTERVAL / 1000} seconds`,
+        )
+        console.log("")
 
-    console.log("")
-    console.log(
-        `Scanning ${routesArray.length} routes for arbitrage opportunities`,
-    )
-    console.log("")
+        let counter = 0
+        let tradeCounter = 0
+        let profitCounter = 0
 
-    let counter = 0
-    let tradeCounter = 0
-    let ProfitCounter = 0
-
-    async function runLoop() {
-        counter++
-        console.log("Scan run number: ", counter)
-        // Create an array to hold all the promises returned by arbQuote
-        const quotePromises = []
-
-        for (let i = 0; i < routesArray.length; i++) {
-            const route = routesArray[i]
-            amountIn = route[7]
-            // Push the promise returned by arbQuote into the array
-            quotePromises.push(arbQuote(route, amountIn, i, profitThreshold))
-        }
-
-        // Wait for all promises to resolve
-        const outputs = await Promise.all(quotePromises)
-
-        for (let i = 0; i < outputs.length; i++) {
-            if (outputs[i][1] == true) {
-                tradeCounter++
-                ProfitCounter += outputs[i][0].profit
+        async function executeBatch(batch) {
+            try {
+                const outputs = await Promise.all(batch)
+                for (const output of outputs) {
+                    if (output[1] === true) {
+                        tradeCounter++
+                        profitCounter += output[0].profit
+                    }
+                }
+            } catch (error) {
+                console.error("Error executing batch: ", error)
             }
         }
 
-        console.log("Number of trades executed: ", tradeCounter)
-        console.log("Total Profit for this session: $", ProfitCounter)
-        return quotePromises
-    }
+        async function runLoop() {
+            counter++
+            console.log("Scan run number: ", counter)
 
-    runLoop()
-    // Run the loop every 20 seconds
-    setInterval(runLoop, 20000) // 20000 milliseconds = 20 seconds
+            for (let i = 0; i < routesArray.length; i += BATCH_SIZE) {
+                const batch = []
+                for (
+                    let j = 0;
+                    j < BATCH_SIZE && i + j < routesArray.length;
+                    j++
+                ) {
+                    const route = routesArray[i + j]
+                    const amountIn = route[7]
+
+                    try {
+                        batch.push(
+                            arbQuote(route, amountIn, i + j, profitThreshold),
+                        )
+                    } catch (error) {
+                        console.error(
+                            `Error creating arbQuote promise for route ${i + j}: `,
+                            error,
+                        )
+                    }
+                }
+                await executeBatch(batch)
+                await new Promise((resolve) =>
+                    setTimeout(resolve, BATCH_INTERVAL),
+                )
+            }
+
+            console.log("Number of trades executed: ", tradeCounter)
+            console.log("Total Profit for this session: $", profitCounter)
+        }
+
+        runLoop()
+
+        // Run every EPOCH_INTERVAL milliseconds
+        setInterval(runLoop, EPOCH_INTERVAL) // EPOCH interval = batch interval * (routes array length / batch size)
+    } catch (error) {
+        console.error("Error in dualArbScan: ", error)
+    }
 }
 
 dualArbScan(pools).catch((error) => {

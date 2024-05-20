@@ -13,8 +13,8 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
     let amountIn
 
-    const token0decimals = path[5]
-    const token1decimals = path[6]
+    const token0Decimals = path[5]
+    const token1Decimals = path[6]
 
     // Create a new provider
     const provider = getProvider()
@@ -77,29 +77,28 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
         console.log("")
         console.log(`Route ${routeNumber} Info:`)
         console.log(
-            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), tokenDecimals)}`,
+            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)}`,
         )
         console.log(
-            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), tokenDecimals)}`,
+            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)}`,
         )
         console.log(
-            `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, tokenDecimals)}`,
+            `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, token0Decimals)}`,
         )
         console.log(
-            `profit - ${ethers.utils.formatUnits(profit, tokenDecimals)}`,
+            `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
         )
         console.log(`Path - ${path}`)
         console.log("")
         console.log("-----------------------")
 
         // await flashSwap(amountIn, path, routeNumber, amountOut, gasEstimate, gasEstimateUsd, sqrtPriceX96AfterList, initializedTicksCrossedList)
+    } else {
+        console.log("")
+        console.log("No arbitrage opportunity found in Route: ", routeNumber)
+        console.log("")
+        console.log("-----------------------")
     }
-    // else {
-    //     console.log("")
-    //     console.log("No arbitrage opportunity found in Route: ", routeNumber)
-    //     console.log("")
-    //     console.log("-----------------------")
-    // }
 
     return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
 }
