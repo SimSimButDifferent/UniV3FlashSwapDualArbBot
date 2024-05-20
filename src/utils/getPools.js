@@ -11,12 +11,10 @@ async function getPools() {
       pools(where: {
         token0_in: [${USDT}, ${USDC}, ${WETH}],
         token1_in: [${USDT}, ${USDC}, ${WETH}],
-        liquidity_gt: "10000000000000",
         totalValueLockedUSD_gt: 1000000,
       }, first: 1000) {
         id
         feeTier
-        liquidity
         totalValueLockedUSD
         tick
         token0 {

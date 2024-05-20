@@ -53,15 +53,17 @@ async function poolInformation(pools, poolsArray) {
                 token1decimals,
                 false,
             )
+            console.log("")
+            console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
+            console.log("")
         }
+
         console.log("")
         console.log(
-            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${liquidity} Address: ${pool.id}`,
+            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} - Address: ${pool.id}`,
         )
         console.log("")
-        console.log(
-            `Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)}`,
-        )
+
         // console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
         console.log("-----------------------")
     }
@@ -140,6 +142,12 @@ async function gasEstimateToUsd(gas) {
     // console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
 
     return gasEstimateUsd.toFixed(6)
+}
+
+function isUSDToken(symbol) {
+    const usdTokens = ["USDT", "USDC"]
+
+    return usdTokens.includes(symbol)
 }
 
 // async function amountInUsdToToken0(amountInUsd, path, quoter) {
