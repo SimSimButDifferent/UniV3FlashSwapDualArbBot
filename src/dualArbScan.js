@@ -17,7 +17,8 @@ async function dualArbScan(pools) {
     console.log(`found ${poolsArray.length} pools`)
 
     // Output pool information
-    await poolInformation(pools, poolsArray)
+    const prices = await poolInformation(pools, poolsArray)
+    console.log(prices)
 
     // Get possible arbitrage routes
     const routesObj = await findArbitrageRoutes(pools)

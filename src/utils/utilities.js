@@ -18,55 +18,66 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
 async function poolInformation(pools, poolsArray) {
     console.log("List of pools to scan")
     console.log("-----------------------")
+    let prices = []
     for (let i = 0; i < pools.length; i++) {
         const pool = pools[i]
         const token0 = pool.token0
         const token1 = pool.token1
         const feeTier = pool.feeTier
-        const liquidity = pool.liquidity
         const totalValueLockedUSD = pool.totalValueLockedUSD
         const token0decimals = token0.decimals
         const token1decimals = token1.decimals
 
         // Get the price of the pool
         let price
+        let formattedPrice
         const slot0 = await poolsArray[i].slot0()
         const sqrtPriceLimitX96 = slot0.sqrtPriceX96
 
-        // Get the price of the pool
+        price = sqrtToPrice(
+            sqrtPriceLimitX96,
+            token0decimals,
+            token1decimals,
+            isUSDToken(token0.symbol),
+        )
 
-        if (token0decimals >= token1decimals) {
-            price = sqrtToPrice(
-                sqrtPriceLimitX96,
-                token0decimals,
-                token1decimals,
-                true,
+        if (
+            (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
+            (isUSDToken(token1.symbol) && !isUSDToken(token0.symbol))
+        ) {
+            formattedPrice = ethers.utils.formatUnits(
+                BigInt(price),
+                (isUSDToken(token0.symbol) ? token1decimals : token0decimals) -
+                    1,
             )
-
-            console.log("")
-            console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
-            console.log("")
-        } else {
-            price = sqrtToPrice(
-                sqrtPriceLimitX96,
-                token0decimals,
-                token1decimals,
-                false,
-            )
-            console.log("")
-            console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
-            console.log("")
+        } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
+            formattedPrice = price
         }
 
         console.log("")
         console.log(
-            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} - Address: ${pool.id}`,
+            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${formattedPrice}`,
+        )
+        console.log("")
+
+        // Log pool information
+        console.log(
+            `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
+        )
+        console.log("")
+
+        console.log("-----------------------")
+
+        console.log("")
+        console.log(
+            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} - Address: ${pools.id}`,
         )
         console.log("")
 
         // console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
         console.log("-----------------------")
     }
+    // return prices
 }
 
 async function findArbitrageRoutes(pools) {
