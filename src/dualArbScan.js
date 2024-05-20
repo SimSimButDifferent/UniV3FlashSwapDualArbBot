@@ -2,22 +2,19 @@ require("./utils/getProvider")
 
 const { data: poolsData } = require("./jsonPoolData/uniswapPools")
 const { initPools } = require("./utils/InitPools")
-const { arbQuote, simSwap } = require("./utils/arbQuote")
+const { arbQuote } = require("./utils/arbQuote")
 
-const {
-    poolInformation,
-    findArbitrageRoutes,
-    gasEstimateToUsd,
-} = require("./utils/utilities")
+const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 
 const pools = poolsData.pools
 const amountIn100 = ethers.utils.parseUnits("100", 6)
 const profitThreshold = ethers.utils.parseUnits("10", 6)
-const tokenDecimals = 6
 
 async function dualArbScan(pools) {
     // Initialize the pools
     const poolsArray = await initPools(pools)
+
+    console.log(`found ${poolsArray.length} pools`)
 
     // Output pool information
     await poolInformation(pools, poolsArray)
@@ -27,7 +24,9 @@ async function dualArbScan(pools) {
     const routesArray = routesObj.routes
 
     console.log("")
-    console.log("Scanning for arbitrage opportunities")
+    console.log(
+        `Scanning ${routesArray.length} routes for arbitrage opportunities`,
+    )
     console.log("")
 
     let counter = 0

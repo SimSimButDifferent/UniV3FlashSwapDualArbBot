@@ -24,35 +24,45 @@ async function poolInformation(pools, poolsArray) {
         const token1 = pool.token1
         const feeTier = pool.feeTier
         const liquidity = pool.liquidity
+        const totalValueLockedUSD = pool.totalValueLockedUSD
         const token0decimals = token0.decimals
         const token1decimals = token1.decimals
 
         // Get the price of the pool
+        let price
         const slot0 = await poolsArray[i].slot0()
         const sqrtPriceLimitX96 = slot0.sqrtPriceX96
-        const price = sqrtToPrice(
-            sqrtPriceLimitX96,
-            token0decimals,
-            token1decimals,
-            true,
-        )
 
         // Get the price of the pool
 
         if (token0decimals >= token1decimals) {
-            console.log("")
-            console.log(
-                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, token0decimals)} - Address: ${pool.id}`,
+            price = sqrtToPrice(
+                sqrtPriceLimitX96,
+                token0decimals,
+                token1decimals,
+                true,
             )
+
+            console.log("")
+            console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
             console.log("")
         } else {
-            console.log("")
-            console.log(
-                `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${ethers.utils.formatUnits(liquidity, 18)} Address: ${pool.id}`,
+            price = sqrtToPrice(
+                sqrtPriceLimitX96,
+                token0decimals,
+                token1decimals,
+                false,
             )
-            console.log("")
         }
-        console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
+        console.log("")
+        console.log(
+            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) Liquidity = ${liquidity} Address: ${pool.id}`,
+        )
+        console.log("")
+        console.log(
+            `Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)}`,
+        )
+        // console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
         console.log("-----------------------")
     }
 }
@@ -67,11 +77,13 @@ async function findArbitrageRoutes(pools) {
             if (i !== j) {
                 // Example route: token0 -> token1 in one pool, and token1 -> token0 in another pool
                 let route1 = [
-                    pools[i].token0.id,
-                    pools[i].feeTier,
-                    pools[i].token1.id,
-                    pools[j].feeTier,
-                    pools[j].token0.id,
+                    pools[i].token0.id, // [0]
+                    pools[i].feeTier, // [1]
+                    pools[i].token1.id, // [2]
+                    pools[j].feeTier, // [3]
+                    pools[j].token0.id, // [4]
+                    pools[i].token0.decimals, // [5] token in/out decimals
+                    pools[i].token1.decimals, // [6] swap token decimals
                 ]
                 let route2 = [
                     pools[i].token1.id,
@@ -79,6 +91,8 @@ async function findArbitrageRoutes(pools) {
                     pools[i].token0.id,
                     pools[j].feeTier,
                     pools[j].token1.id,
+                    pools[i].token1.decimals, // [5] token in/out decimals
+                    pools[i].token0.decimals, // [6] swap token decimals
                 ]
 
                 // Add routes to the routes array
@@ -127,6 +141,27 @@ async function gasEstimateToUsd(gas) {
 
     return gasEstimateUsd.toFixed(6)
 }
+
+// async function amountInUsdToToken0(amountInUsd, path, quoter) {
+//     const provider = getProvider()
+
+//     // Create a params object
+//     const paramsObj = {
+//         tokenIn: path[0],
+//         tokenOut: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+//         fee: path[1],
+//         amountIn: amountInUsd,
+//         sqrtPriceLimitX96: 0,
+//     }
+
+//     const output = await quoter.callStatic.quoteExactOutputSingle(paramsObj)
+
+//     const sqrtPriceLimitX96 = output.sqrtPriceLimitX96
+
+//     const price = sqrtToPrice(sqrtPriceLimitX96, path[5], path[6], true)
+
+//     console.log(price.toString())
+// }
 
 module.exports = {
     sqrtToPrice,

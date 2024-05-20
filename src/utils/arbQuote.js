@@ -9,12 +9,12 @@ const { gasEstimateToUsd } = require("./utilities")
 
 const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
-const tokenDecimals = 6
-
-async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
+async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
-    let optimalAmountIn = amountIn
-    let maxProfit = 0
+    let amountIn
+
+    const token0decimals = path[5]
+    const token1decimals = path[6]
 
     // Create a new provider
     const provider = getProvider()
@@ -25,6 +25,8 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         Quoter2Abi,
         provider,
     )
+
+    amountIn = await amountInUsdToToken0(amountInUsd, path, quoter2)
 
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
@@ -42,7 +44,7 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         const gasEstimate = output.gasEstimate.toString()
         const gasEstimateUsd = ethers.utils.parseUnits(
             await gasEstimateToUsd(gasEstimate),
-            tokenDecimals,
+            6,
         )
 
         // Calculate the minimum amount required to make the trade profitable / worthwhile
