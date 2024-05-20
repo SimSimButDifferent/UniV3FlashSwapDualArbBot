@@ -23,73 +23,65 @@ async function poolInformation(pools, poolsArray, amountInUsd) {
     let tokenAmountsIn = {}
 
     for (let i = 0; i < pools.length; i++) {
-        const pool = pools[i]
-        const token0 = pool.token0
-        const token1 = pool.token1
-        const feeTier = pool.feeTier
-        const totalValueLockedUSD = pool.totalValueLockedUSD
-        const token0decimals = token0.decimals
-        const token1decimals = token1.decimals
+        try {
+            const pool = pools[i]
+            const token0 = pool.token0
+            const token1 = pool.token1
+            const feeTier = pool.feeTier
+            const totalValueLockedUSD = pool.totalValueLockedUSD
+            const token0decimals = token0.decimals
+            const token1decimals = token1.decimals
 
-        // Get the price of the pool
-        let price
-        let formattedPrice
-        const slot0 = await poolsArray[i].slot0()
-        const sqrtPriceLimitX96 = slot0.sqrtPriceX96
+            // Get the price of the pool
+            const slot0 = await poolsArray[i].slot0()
+            const sqrtPriceLimitX96 = slot0.sqrtPriceX96
 
-        price = sqrtToPrice(
-            sqrtPriceLimitX96,
-            token0decimals,
-            token1decimals,
-            isUSDToken(token0.symbol),
-        )
-
-        if (
-            (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
-            (isUSDToken(token1.symbol) && !isUSDToken(token0.symbol))
-        ) {
-            // Calculate the amount in USD
-            formattedPrice = ethers.utils.formatUnits(
-                BigInt(price),
-                (isUSDToken(token0.symbol) ? token1decimals : token0decimals) -
-                    1,
+            let price = sqrtToPrice(
+                sqrtPriceLimitX96,
+                token0decimals,
+                token1decimals,
+                isUSDToken(token0.symbol),
             )
 
-            // Add the token price to the tokenPrices object
-            isUSDToken(token0.symbol)
-                ? (tokenPrices[token1.symbol] = formattedPrice) &&
-                  (tokenAmountsIn[token1.symbol] = (
-                      Number(amountInUsd) / Number(formattedPrice)
-                  ).toString())
-                : (tokenPrices[token0.symbol] = formattedPrice) &&
-                  (tokenAmountsIn[token0.symbol] = (
-                      Number(amountInUsd) / Number(formattedPrice)
-                  ).toString())
-        } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
-            formattedPrice = price
+            let formattedPrice = price
+            if (
+                (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
+                (isUSDToken(token1.symbol) && !isUSDToken(token0.symbol))
+            ) {
+                formattedPrice = ethers.utils.formatUnits(
+                    BigInt(price),
+                    (isUSDToken(token0.symbol)
+                        ? token1decimals
+                        : token0decimals) - 1,
+                )
+
+                // Add the token price to the tokenPrices object
+                if (isUSDToken(token0.symbol)) {
+                    tokenPrices[token1.symbol] = formattedPrice
+                    tokenAmountsIn[token1.symbol] = (
+                        Number(amountInUsd) / Number(formattedPrice)
+                    ).toString()
+                } else {
+                    tokenPrices[token0.symbol] = formattedPrice
+                    tokenAmountsIn[token0.symbol] = (
+                        Number(amountInUsd) / Number(formattedPrice)
+                    ).toString()
+                }
+            } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
+                formattedPrice = price
+            }
+
+            // Log pool information
+            console.log(
+                `\n${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${formattedPrice}`,
+            )
+            console.log(
+                `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
+            )
+            console.log("-----------------------")
+        } catch (error) {
+            console.error(`Error processing pool at index ${i}:`, error)
         }
-
-        // Log pool information
-        console.log("")
-        console.log(
-            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${formattedPrice}`,
-        )
-        console.log("")
-
-        console.log(
-            `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
-        )
-        console.log("")
-
-        console.log("-----------------------")
-
-        console.log("")
-        console.log(
-            `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} - Address: ${pools.id}`,
-        )
-        console.log("")
-
-        console.log("-----------------------")
     }
 
     return tokenAmountsIn
@@ -185,10 +177,6 @@ function isUSDToken(symbol) {
     const usdTokens = ["USDT", "USDC"]
 
     return usdTokens.includes(symbol)
-}
-
-function calculateAmountInUsd(formattedPrice, amountInUsd) {
-    return Number(amountInUsd) / Number(formattedPrice)
 }
 
 module.exports = {
