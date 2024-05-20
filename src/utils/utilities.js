@@ -15,10 +15,13 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     return ratio
 }
 
-async function poolInformation(pools, poolsArray) {
+async function poolInformation(pools, poolsArray, amountInUsd) {
     console.log("List of pools to scan")
     console.log("-----------------------")
-    let prices = []
+
+    let tokenPrices = {}
+    let tokenAmountsIn = {}
+
     for (let i = 0; i < pools.length; i++) {
         const pool = pools[i]
         const token0 = pool.token0
@@ -45,22 +48,34 @@ async function poolInformation(pools, poolsArray) {
             (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
             (isUSDToken(token1.symbol) && !isUSDToken(token0.symbol))
         ) {
+            // Calculate the amount in USD
             formattedPrice = ethers.utils.formatUnits(
                 BigInt(price),
                 (isUSDToken(token0.symbol) ? token1decimals : token0decimals) -
                     1,
             )
+
+            // Add the token price to the tokenPrices object
+            isUSDToken(token0.symbol)
+                ? (tokenPrices[token1.symbol] = formattedPrice) &&
+                  (tokenAmountsIn[token1.symbol] = (
+                      Number(amountInUsd) / Number(formattedPrice)
+                  ).toString())
+                : (tokenPrices[token0.symbol] = formattedPrice) &&
+                  (tokenAmountsIn[token0.symbol] = (
+                      Number(amountInUsd) / Number(formattedPrice)
+                  ).toString())
         } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
             formattedPrice = price
         }
 
+        // Log pool information
         console.log("")
         console.log(
             `${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${formattedPrice}`,
         )
         console.log("")
 
-        // Log pool information
         console.log(
             `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
         )
@@ -74,20 +89,32 @@ async function poolInformation(pools, poolsArray) {
         )
         console.log("")
 
-        // console.log(`${token0.symbol}/${token1.symbol} - Price: ${price}`)
         console.log("-----------------------")
     }
-    // return prices
+
+    return tokenAmountsIn
 }
 
-async function findArbitrageRoutes(pools) {
+async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
     let routes = []
+    let amountIn
 
     // Iterate through each pool and compare it with every other pool
     for (let i = 0; i < pools.length; i++) {
         for (let j = 0; j < pools.length; j++) {
             // Ensure not to compare the same pool
             if (i !== j) {
+                !isUSDToken(pools[i].token0.symbol)
+                    ? (amountIn = ethers.utils
+                          .parseUnits(
+                              tokenAmountsIn[pools[i].token0.symbol],
+                              pools[i].token0.decimals,
+                          )
+                          .toString())
+                    : (amountIn = ethers.utils
+                          .parseUnits(amountInUsd, 6)
+                          .toString())
+
                 // Example route: token0 -> token1 in one pool, and token1 -> token0 in another pool
                 let route1 = [
                     pools[i].token0.id, // [0]
@@ -97,6 +124,7 @@ async function findArbitrageRoutes(pools) {
                     pools[j].token0.id, // [4]
                     pools[i].token0.decimals, // [5] token in/out decimals
                     pools[i].token1.decimals, // [6] swap token decimals
+                    amountIn, // [7] amount in
                 ]
                 let route2 = [
                     pools[i].token1.id,
@@ -106,6 +134,7 @@ async function findArbitrageRoutes(pools) {
                     pools[j].token1.id,
                     pools[i].token1.decimals, // [5] token in/out decimals
                     pools[i].token0.decimals, // [6] swap token decimals
+                    amountIn, // [7] amount in
                 ]
 
                 // Add routes to the routes array
@@ -116,7 +145,7 @@ async function findArbitrageRoutes(pools) {
     }
 
     // Return an object with all the routes
-    return { routes }
+    return routes
 }
 
 async function getEthPriceUsd() {
@@ -149,9 +178,6 @@ async function gasEstimateToUsd(gas) {
 
     const gasEstimateUsd = gasEstimateEth * Number(ethPriceUsd)
 
-    // console.log("Gas estimate in ETH: ", gasEstimateEth)
-    // console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
-
     return gasEstimateUsd.toFixed(6)
 }
 
@@ -161,26 +187,9 @@ function isUSDToken(symbol) {
     return usdTokens.includes(symbol)
 }
 
-// async function amountInUsdToToken0(amountInUsd, path, quoter) {
-//     const provider = getProvider()
-
-//     // Create a params object
-//     const paramsObj = {
-//         tokenIn: path[0],
-//         tokenOut: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-//         fee: path[1],
-//         amountIn: amountInUsd,
-//         sqrtPriceLimitX96: 0,
-//     }
-
-//     const output = await quoter.callStatic.quoteExactOutputSingle(paramsObj)
-
-//     const sqrtPriceLimitX96 = output.sqrtPriceLimitX96
-
-//     const price = sqrtToPrice(sqrtPriceLimitX96, path[5], path[6], true)
-
-//     console.log(price.toString())
-// }
+function calculateAmountInUsd(formattedPrice, amountInUsd) {
+    return Number(amountInUsd) / Number(formattedPrice)
+}
 
 module.exports = {
     sqrtToPrice,

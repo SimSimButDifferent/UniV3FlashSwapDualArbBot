@@ -26,7 +26,7 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
         provider,
     )
 
-    amountIn = await amountInUsdToToken0(amountInUsd, path, quoter2)
+    // amountIn = await amountInUsdToToken0(amountInUsd, path, quoter2)
 
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
@@ -38,7 +38,7 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
 
         const output = await quoter2.callStatic.quoteExactInput(
             swapPath,
-            amountIn,
+            amountInUsd,
         )
         const amountOut = output.amountOut
         const gasEstimate = output.gasEstimate.toString()

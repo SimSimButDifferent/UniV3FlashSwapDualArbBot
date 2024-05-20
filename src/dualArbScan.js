@@ -7,7 +7,8 @@ const { arbQuote } = require("./utils/arbQuote")
 const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 
 const pools = poolsData.pools
-const amountIn100 = ethers.utils.parseUnits("100", 6)
+let amountIn
+const amountInUsd = "100"
 const profitThreshold = ethers.utils.parseUnits("10", 6)
 
 async function dualArbScan(pools) {
@@ -17,12 +18,16 @@ async function dualArbScan(pools) {
     console.log(`found ${poolsArray.length} pools`)
 
     // Output pool information
-    const prices = await poolInformation(pools, poolsArray)
-    console.log(prices)
+    const tokenAmountsIn = await poolInformation(pools, poolsArray, amountInUsd)
 
     // Get possible arbitrage routes
-    const routesObj = await findArbitrageRoutes(pools)
-    const routesArray = routesObj.routes
+    const routesArray = await findArbitrageRoutes(
+        pools,
+        tokenAmountsIn,
+        amountInUsd,
+    )
+
+    // find amountin for each route. If token0  in usd token then amountin = amountInUsd. otherwise call
 
     console.log("")
     console.log(
@@ -42,8 +47,9 @@ async function dualArbScan(pools) {
 
         for (let i = 0; i < routesArray.length; i++) {
             const route = routesArray[i]
+            amountIn = route[7]
             // Push the promise returned by arbQuote into the array
-            quotePromises.push(arbQuote(route, amountIn100, i, profitThreshold))
+            quotePromises.push(arbQuote(route, amountIn, i, profitThreshold))
         }
 
         // Wait for all promises to resolve
