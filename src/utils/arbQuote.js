@@ -25,8 +25,6 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         provider,
     )
 
-    console.log(amountIn, path, routeNumber, profitThreshold)
-
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
             ["address", "uint24", "address", "uint24", "address"],

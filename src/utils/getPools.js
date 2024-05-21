@@ -8,11 +8,18 @@ const DAI = `"0x6b175474e89094c44da98b954eedeac495271d0f"`
 async function getPools() {
     const query = `
     {
-      pools(where: {
-        token0_in: [${USDT}, ${USDC}, ${WETH}],
-        token1_in: [${USDT}, ${USDC}, ${WETH}],
-        totalValueLockedUSD_gt: 1000000,
-      }, first: 1000) {
+      pools(
+        where: {
+          token0_in: [
+            ${USDT}, ${USDC}, ${WETH}
+          ]
+          token1_in: [
+            ${USDT}, ${USDC}, ${WETH}
+          ]
+          totalValueLockedUSD_gt: 1000000
+        }
+        first: 1000
+      ) {
         id
         feeTier
         totalValueLockedUSD
@@ -29,6 +36,8 @@ async function getPools() {
           name
           decimals
         }
+        token0Price
+        token1Price
       }
     }
   `
@@ -59,3 +68,30 @@ getPools()
     .catch((error) => console.error("Error fetching data:", error))
 
 exports.getPools = getPools
+
+// {
+//   pools(where: {
+//     token0_in: [${USDT}, ${USDC}, ${WETH}],
+//     token1_in: [${USDT}, ${USDC}, ${WETH}],
+//     totalValueLockedUSD_gt: 1000000,
+//   }, first: 1000) {
+//     id
+//     feeTier
+//     totalValueLockedUSD
+//     tick
+//     token0 {
+//       id
+//       symbol
+//       name
+//       decimals
+//     }
+//     token1 {
+//       id
+//       symbol
+//       name
+//       decimals
+//     }
+//     token0price
+//     token1price
+//   }
+// }

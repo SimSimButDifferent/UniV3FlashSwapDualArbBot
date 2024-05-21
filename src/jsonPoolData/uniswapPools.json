@@ -4,9 +4,8 @@
       {
         "id": "0x11b815efb8f581194ae79006d24e0d814b7697f6",
         "feeTier": "500",
-        "liquidity": "7807864999558992627",
-        "totalValueLockedUSD": "96238500.25655336594992015519063142",
-        "tick": "-195977",
+        "totalValueLockedUSD": "100760125.6675710091184238433606399",
+        "tick": "-194203",
         "token0": {
           "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
           "symbol": "WETH",
@@ -18,14 +17,15 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "0.0002714456125621326445424662563768831",
+        "token1Price": "3683.979234591992632466177041476634"
       },
       {
         "id": "0x3416cf6c708da44db2624d63ea0aaef7113527c6",
         "feeTier": "100",
-        "liquidity": "76119772562927009",
-        "totalValueLockedUSD": "30586927.68615",
-        "tick": "-1",
+        "totalValueLockedUSD": "30193284.40665200000000000000000001",
+        "tick": "-2",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -37,14 +37,15 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "1.000150232733566632544028771122945",
+        "token1Price": "0.999849789832917377778913422256861"
       },
       {
         "id": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
         "feeTier": "3000",
-        "liquidity": "7346699998750393164",
-        "totalValueLockedUSD": "211800162.7406654192549675508688057",
-        "tick": "-195991",
+        "totalValueLockedUSD": "230225576.5591177249293155208573101",
+        "tick": "-194223",
         "token0": {
           "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
           "symbol": "WETH",
@@ -56,14 +57,15 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "0.0002720019533451466628203155082778785",
+        "token1Price": "3676.444186160264658473367192573204"
       },
       {
         "id": "0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf",
         "feeTier": "500",
-        "liquidity": "2687801597334035",
-        "totalValueLockedUSD": "12783334.961892",
-        "tick": "0",
+        "totalValueLockedUSD": "12786375.869158",
+        "tick": "-6",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -75,14 +77,15 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "1.000596360943709253562253234173384",
+        "token1Price": "0.9994039944906987292578682363144051"
       },
       {
         "id": "0x7bea39867e4169dbe237d55c8242a8f2fcdcc387",
         "feeTier": "10000",
-        "liquidity": "143853319427656569",
-        "totalValueLockedUSD": "13479731.02299663106695410412381173",
-        "tick": "195994",
+        "totalValueLockedUSD": "14977472.77095493538205312532189319",
+        "tick": "194208",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -94,14 +97,15 @@
           "symbol": "WETH",
           "name": "Wrapped Ether",
           "decimals": "18"
-        }
+        },
+        "token0Price": "3681.791060724664014365184483509658",
+        "token1Price": "0.0002716069389888670720121982822542148"
       },
       {
         "id": "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
         "feeTier": "500",
-        "liquidity": "11532731503642959963",
-        "totalValueLockedUSD": "470464421.4920948548253625302635621",
-        "tick": "195977",
+        "totalValueLockedUSD": "522066599.2268674919846273618364108",
+        "tick": "194203",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -113,14 +117,15 @@
           "symbol": "WETH",
           "name": "Wrapped Ether",
           "decimals": "18"
-        }
+        },
+        "token0Price": "3683.627422493757009586827234616789",
+        "token1Price": "0.0002714715375104401710719230451053091"
       },
       {
         "id": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
         "feeTier": "3000",
-        "liquidity": "8550467958527122772",
-        "totalValueLockedUSD": "355887360.1443512867205619703549836",
-        "tick": "195989",
+        "totalValueLockedUSD": "393639206.6563748001303598346586131",
+        "tick": "194206",
         "token0": {
           "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           "symbol": "USDC",
@@ -132,14 +137,15 @@
           "symbol": "WETH",
           "name": "Wrapped Ether",
           "decimals": "18"
-        }
+        },
+        "token0Price": "3682.603332209393308107691793366247",
+        "token1Price": "0.0002715470306708395355736923728479424"
       },
       {
         "id": "0xc5af84701f98fa483ece78af83f11b6c38aca71d",
         "feeTier": "10000",
-        "liquidity": "10534473241996812",
-        "totalValueLockedUSD": "3861755.552198998393380286917979476",
-        "tick": "-196030",
+        "totalValueLockedUSD": "4344656.510154708375009062927167956",
+        "tick": "-194297",
         "token0": {
           "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
           "symbol": "WETH",
@@ -151,14 +157,15 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "0.0002740209912992956847968938274476634",
+        "token1Price": "3649.355457253140360163648034939563"
       },
       {
         "id": "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b",
         "feeTier": "100",
-        "liquidity": "272589725297405082",
-        "totalValueLockedUSD": "3119353.346935297643812128293821124",
-        "tick": "-195977",
+        "totalValueLockedUSD": "4477751.181339244832869180794743355",
+        "tick": "-194207",
         "token0": {
           "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
           "symbol": "WETH",
@@ -170,7 +177,29 @@
           "symbol": "USDT",
           "name": "Tether USD",
           "decimals": "6"
-        }
+        },
+        "token0Price": "0.0002715677314278933902508984636978228",
+        "token1Price": "3682.322618898923932172826098359072"
+      },
+      {
+        "id": "0xe0554a476a092703abdb3ef35c80e0d76d32939f",
+        "feeTier": "100",
+        "totalValueLockedUSD": "1605078.745603679680416475543834496",
+        "tick": "194182",
+        "token0": {
+          "id": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "symbol": "USDC",
+          "name": "USD Coin",
+          "decimals": "6"
+        },
+        "token1": {
+          "id": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "symbol": "WETH",
+          "name": "Wrapped Ether",
+          "decimals": "18"
+        },
+        "token0Price": "3691.331419813396127799829009722365",
+        "token1Price": "0.0002709049625380296833406084682541603"
       }
     ]
   }

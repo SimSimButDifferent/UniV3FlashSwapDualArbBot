@@ -10,7 +10,7 @@ const amountInUsd = "100"
 // const profitThreshold = ethers.utils.parseUnits("10", 6)
 let profitThreshold
 const BATCH_SIZE = 10 // Number of promises to execute in each batch
-const BATCH_INTERVAL = 15000 // Interval between batches in milliseconds
+const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 
 async function dualArbScan(pools) {
     try {
@@ -67,6 +67,7 @@ async function dualArbScan(pools) {
 
             for (let i = 0; i < routesArray.length; i += BATCH_SIZE) {
                 const batch = []
+                console.log("Batch number: ", i / BATCH_SIZE + 1)
                 for (
                     let j = 0;
                     j < BATCH_SIZE && i + j < routesArray.length;
