@@ -117,6 +117,8 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     pools[i].token0.decimals, // [5] token in/out decimals
                     pools[i].token1.decimals, // [6] swap token decimals
                     amountIn, // [7] amount in
+                    (Number(amountIn * 100) / 10).toString(), // [8] amount out
+                    pools[i].token0.symbol, // [9] token in symbol
                 ]
                 let route2 = [
                     pools[i].token1.id,
@@ -127,6 +129,8 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     pools[i].token1.decimals, // [5] token in/out decimals
                     pools[i].token0.decimals, // [6] swap token decimals
                     amountIn, // [7] amount in
+                    (Number(amountIn * 100) / 10).toString(), // [8] amount out
+                    pools[i].token0.symbol, // [9] token in symbol
                 ]
 
                 // Check if the routes are valid

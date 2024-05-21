@@ -69,17 +69,15 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         arbitrageOpportunity = true
 
         console.log("")
-        console.log(
-            `Arbitrage opportunity found: Route ${routeNumber}, calculating optimal amountIn... `,
-        )
+        console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
         console.log("")
         console.log("")
         console.log(`Route ${routeNumber} Info:`)
         console.log(
-            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)}`,
+            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${path[9]}`,
         )
         console.log(
-            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)}`,
+            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)} ${path[9]}`,
         )
         console.log(
             `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, token0Decimals)}`,

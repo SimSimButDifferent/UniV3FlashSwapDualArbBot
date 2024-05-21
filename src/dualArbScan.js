@@ -7,7 +7,8 @@ const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 
 const pools = poolsData.pools
 const amountInUsd = "100"
-const profitThreshold = ethers.utils.parseUnits("10", 6)
+// const profitThreshold = ethers.utils.parseUnits("10", 6)
+let profitThreshold
 const BATCH_SIZE = 10 // Number of promises to execute in each batch
 const BATCH_INTERVAL = 15000 // Interval between batches in milliseconds
 
@@ -62,6 +63,7 @@ async function dualArbScan(pools) {
         async function runLoop() {
             counter++
             console.log("Scan run number: ", counter)
+            let batchPromises = []
 
             for (let i = 0; i < routesArray.length; i += BATCH_SIZE) {
                 const batch = []
@@ -75,12 +77,7 @@ async function dualArbScan(pools) {
 
                     try {
                         batch.push(
-                            await arbQuote(
-                                route,
-                                amountInFromArray,
-                                i + j,
-                                profitThreshold,
-                            ),
+                            arbQuote(route, amountInFromArray, i + j, route[8]),
                         )
                     } catch (error) {
                         console.error(
@@ -89,10 +86,15 @@ async function dualArbScan(pools) {
                         )
                     }
                 }
-                await executeBatch(batch)
-                await new Promise((resolve) =>
-                    setTimeout(resolve, BATCH_INTERVAL),
+                batchPromises.push(
+                    executeBatch(batch).then(
+                        () =>
+                            new Promise((resolve) =>
+                                setTimeout(resolve, BATCH_INTERVAL),
+                            ),
+                    ),
                 )
+                await Promise.all(batchPromises)
             }
 
             console.log("Number of trades executed: ", tradeCounter)
