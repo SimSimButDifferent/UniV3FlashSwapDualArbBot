@@ -8,8 +8,8 @@ const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
 const pools = poolsData.pools
 const amountInUsd = "100"
 const profitThreshold = ethers.utils.parseUnits("10", 6)
-const BATCH_SIZE = 7 // Number of promises to execute in each batch
-const BATCH_INTERVAL = 10000 // Interval between batches in milliseconds
+const BATCH_SIZE = 10 // Number of promises to execute in each batch
+const BATCH_INTERVAL = 15000 // Interval between batches in milliseconds
 
 async function dualArbScan(pools) {
     try {
@@ -71,11 +71,16 @@ async function dualArbScan(pools) {
                     j++
                 ) {
                     const route = routesArray[i + j]
-                    const amountIn = route[7]
+                    const amountInFromArray = route[7]
 
                     try {
                         batch.push(
-                            arbQuote(route, amountIn, i + j, profitThreshold),
+                            await arbQuote(
+                                route,
+                                amountInFromArray,
+                                i + j,
+                                profitThreshold,
+                            ),
                         )
                     } catch (error) {
                         console.error(

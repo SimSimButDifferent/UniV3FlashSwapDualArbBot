@@ -9,9 +9,8 @@ const { gasEstimateToUsd } = require("./utilities")
 
 const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
-async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
+async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
-    let amountIn
 
     const token0Decimals = path[5]
     const token1Decimals = path[6]
@@ -26,7 +25,7 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
         provider,
     )
 
-    // amountIn = await amountInUsdToToken0(amountInUsd, path, quoter2)
+    console.log(amountIn, path, routeNumber, profitThreshold)
 
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
@@ -38,7 +37,7 @@ async function arbQuote(path, amountInUsd, routeNumber, profitThreshold) {
 
         const output = await quoter2.callStatic.quoteExactInput(
             swapPath,
-            amountInUsd,
+            amountIn,
         )
         const amountOut = output.amountOut
         const gasEstimate = output.gasEstimate.toString()

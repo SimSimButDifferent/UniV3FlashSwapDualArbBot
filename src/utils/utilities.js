@@ -129,9 +129,15 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     amountIn, // [7] amount in
                 ]
 
-                // Add routes to the routes array
-                routes.push(route1)
-                routes.push(route2)
+                // Check if the routes are valid
+                if (route1[0] === route1[4] && route1[0] !== route1[2]) {
+                    // Add routes to the routes array
+                    routes.push(route1)
+                }
+                if (route2[0] === route2[4] && route2[0] !== route2[2]) {
+                    // Add routes to the routes array
+                    routes.push(route2)
+                }
             }
         }
     }
