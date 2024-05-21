@@ -36,6 +36,8 @@ contract UniswapV3FlashTest is Test {
         weth.approve(address(router), 500 * 1e18);
         vm.stopPrank();
 
+        vm.deal(account1, 500 ether);
+
         // Impersonate account for setting up the test environment
         vm.startPrank(account1);
 
