@@ -3,7 +3,8 @@ require("./utils/getProvider")
 const { data: poolsData } = require("./jsonPoolData/uniswapPools")
 const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
-const { poolInformation, findArbitrageRoutes } = require("./utils/utilities")
+const { findArbitrageRoutes } = require("./utils/utilities")
+const { poolInformation } = require("./utils/poolInformation")
 
 const pools = poolsData.pools
 const amountInUsd = "100"
