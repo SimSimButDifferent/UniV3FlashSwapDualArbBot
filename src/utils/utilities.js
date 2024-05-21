@@ -15,7 +15,7 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     return ratio
 }
 
-async function poolInformation(pools, poolsArray, amountInUsd) {
+async function poolInformation(pools, amountInUsd) {
     console.log("List of pools to scan")
     console.log("-----------------------")
 
