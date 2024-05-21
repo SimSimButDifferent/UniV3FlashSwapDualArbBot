@@ -72,10 +72,17 @@ async function dualArbScan(pools) {
                 ) {
                     const route = routesArray[i + j]
                     const amountInFromArray = route[7]
+                    const routeNumber = i + j
+                    const profitThreshold = route[8]
 
                     try {
                         batch.push(
-                            arbQuote(route, amountInFromArray, i + j, route[8]),
+                            arbQuote(
+                                route,
+                                amountInFromArray,
+                                routeNumber,
+                                profitThreshold,
+                            ),
                         )
                     } catch (error) {
                         console.error(
@@ -102,7 +109,8 @@ async function dualArbScan(pools) {
         runLoop()
 
         // Run every EPOCH_INTERVAL milliseconds
-        setInterval(runLoop, EPOCH_INTERVAL) // EPOCH interval = batch interval * (routes array length / batch size)
+        // EPOCH interval = batch interval * (routes array length / batch size)
+        setInterval(runLoop, EPOCH_INTERVAL)
     } catch (error) {
         console.error("Error in dualArbScan: ", error)
     }
