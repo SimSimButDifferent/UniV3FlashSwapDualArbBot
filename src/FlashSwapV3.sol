@@ -11,6 +11,10 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
 contract FlashSwapV3 is ReentrancyGuard {
+    /* Events */
+    event FlashSwapExecuted(address indexed caller, uint256 profit);
+
+    /* State Variables */
     address private immutable owner;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
@@ -18,10 +22,12 @@ contract FlashSwapV3 is ReentrancyGuard {
     uint160 private constant MAX_SQRT_RATIO =
         1461446703485210103287273052203988822378723970342;
 
+    /* Constructor */
     constructor() {
         owner = msg.sender;
     }
 
+    /* Modifiers */
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
@@ -34,6 +40,16 @@ contract FlashSwapV3 is ReentrancyGuard {
     // 3. Send DAI to pool0
     // profit = DAI received from pool1 - DAI repaid to pool0
 
+    /* Functions */
+
+    /**
+     * @notice Execute a flash swap
+     * @param pool0 Address of the pool to flash swap
+     * @param fee1 Fee of the pool to swap
+     * @param tokenIn Address of the token to swap
+     * @param tokenOut Address of the token to receive
+     * @param amountIn Amount of tokenIn to swap
+     */
     function flashSwap(
         address pool0,
         uint24 fee1,
@@ -67,6 +83,15 @@ contract FlashSwapV3 is ReentrancyGuard {
         });
     }
 
+    /**
+     * @notice Swap tokenIn for tokenOut
+     * @param tokenIn Address of the token to swap
+     * @param tokenOut Address of the token to receive
+     * @param fee Fee of the pool to swap
+     * @param amountIn Amount of tokenIn to swap
+     * @param amountOutMin Minimum amount of tokenOut to receive
+     * @return amountOut Amount of tokenOut received
+     */
     function _swap(
         address tokenIn,
         address tokenOut,
@@ -90,6 +115,13 @@ contract FlashSwapV3 is ReentrancyGuard {
         amountOut = router.exactInputSingle(params);
     }
 
+    
+    /**
+     * @notice Callback function for Uniswap V3 pool
+     * @param amount0 Amount of token0 received
+     * @param amount1 Amount of token1 received
+     * @param data Data passed from flashSwap
+     */
     function uniswapV3SwapCallback(
         int256 amount0,
         int256 amount1,
@@ -129,6 +161,8 @@ contract FlashSwapV3 is ReentrancyGuard {
 
         IERC20(tokenIn).transfer(pool0, amountIn);
         IERC20(tokenIn).transfer(caller, profit);
+
+        emit FlashSwapExecuted(caller, profit);
     }
 }
 
