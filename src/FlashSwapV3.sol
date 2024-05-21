@@ -74,7 +74,7 @@ contract FlashSwapV3 is ReentrancyGuard {
         uint256 amountIn,
         uint256 amountOutMin
     ) private returns (uint256 amountOut) {
-        IERC20(tokenIn).approve(address(router), amountIn);
+        // IERC20(tokenIn).approve(address(router), amountIn);
 
         ISwapRouter02.ExactInputSingleParams memory params = ISwapRouter02
             .ExactInputSingleParams({
@@ -110,6 +110,8 @@ contract FlashSwapV3 is ReentrancyGuard {
             );
 
         uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
+
+        IERC20(tokenOut).approve(address(router), amountOut);
 
         // pool0 -> tokenIn -> tokenOut (amountOut)
         // Swap on pool 1 (swap tokenOut -> tokenIn)
