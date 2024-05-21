@@ -8,8 +8,6 @@ const { poolInformation } = require("./utils/poolInformation")
 
 const pools = poolsData.pools
 const amountInUsd = "100"
-// const profitThreshold = ethers.utils.parseUnits("10", 6)
-let profitThreshold
 const BATCH_SIZE = 10 // Number of promises to execute in each batch
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 

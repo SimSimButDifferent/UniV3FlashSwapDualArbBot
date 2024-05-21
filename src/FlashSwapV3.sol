@@ -35,7 +35,7 @@ contract FlashSwapV3 is ReentrancyGuard {
     // EXAMPLE swap
     // DAI / WETH 0.3% swap fee (2000 DAI / WETH)
     // DAI / WETH 0.05% swap fee (2100 DAI / WETH)
-    // 1. Flash swap on pool0 (receive WETH)
+    // 1. Flash swap on pool0 (receive WETH (tokenOut))
     // 2. Swap on pool1 (WETH -> DAI)
     // 3. Send DAI to pool0
     // profit = DAI received from pool1 - DAI repaid to pool0
@@ -44,11 +44,11 @@ contract FlashSwapV3 is ReentrancyGuard {
 
     /**
      * @notice Execute a flash swap
-     * @param pool0 Address of the pool to flash swap
-     * @param fee1 Fee of the pool to swap
-     * @param tokenIn Address of the token to swap
-     * @param tokenOut Address of the token to receive
-     * @param amountIn Amount of tokenIn to swap
+     * @param pool0 Address of the pool to flash swap and borrow tokens from
+     * @param fee1 Fee of the pool1 to be used in callback function
+     * @param tokenIn Address of the token to be flashloaned
+     * @param tokenOut Address of the token Out
+     * @param amountIn Amount of tokenIn to borrow
      */
     function flashSwap(
         address pool0,
@@ -57,6 +57,7 @@ contract FlashSwapV3 is ReentrancyGuard {
         address tokenOut,
         uint256 amountIn
     ) external onlyOwner nonReentrant() {
+        // Swap on pool 0 (flash swap)
         bool zeroForOne = tokenIn < tokenOut;
         // 0 -> 1 => sqrt price decrease
         // 1 -> 0 => sqrt price increase
@@ -64,6 +65,7 @@ contract FlashSwapV3 is ReentrancyGuard {
             ? MIN_SQRT_RATIO + 1
             : MAX_SQRT_RATIO - 1;
 
+        // Encode data for callback
         bytes memory data = abi.encode(
             msg.sender,
             pool0,
@@ -74,6 +76,12 @@ contract FlashSwapV3 is ReentrancyGuard {
             zeroForOne
         );
 
+        /**
+        @notice calls swap which triggers a flashloan
+        @param recipient the recipient of the loan, in this case this contract
+        @param amountSpecified the amount of tokenIn being borrowed
+        @param data the data to be passed to the callback function
+        */
         IUniswapV3Pool(pool0).swap({
             recipient: address(this),
             zeroForOne: zeroForOne,
