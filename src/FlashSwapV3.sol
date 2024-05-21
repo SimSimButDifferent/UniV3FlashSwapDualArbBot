@@ -55,7 +55,8 @@ contract FlashSwapV3 is ReentrancyGuard {
         uint24 fee1,
         address tokenIn,
         address tokenOut,
-        uint256 amountIn
+        uint256 amountIn,
+        uint256 amountOutMin
     ) external onlyOwner nonReentrant() {
         // Swap on pool 0 (flash swap)
         bool zeroForOne = tokenIn < tokenOut;
@@ -73,6 +74,7 @@ contract FlashSwapV3 is ReentrancyGuard {
             tokenIn,
             tokenOut,
             amountIn,
+            amountOutMin,
             zeroForOne
         );
 
@@ -143,10 +145,12 @@ contract FlashSwapV3 is ReentrancyGuard {
             address tokenIn,
             address tokenOut,
             uint256 amountIn,
+            uint256 amountOutMin,
             bool zeroForOne
+
         ) = abi.decode(
                 data,
-                (address, address, uint24, address, address, uint256, bool)
+                (address, address, uint24, address, address, uint256, uint256, bool)
             );
 
         uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
@@ -160,7 +164,7 @@ contract FlashSwapV3 is ReentrancyGuard {
             tokenOut: tokenIn,
             fee: fee1,
             amountIn: amountOut,
-            amountOutMin: amountIn
+            amountOutMin: amountOutMin
         });
 
         // Repay pool 0

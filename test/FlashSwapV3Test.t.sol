@@ -72,7 +72,8 @@ contract UniswapV3FlashTest is Test {
             fee1: FEE_1,
             tokenIn: DAI,
             tokenOut: WETH,
-            amountIn: DAI_AMOUNT_IN
+            amountIn: DAI_AMOUNT_IN,
+            amountOutMin: 0
         });
 
         vm.stopPrank();
