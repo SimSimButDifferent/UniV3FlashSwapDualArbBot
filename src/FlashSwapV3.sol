@@ -5,11 +5,11 @@ pragma abicoder v2;
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
-import "./MultihopV3.sol";
+
 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-contract UniswapV3FlashSwap {
+contract FlashSwapV3 {
     address private immutable owner;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
@@ -25,7 +25,7 @@ contract UniswapV3FlashSwap {
         require(msg.sender == owner, "Not owner");
         _;
     }
-
+    // EXAMPLE swap
     // DAI / WETH 0.3% swap fee (2000 DAI / WETH)
     // DAI / WETH 0.05% swap fee (2100 DAI / WETH)
     // 1. Flash swap on pool0 (receive WETH)

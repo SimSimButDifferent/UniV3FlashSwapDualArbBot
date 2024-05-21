@@ -3,7 +3,7 @@ pragma solidity >=0.7.0 <0.9.0;
 pragma abicoder v2;
 
 import {Test, console} from "forge-std/Test.sol";
-import {UniswapV3FlashSwap, IUniswapV3Pool, ISwapRouter02, IERC20, IWETH9} from "../src/FlashSwapV3.sol";
+import {FlashSwapV3, IUniswapV3Pool, ISwapRouter02, IERC20, IWETH9} from "../src/FlashSwapV3.sol";
 import {IQuoterV2} from "@uniswap/v3-periphery/contracts/interfaces/IQuoterV2.sol";
 
 address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -22,19 +22,28 @@ contract UniswapV3FlashTest is Test {
     IQuoterV2 private constant quoter = IQuoterV2(QUOTER2);
     IUniswapV3Pool private constant pool0 = IUniswapV3Pool(DAI_WETH_POOL_3000);
     IUniswapV3Pool private constant pool1 = IUniswapV3Pool(DAI_WETH_POOL_500);
-    UniswapV3FlashSwap private flashSwap;
+    FlashSwapV3 private flashSwap;
 
+    address owner = address(this);
     address account1 = address(1);
 
     uint256 private constant DAI_AMOUNT_IN = 10 * 1e18;
 
     function setUp() public {
-        flashSwap = new UniswapV3FlashSwap();
+        vm.startPrank(owner);
+        flashSwap = new FlashSwapV3();
+        weth.deposit{value: 500 * 1e18}();
+        weth.approve(address(router), 500 * 1e18);
+        vm.stopPrank();
 
-        // Create an arbitrage opportunity - make WETH cheaper on pool0
+        // Impersonate account for setting up the test environment
+        vm.startPrank(account1);
+
+        // Get Weth tokens for account1
         weth.deposit{value: 500 * 1e18}();
         weth.approve(address(router), 500 * 1e18);
 
+        // Create an arbitrage opportunity - make WETH cheaper on pool0
         router.exactInputSingle(
             ISwapRouter02.ExactInputSingleParams({
                 tokenIn: WETH,
@@ -46,11 +55,16 @@ contract UniswapV3FlashTest is Test {
                 sqrtPriceLimitX96: 0
             })
         );
+        vm.stopPrank();
         console.log("Dai balance:", dai.balanceOf(account1));
     }
 
     function test_flashSwap() public {
-        uint256 bal0 = dai.balanceOf(address(this));
+        uint256 initialDaiBalance = dai.balanceOf(address(this));
+
+        // Impersonate owner to perform the flash swap
+        vm.startPrank(owner);
+
         flashSwap.flashSwap({
             pool0: address(pool0),
             fee1: FEE_1,
@@ -58,9 +72,13 @@ contract UniswapV3FlashTest is Test {
             tokenOut: WETH,
             amountIn: DAI_AMOUNT_IN
         });
-        uint256 bal1 = dai.balanceOf(address(this));
-        uint256 profit = bal1 - bal0;
-        assertGt(profit, 0, "profit = 0");
-        console.log("Profit %e", profit);
+
+        vm.stopPrank();
+
+        uint256 finalDaiBalance = dai.balanceOf(address(this));
+        uint256 profit = finalDaiBalance - initialDaiBalance;
+
+        console.log("Profit:", profit);
+        assertGt(profit, 0, "Profit should be greater than zero");
     }
 }
