@@ -32,6 +32,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     amountIn, // [7] amount in
                     (Number(amountIn * 100) / 10).toString(), // [8] profit threshhold
                     pools[i].token0.symbol, // [9] token in symbol
+                    pools[i].id, // [10] pool0 address
                 ]
                 let route2 = [
                     pools[i].token1.id,
@@ -44,6 +45,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     amountIn, // [7] amount in
                     (Number(amountIn * 100) / 10).toString(), // [8] profit threshhold
                     pools[i].token0.symbol, // [9] token in symbol
+                    pools[i].id, // [10] pool0 address
                 ]
 
                 // Check if the routes are valid

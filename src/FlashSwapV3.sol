@@ -50,8 +50,8 @@ contract FlashSwapV3 is ReentrancyGuard {
      * @notice Execute a flash swap
      * @param pool0 Address of the pool to flash swap and borrow tokens from
      * @param fee1 Fee of the pool1 to be used in callback function
-     * @param tokenIn Address of the token to be flashloaned
-     * @param tokenOut Address of the token Out
+     * @param tokenIn Address of the tokenIn
+     * @param tokenOut Address of the token Out to receive flashloan
      * @param amountIn Amount of tokenIn to borrow
      */
     function flashSwap(
@@ -85,7 +85,7 @@ contract FlashSwapV3 is ReentrancyGuard {
         /**
         @notice calls swap which triggers a flashloan
         @param recipient the recipient of the loan, in this case this contract
-        @param amountSpecified the amount of tokenIn being borrowed
+        @param amountSpecified the amount of tokenOut being borrowed
         @param data the data to be passed to the callback function
         */
         IUniswapV3Pool(pool0).swap({

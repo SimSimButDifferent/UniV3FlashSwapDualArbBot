@@ -10,11 +10,15 @@ const { initFlashSwap } = require("./initFlashSwap")
 
 const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
-async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
+async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
+    let poolAddress
+    let feePool1
+    let tokenIn
+    let tokenOut
 
-    const token0Decimals = path[5]
-    const token1Decimals = path[6]
+    const token0Decimals = route[5]
+    const token1Decimals = route[6]
 
     // Create a new provider
     const provider = getProvider()
@@ -29,7 +33,7 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
             ["address", "uint24", "address", "uint24", "address"],
-            [path[0], path[1], path[2], path[3], path[4]],
+            [route[0], route[1], route[2], route[3], route[4]],
         )
 
         // Call the quoteExactInput function and get the output
@@ -66,8 +70,12 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     // Calculate wether the arbitrage opportunity is profitable
     if (profit > profitThreshold) {
         arbitrageOpportunity = true
+        poolAddress = route[10]
+        feePool1 = route[3]
+        tokenIn = route[0]
+        tokenOut = route[2]
 
-        // const flashSwap = initFlashSwap()
+        const flashSwap = initFlashSwap()
 
         console.log("")
         console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
@@ -75,10 +83,10 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         console.log("")
         console.log(`Route ${routeNumber} Info:`)
         console.log(
-            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${path[9]}`,
+            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
         )
         console.log(
-            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)} ${path[9]}`,
+            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)} ${route[9]}`,
         )
         console.log(
             `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, token0Decimals)}`,
@@ -86,11 +94,22 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         console.log(
             `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
         )
-        console.log(`Path - ${path}`)
+        console.log(
+            `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
+        )
         console.log("")
         console.log("-----------------------")
 
-        // await flashSwap(poolAddress, feePool1, tokenIn, tokenOut, amountIn)
+        const tx = await flashSwap.flashswap(
+            poolAddress,
+            feePool1,
+            tokenIn,
+            tokenOut,
+            amountIn,
+            minimumAmountOut,
+        )
+        const txRecipt = await tx.wait()
+        console.log("Transaction Recipt: ", txRecipt)
     } else {
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
