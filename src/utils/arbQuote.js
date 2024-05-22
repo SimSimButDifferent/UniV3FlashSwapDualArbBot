@@ -6,6 +6,7 @@ const {
 
 const { getProvider } = require("./getProvider.js")
 const { gasEstimateToUsd } = require("./utilities")
+const { initFlashSwap } = require("./initFlashSwap")
 
 const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
 
@@ -66,6 +67,8 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
     if (profit > profitThreshold) {
         arbitrageOpportunity = true
 
+        // const flashSwap = initFlashSwap()
+
         console.log("")
         console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
         console.log("")
@@ -87,7 +90,7 @@ async function arbQuote(path, amountIn, routeNumber, profitThreshold) {
         console.log("")
         console.log("-----------------------")
 
-        // await flashSwap(amountIn, path, routeNumber, amountOut, gasEstimate, gasEstimateUsd, sqrtPriceX96AfterList, initializedTicksCrossedList)
+        // await flashSwap(poolAddress, feePool1, tokenIn, tokenOut, amountIn)
     } else {
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)

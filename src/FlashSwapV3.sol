@@ -18,6 +18,10 @@ contract FlashSwapV3 is ReentrancyGuard {
     address private immutable owner;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
+    uint256 public WethProfit;
+    uint256 public UsdtProfit;
+    uint256 public UsdcProfit;
+
     uint160 private constant MIN_SQRT_RATIO = 4295128739;
     uint160 private constant MAX_SQRT_RATIO =
         1461446703485210103287273052203988822378723970342;
@@ -170,6 +174,8 @@ contract FlashSwapV3 is ReentrancyGuard {
         // Repay pool 0
         uint256 profit = buyBackAmount - amountIn;
         require(profit > 0, "profit = 0");
+
+        
 
         IERC20(tokenIn).transfer(pool0, amountIn);
         IERC20(tokenIn).transfer(caller, profit);
