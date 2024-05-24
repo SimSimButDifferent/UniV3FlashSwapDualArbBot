@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat")
+const { ethers, network } = require("hardhat")
 const { networkConfig } = require("../../helper-hardhat-config.js")
 
 const {
@@ -9,6 +9,7 @@ const { getProvider } = require("./getProvider.js")
 const { gasEstimateToUsd } = require("./utilities")
 const { initFlashSwap } = require("./initFlashSwap")
 
+const chainId = network.config.chainId
 const quoter2Address = networkConfig[chainId].quoter2
 
 async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
