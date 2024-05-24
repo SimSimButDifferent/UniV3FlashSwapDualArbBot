@@ -5,6 +5,8 @@ require("dotenv").config()
 
 const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
 const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY
 
 module.exports = {
     networks: {
@@ -32,6 +34,12 @@ module.exports = {
             chainId: 8453,
             blockConfirmations: 6,
         },
-        solidity: "0.7.6",
+    },
+    solidity: "0.7.6",
+    etherscan: {
+        apiKey: ETHERSCAN_API_KEY,
+    },
+    basescan: {
+        apiKey: BASESCAN_API_KEY,
     },
 }
