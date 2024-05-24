@@ -1,4 +1,5 @@
 const { ethers } = require("hardhat")
+const { networkConfig } = require("../../helper-hardhat-config.js")
 
 const {
     abi: Quoter2Abi,
@@ -8,7 +9,7 @@ const { getProvider } = require("./getProvider.js")
 const { gasEstimateToUsd } = require("./utilities")
 const { initFlashSwap } = require("./initFlashSwap")
 
-const QUOTER2_CONTRACT_ADDRESS = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
+const quoter2Address = networkConfig[chainId].quoter2
 
 async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
@@ -24,11 +25,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     const provider = getProvider()
 
     // Create a new instance of the Quoter contract
-    const quoter2 = new ethers.Contract(
-        QUOTER2_CONTRACT_ADDRESS,
-        Quoter2Abi,
-        provider,
-    )
+    const quoter2 = new ethers.Contract(quoter2Address, Quoter2Abi, provider)
 
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(

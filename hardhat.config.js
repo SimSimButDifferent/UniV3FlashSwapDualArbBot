@@ -4,6 +4,7 @@ require("@nomicfoundation/hardhat-foundry")
 require("dotenv").config()
 
 const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
+const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
 
 module.exports = {
     networks: {
@@ -18,6 +19,19 @@ module.exports = {
             url: "http://localhost:8545",
             chainId: 31337,
         },
+        mainnet: {
+            url: ALCHEMY_MAINNET_API,
+            chainId: 1,
+            accounts: BOT_PRIVATE_KEY !== undefined ? [BOT_PRIVATE_KEY] : [],
+            blockConfirmations: 6,
+        },
+        // BASE network
+        "base-mainnet": {
+            url: "https://mainnet.base.org",
+            accounts: BOT_PRIVATE_KEY !== undefined ? [BOT_PRIVATE_KEY] : [],
+            chainId: 8453,
+            blockConfirmations: 6,
+        },
+        solidity: "0.7.6",
     },
-    solidity: "0.7.6",
 }

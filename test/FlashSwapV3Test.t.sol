@@ -25,9 +25,9 @@ contract UniswapV3FlashTest is Test {
     FlashSwapV3 private flashSwap;
 
     address owner = address(this);
-    address account1 = address(1);
+    address account1 = address(17);
 
-    uint256 private constant DAI_AMOUNT_IN = 10 * 1e18;
+    uint256 private constant DAI_AMOUNT_IN = 10000 * 1e18;
 
     function setUp() public {
         vm.startPrank(owner);
@@ -58,7 +58,8 @@ contract UniswapV3FlashTest is Test {
             })
         );
         vm.stopPrank();
-        console.log("Dai balance:", dai.balanceOf(account1));
+        uint256 daiBalanceBefore = dai.balanceOf(account1);
+        console.log("Dai balance before test:", daiBalanceBefore);
     }
 
     function test_flashSwap() public {
