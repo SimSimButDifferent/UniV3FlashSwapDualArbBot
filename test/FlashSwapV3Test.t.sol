@@ -153,13 +153,5 @@ contract UniswapV3FlashTest is Test {
             console.log("Reverted with reason:", string(reason));
             assertEq(string(reason), "profit = 0", "Expected revert reason not met");
         }
-
-        // vm.stopPrank();
-
-        // uint256 finalPepeBalance = pepe.balanceOf(address(this));
-        // uint256 profit = finalPepeBalance - initialPepeBalance;
-
-        // console.log("Profit:", profit);
-        // assertGt(profit, 0, "Profit should be greater than zero");
     }
 }
