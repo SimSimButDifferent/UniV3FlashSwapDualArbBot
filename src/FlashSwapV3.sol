@@ -11,17 +11,28 @@ import {console} from "forge-std/Test.sol";
 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
+address constant USDT_ADDRESS = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+address constant USDC_ADDRESS = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+address constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+address constant PEPE_ADDRESS = 0x6982508145454Ce325dDbE47a25d4ec3d2311933;
+
+uint16 constant USDT_DECIMALS = 6;
+uint16 constant USDC_DECIMALS = 6;
+
 contract FlashSwapV3 is ReentrancyGuard {
     /* Events */
     event FlashSwapExecuted(address indexed caller, uint256 profit);
 
     /* State Variables */
     address private immutable owner;
+    address private tokenInAddress;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
-    uint256 public WethProfit;
-    uint256 public UsdtProfit;
-    uint256 public UsdcProfit;
+    uint256 private WethProfit;
+    uint256 private UsdtProfit;
+    uint256 private UsdcProfit;
+    uint256 private DaiProfit;
+    uint256 private PepeProfit;
 
     uint160 private constant MIN_SQRT_RATIO = 4295128739;
     uint160 private constant MAX_SQRT_RATIO =
@@ -179,6 +190,20 @@ contract FlashSwapV3 is ReentrancyGuard {
 
     require(profit > 0, "profit = 0");
 
+    if (tokenIn == USDT_ADDRESS) {
+        UsdtProfit += profit;
+    } else if (tokenIn == USDC_ADDRESS) {
+        UsdcProfit += profit;
+    } else if (tokenIn == PEPE_ADDRESS) {
+        PepeProfit += profit;
+    } else if (tokenIn == DAI_ADDRESS) {
+        DaiProfit += profit;
+    } else {
+        WethProfit += profit;
+    }
+
+
+
     // Repay pool 0
     IERC20(tokenIn).transfer(pool0, amountIn);
     IERC20(tokenIn).transfer(caller, profit);
@@ -186,7 +211,25 @@ contract FlashSwapV3 is ReentrancyGuard {
     emit FlashSwapExecuted(caller, profit);
     }
     
+    // Getter Functions
+function getWethProfit() public view returns (uint256) {
+    return WethProfit;
 }
+function getUsdtProfit() public view returns (uint256) {
+    return UsdtProfit;
+}
+function getUsdcProfit() public view returns (uint256) {
+    return UsdcProfit;
+}
+function getPepeProfit() public view returns (uint256) {
+    return PepeProfit;
+}
+function getDaiProfit() public view returns (uint256) {
+    return DaiProfit;
+}
+
+}
+
 
 interface ISwapRouter02 {
     struct ExactInputSingleParams {

@@ -110,6 +110,7 @@ contract UniswapV3FlashTest is Test {
         uint256 profit = finalDaiBalance > initialDaiBalance ? finalDaiBalance - initialDaiBalance : 0;
 
         console.log("Profit:", profit);
+        assertEq(profit, flashSwap.getDaiProfit(), "Profit should be equal to DaiProfit");
         assertGt(profit, 0, "Profit should be greater than zero");
     } catch Error(string memory reason) {
         vm.stopPrank();
@@ -137,12 +138,14 @@ contract UniswapV3FlashTest is Test {
             amountIn: PEPE_AMOUNT_IN,
             amountOutMin: 0
         }) {
+            
             vm.stopPrank();
 
             uint256 finalPepeBalance = pepe.balanceOf(address(this));
             uint256 profit = finalPepeBalance > initialPepeBalance ? finalPepeBalance - initialPepeBalance : 0;
 
             console.log("Profit:", profit);
+            assertEq(profit, flashSwap.getPepeProfit(), "Profit should be equal to PepeProfit");
             assertGt(profit, 0, "Profit should be greater than zero");
         } catch Error(string memory reason) {
             vm.stopPrank();
