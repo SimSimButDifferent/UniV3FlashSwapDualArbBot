@@ -6,7 +6,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {console} from "forge-std/Test.sol";
+
 
 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
@@ -150,68 +150,7 @@ contract FlashSwapV3 is ReentrancyGuard {
      * @param amount1 Amount of token1 received
      * @param data Data passed from flashSwap
      */
-//      function uniswapV3SwapCallback(
-//     int256 amount0,
-//     int256 amount1,
-//     bytes calldata data
-// ) external {
-//     // Decode data
-//     (
-//         address caller,
-//         address pool0,
-//         uint24 fee1,
-//         address tokenIn,
-//         address tokenOut,
-//         uint256 amountIn,
-//         uint256 amountOutMin,
-//         bool zeroForOne
-//     ) = abi.decode(
-//             data,
-//             (address, address, uint24, address, address, uint256, uint256, bool)
-//         );
 
-//     uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
-
-//     // Approve tokens for swap
-//     IERC20(tokenOut).approve(address(router), amountOut);
-
-//     // Perform the swap
-//     uint256 buyBackAmount = _swap({
-//         tokenIn: tokenOut,
-//         tokenOut: tokenIn,
-//         fee: fee1,
-//         amountIn: amountOut,
-//         amountOutMin: amountOutMin
-//     });
-
-//     // Calculate profit
-//     uint256 profit = (buyBackAmount > amountIn) ? buyBackAmount - amountIn : 0;
-//     console.log("buyBackAmount:", buyBackAmount);
-//     console.log("amountIn:", amountIn);
-//     console.log("Profit:", profit);
-
-//     require(profit > 0, "profit = 0");
-
-//     if (tokenIn == USDT_ADDRESS) {
-//         UsdtProfit += profit;
-//     } else if (tokenIn == USDC_ADDRESS) {
-//         UsdcProfit += profit;
-//     } else if (tokenIn == PEPE_ADDRESS) {
-//         PepeProfit += profit;
-//     } else if (tokenIn == DAI_ADDRESS) {
-//         DaiProfit += profit;
-//     } else {
-//         WethProfit += profit;
-//     }
-
-
-
-//     // Repay pool 0
-//     IERC20(tokenIn).transfer(pool0, amountIn);
-//     IERC20(tokenIn).transfer(caller, profit);
-
-//     emit FlashSwapExecuted(caller, profit);
-//     }
 function uniswapV3SwapCallback(
     int256 amount0,
     int256 amount1,
@@ -252,11 +191,6 @@ function uniswapV3SwapCallback(
 
     // Calculate profit
     uint256 profit = (normalizedBuyBackAmount > normalizedAmountIn) ? normalizedBuyBackAmount - normalizedAmountIn : 0;
-    console.log("buyBackAmount:", buyBackAmount);
-    console.log("amountIn:", amountIn);
-    console.log("Normalized buyBackAmount:", normalizedBuyBackAmount);
-    console.log("Normalized amountIn:", normalizedAmountIn);
-    console.log("Profit:", profit);
 
     require(profit > 0, "profit = 0");
 

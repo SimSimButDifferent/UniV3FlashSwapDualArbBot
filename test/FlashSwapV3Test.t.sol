@@ -24,43 +24,60 @@ uint24 constant FEE_2 = 10000;
 
 contract UniswapV3FlashTest is Test {
     IERC20 private constant dai = IERC20(DAI);
+    IERC20 private constant usdt = IERC20(USDT);
     IERC20 private constant pepe = IERC20(PEPE);
     IWETH9 private constant weth = IWETH9(WETH);
     ISwapRouter02 private constant router = ISwapRouter02(SWAP_ROUTER_02);
     IQuoterV2 private constant quoter = IQuoterV2(QUOTER2);
     IUniswapV3Pool private constant test1pool0 = IUniswapV3Pool(DAI_WETH_POOL_3000);
     IUniswapV3Pool private constant test1pool1 = IUniswapV3Pool(DAI_WETH_POOL_500);
-    IUniswapV3Pool private constant test2pool0 = IUniswapV3Pool(PEPE_WETH_POOL_3000);
-    IUniswapV3Pool private constant test2pool1 = IUniswapV3Pool(PEPE_WETH_POOL_10000);
+    IUniswapV3Pool private constant test2pool0 = IUniswapV3Pool(USDT_WETH_POOL_3000);
+    IUniswapV3Pool private constant test2pool1 = IUniswapV3Pool(USDT_WETH_POOL_500);
+    IUniswapV3Pool private constant test3pool0 = IUniswapV3Pool(PEPE_WETH_POOL_3000);
+    IUniswapV3Pool private constant test3pool1 = IUniswapV3Pool(PEPE_WETH_POOL_10000);
     FlashSwapV3 private flashSwap;
 
     address owner = address(this);
     address account1 = address(17);
 
     uint256 private constant DAI_AMOUNT_IN = 100 * 1e18;
+    uint256 private constant USDT_AMOUNT_IN = 100 * 1e6;
     uint256 private constant PEPE_AMOUNT_IN = 6000000 * 1e18;
   
     function setUp() public {
         vm.startPrank(owner);
         flashSwap = new FlashSwapV3();
-        weth.deposit{value: 1000 * 1e18}();
-        weth.approve(address(router), 1000 * 1e18);
+        weth.deposit{value: 1500 * 1e18}();
+        weth.approve(address(router), 1500 * 1e18);
         vm.stopPrank();
 
-        vm.deal(account1, 1000 ether);
+        vm.deal(account1, 1500 ether);
 
         // Impersonate account for setting up the test environment
         vm.startPrank(account1);
 
         // Get Weth tokens for account1
-        weth.deposit{value: 1000 * 1e18}();
-        weth.approve(address(router), 1000 * 1e18);
+        weth.deposit{value: 1500 * 1e18}();
+        weth.approve(address(router), 1500 * 1e18);
 
         // Create an arbitrage opportunity - make WETH cheaper on test1pool0
         router.exactInputSingle(
             ISwapRouter02.ExactInputSingleParams({
                 tokenIn: WETH,
                 tokenOut: DAI,
+                fee: FEE_1,
+                recipient: address(0),
+                amountIn: 500 * 1e18,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            })
+        );
+
+        // Create an arbitrage opportunity - make WETH cheaper on test2pool0
+        router.exactInputSingle(
+            ISwapRouter02.ExactInputSingleParams({
+                tokenIn: WETH,
+                tokenOut: USDT,
                 fee: FEE_1,
                 recipient: address(0),
                 amountIn: 500 * 1e18,
@@ -84,8 +101,11 @@ contract UniswapV3FlashTest is Test {
 
         vm.stopPrank();
         uint256 daiBalanceBefore = dai.balanceOf(owner);
+        uint256 usdtBalanceBefore = usdt.balanceOf(owner);
         uint256 pepeBalanceBefore = pepe.balanceOf(owner);
+       
         console.log("Dai balance before test:", daiBalanceBefore);
+        console.log("Usdt balance before test:", usdtBalanceBefore);
         console.log("Pepe balance before test:", pepeBalanceBefore);
     }
 
@@ -122,6 +142,38 @@ contract UniswapV3FlashTest is Test {
         assertEq(string(reason), "profit = 0", "Expected revert reason not met");
     }
 }
+    function test_flashswap_USDT() public {
+        uint256 initialUsdtBalance = usdt.balanceOf(address(this));
+
+        // Impersonate owner to perform the flash swap
+        vm.startPrank(owner);
+
+        try flashSwap.flashSwap({
+            pool0: address(test2pool0),
+            fee1: FEE_1,
+            tokenIn: USDT,
+            tokenOut: WETH,
+            amountIn: USDT_AMOUNT_IN,
+            amountOutMin: 0
+        }) {
+            vm.stopPrank();
+
+            uint256 finalUsdtBalance = usdt.balanceOf(address(this));
+            uint256 profit = finalUsdtBalance > initialUsdtBalance ? finalUsdtBalance - initialUsdtBalance : 0;
+
+            console.log("Profit:", profit);
+            assertEq(profit, flashSwap.getUsdtProfit(), "Profit should be equal to UsdtProfit");
+            assertGt(profit, 0, "Profit should be greater than zero");
+        } catch Error(string memory reason) {
+            vm.stopPrank();
+            console.log("Reverted with reason:", reason);
+            assertEq(reason, "profit = 0", "Expected revert reason not met");
+        } catch (bytes memory reason) {
+            vm.stopPrank();
+            console.log("Reverted with reason:", string(reason));
+            assertEq(string(reason), "profit = 0", "Expected revert reason not met");
+        }
+    }
 
 
     function test_flashSwap_PEPE() public {
@@ -131,7 +183,7 @@ contract UniswapV3FlashTest is Test {
         vm.startPrank(owner);
 
         try flashSwap.flashSwap({
-            pool0: address(test2pool0),
+            pool0: address(test3pool0),
             fee1: FEE_2,
             tokenIn: PEPE,
             tokenOut: WETH,
