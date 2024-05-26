@@ -18,6 +18,8 @@ address constant PEPE_ADDRESS = 0x6982508145454Ce325dDbE47a25d4ec3d2311933;
 
 uint16 constant USDT_DECIMALS = 6;
 uint16 constant USDC_DECIMALS = 6;
+uint16 constant DAI_DECIMALS = 18;
+uint16 constant PEPE_DECIMALS = 18;
 
 contract FlashSwapV3 is ReentrancyGuard {
     /* Events */
@@ -148,7 +150,69 @@ contract FlashSwapV3 is ReentrancyGuard {
      * @param amount1 Amount of token1 received
      * @param data Data passed from flashSwap
      */
-     function uniswapV3SwapCallback(
+//      function uniswapV3SwapCallback(
+//     int256 amount0,
+//     int256 amount1,
+//     bytes calldata data
+// ) external {
+//     // Decode data
+//     (
+//         address caller,
+//         address pool0,
+//         uint24 fee1,
+//         address tokenIn,
+//         address tokenOut,
+//         uint256 amountIn,
+//         uint256 amountOutMin,
+//         bool zeroForOne
+//     ) = abi.decode(
+//             data,
+//             (address, address, uint24, address, address, uint256, uint256, bool)
+//         );
+
+//     uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
+
+//     // Approve tokens for swap
+//     IERC20(tokenOut).approve(address(router), amountOut);
+
+//     // Perform the swap
+//     uint256 buyBackAmount = _swap({
+//         tokenIn: tokenOut,
+//         tokenOut: tokenIn,
+//         fee: fee1,
+//         amountIn: amountOut,
+//         amountOutMin: amountOutMin
+//     });
+
+//     // Calculate profit
+//     uint256 profit = (buyBackAmount > amountIn) ? buyBackAmount - amountIn : 0;
+//     console.log("buyBackAmount:", buyBackAmount);
+//     console.log("amountIn:", amountIn);
+//     console.log("Profit:", profit);
+
+//     require(profit > 0, "profit = 0");
+
+//     if (tokenIn == USDT_ADDRESS) {
+//         UsdtProfit += profit;
+//     } else if (tokenIn == USDC_ADDRESS) {
+//         UsdcProfit += profit;
+//     } else if (tokenIn == PEPE_ADDRESS) {
+//         PepeProfit += profit;
+//     } else if (tokenIn == DAI_ADDRESS) {
+//         DaiProfit += profit;
+//     } else {
+//         WethProfit += profit;
+//     }
+
+
+
+//     // Repay pool 0
+//     IERC20(tokenIn).transfer(pool0, amountIn);
+//     IERC20(tokenIn).transfer(caller, profit);
+
+//     emit FlashSwapExecuted(caller, profit);
+//     }
+function uniswapV3SwapCallback(
     int256 amount0,
     int256 amount1,
     bytes calldata data
@@ -182,10 +246,16 @@ contract FlashSwapV3 is ReentrancyGuard {
         amountOutMin: amountOutMin
     });
 
+    // Normalize amounts to 18 decimals
+    uint256 normalizedAmountIn = _normalize(tokenIn, amountIn);
+    uint256 normalizedBuyBackAmount = _normalize(tokenIn, buyBackAmount);
+
     // Calculate profit
-    uint256 profit = (buyBackAmount > amountIn) ? buyBackAmount - amountIn : 0;
+    uint256 profit = (normalizedBuyBackAmount > normalizedAmountIn) ? normalizedBuyBackAmount - normalizedAmountIn : 0;
     console.log("buyBackAmount:", buyBackAmount);
     console.log("amountIn:", amountIn);
+    console.log("Normalized buyBackAmount:", normalizedBuyBackAmount);
+    console.log("Normalized amountIn:", normalizedAmountIn);
     console.log("Profit:", profit);
 
     require(profit > 0, "profit = 0");
@@ -202,14 +272,23 @@ contract FlashSwapV3 is ReentrancyGuard {
         WethProfit += profit;
     }
 
-
-
     // Repay pool 0
     IERC20(tokenIn).transfer(pool0, amountIn);
     IERC20(tokenIn).transfer(caller, profit);
 
     emit FlashSwapExecuted(caller, profit);
+}
+
+
+    // Normalize token amounts to 18 decimals
+function _normalize(address token, uint256 amount) private pure returns (uint256) {
+    if (token == USDT_ADDRESS || token == USDC_ADDRESS) {
+        return amount * 1e12; // Convert from 6 to 18 decimals
+    } else {
+        return amount; // Already 18 decimals
     }
+}
+
     
     // Getter Functions
 function getWethProfit() public view returns (uint256) {
