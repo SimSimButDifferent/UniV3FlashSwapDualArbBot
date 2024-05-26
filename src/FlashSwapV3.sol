@@ -184,58 +184,8 @@ contract FlashSwapV3 is ReentrancyGuard {
     IERC20(tokenIn).transfer(caller, profit);
 
     emit FlashSwapExecuted(caller, profit);
-}
-    // function uniswapV3SwapCallback(
-    //     int256 amount0,
-    //     int256 amount1,
-    //     bytes calldata data
-    // ) external {
-    //     // Decode data
-    //     (
-    //         address caller,
-    //         address pool0,
-    //         uint24 fee1,
-    //         address tokenIn,
-    //         address tokenOut,
-    //         uint256 amountIn,
-    //         uint256 amountOutMin,
-    //         bool zeroForOne
-
-    //     ) = abi.decode(
-    //             data,
-    //             (address, address, uint24, address, address, uint256, uint256, bool)
-    //         );
-
-    //     uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
-
-    //     IERC20(tokenOut).approve(address(router), amountOut);
-
-    //     // pool0 -> tokenIn -> tokenOut (amountOut)
-    //     // Swap on pool 1 (swap tokenOut -> tokenIn)
-    //     uint256 buyBackAmount = _swap({
-    //         tokenIn: tokenOut,
-    //         tokenOut: tokenIn,
-    //         fee: fee1,
-    //         amountIn: amountOut,
-    //         amountOutMin: amountOutMin
-    //     });
-
-    //     // Repay pool 0
-    //     uint256 profit = buyBackAmount - amountIn;
-
-    //     console.log("buyBackAmount:", buyBackAmount);
-    //     console.log("amountIn:", amountIn);
-    //     console.log("Profit:", profit);
-
-    //     require(profit > 0, "profit = 0");
-
-        
-
-    //     IERC20(tokenIn).transfer(pool0, amountIn);
-    //     IERC20(tokenIn).transfer(caller, profit);
-
-    //     emit FlashSwapExecuted(caller, profit);
-    // }
+    }
+    
 }
 
 interface ISwapRouter02 {
