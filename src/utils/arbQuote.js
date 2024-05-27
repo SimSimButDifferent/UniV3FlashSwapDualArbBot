@@ -62,57 +62,107 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         }
     }
 
-    const { amountOut, gasEstimate, gasEstimateUsd, minimumAmountOut, profit } =
-        await simSwap(amountIn)
+    const { amountOut, minimumAmountOut, profit } = await simSwap(amountIn)
 
-    // Calculate wether the arbitrage opportunity is profitable
-    if (profit > profitThreshold) {
-        arbitrageOpportunity = true
-        poolAddress = route[10]
-        feePool1 = route[3]
-        tokenIn = route[0]
-        tokenOut = route[2]
+    // // Calculate wether the arbitrage opportunity is profitable
+    // if (profit > profitThreshold) {
+    //     arbitrageOpportunity = true
+    //     poolAddress = route[10]
+    //     feePool1 = route[3]
+    //     tokenIn = route[0]
+    //     tokenOut = route[2]
 
-        const flashSwap = initFlashSwap()
+    //     const flashSwap = initFlashSwap()
 
-        console.log("")
-        console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
-        console.log("")
-        console.log("")
-        console.log(`Route ${routeNumber} Info:`)
-        console.log(
-            `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
-        )
-        console.log(
-            `amountOut - ${ethers.utils.formatUnits(amountOut.toString(), token0Decimals)} ${route[9]}`,
-        )
-        console.log(
-            `MinimumAmountOut: ${ethers.utils.formatUnits(minimumAmountOut, token0Decimals)}`,
-        )
-        console.log(
-            `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
-        )
-        console.log(
-            `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
-        )
-        console.log("")
-        console.log("-----------------------")
+    //     console.log("")
+    //     console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
+    //     console.log("")
+    //     console.log("")
 
-        const tx = await flashSwap.flashswap(
-            poolAddress,
-            feePool1,
-            tokenIn,
-            tokenOut,
-            amountIn,
-            minimumAmountOut,
-        )
-        const txRecipt = await tx.wait()
-        console.log("Transaction Recipt: ", txRecipt)
-    } else {
-        console.log("")
-        console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        console.log("")
-        console.log("-----------------------")
+    //     const tx = await flashSwap.flashswap(
+    //         poolAddress,
+    //         feePool1,
+    //         tokenIn,
+    //         tokenOut,
+    //         amountIn,
+    //         minimumAmountOut,
+    //     )
+
+    //     console.log(`Route ${routeNumber} Info:`)
+
+    //     console.log(
+    //         `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
+    //     )
+    //     console.log(
+    //         `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
+    //     )
+    //     console.log("")
+    //     console.log("-----------------------")
+
+    //     const txRecipt = await tx.wait()
+    //     console.log("Transaction Recipt: ", txRecipt)
+    // } else {
+    //     console.log("")
+    //     console.log("No arbitrage opportunity found in Route: ", routeNumber)
+    //     console.log("")
+    //     console.log("-----------------------")
+    let iterationCount = 0
+
+    while (true) {
+        const { amountOut, minimumAmountOut, profit } = await simSwap(amountIn)
+
+        // Check if the arbitrage opportunity is profitable
+        if (profit > profitThreshold) {
+            arbitrageOpportunity = true
+            poolAddress = route[10]
+            feePool1 = route[3]
+            tokenIn = route[0]
+            tokenOut = route[2]
+
+            const flashSwap = initFlashSwap()
+
+            console.log("")
+            console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
+            console.log("")
+            console.log("")
+
+            const tx = await flashSwap.flashswap(
+                poolAddress,
+                feePool1,
+                tokenIn,
+                tokenOut,
+                amountIn,
+                minimumAmountOut,
+            )
+
+            console.log(`Route ${routeNumber} Info:`)
+
+            console.log(
+                `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
+            )
+            console.log(
+                `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
+            )
+            console.log("")
+            console.log("-----------------------")
+
+            const txReceipt = await tx.wait()
+            console.log("Transaction Receipt: ", txReceipt)
+
+            // Update amountIn for the next iteration if you want to adjust it dynamically
+            amountIn = amountOut
+            iterationCount++
+        } else {
+            console.log("")
+            console.log(
+                "No more arbitrage opportunity found in Route: ",
+                routeNumber,
+            )
+            console.log(`Total Iterations: ${iterationCount}`)
+            console.log("")
+            console.log("-----------------------")
+            break
+        }
     }
 
     return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
