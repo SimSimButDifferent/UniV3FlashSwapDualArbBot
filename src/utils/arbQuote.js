@@ -11,7 +11,16 @@ const { initFlashSwap } = require("./initFlashSwap")
 
 const chainId = network.config.chainId
 const quoter2Address = networkConfig[chainId].quoter2
-
+/**
+ * @dev This function checks for arbitrage opportunities in a given route
+ * Calls the Quoter contract to get the output of a swap
+ * If the route is profitable calls flashswap. Then recursively calls
+ * flashswap again until there is no arbitrage opportunity left.
+ * @param route
+ * @param amountIn
+ * @param routeNumber
+ * @param profitThreshold
+ */
 async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
     let poolAddress
@@ -28,6 +37,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     // Create a new instance of the Quoter contract
     const quoter2 = new ethers.Contract(quoter2Address, Quoter2Abi, provider)
 
+    // Simulate the swap
     async function simSwap(amountIn) {
         const swapPath = ethers.utils.solidityPack(
             ["address", "uint24", "address", "uint24", "address"],
@@ -35,11 +45,12 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         )
 
         // Call the quoteExactInput function and get the output
-
         const output = await quoter2.callStatic.quoteExactInput(
             swapPath,
             amountIn,
         )
+
+        // Log neccesary outputs
         const amountOut = output.amountOut
         const gasEstimate = output.gasEstimate.toString()
         const gasEstimateUsd = ethers.utils.parseUnits(
@@ -51,6 +62,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         const minimumAmountOut =
             Number(amountIn) + Number(gasEstimateUsd) + Number(profitThreshold)
 
+        // Calculate the profit
         const profit = Number(amountOut) - minimumAmountOut
 
         return {
@@ -67,6 +79,8 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     // Calculate wether the arbitrage opportunity is profitable
     if (profit > profitThreshold) {
         arbitrageOpportunity = true
+
+        // Inputs for calling Flashswap
         poolAddress = route[10]
         feePool1 = route[3]
         tokenIn = route[0]
@@ -79,6 +93,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         console.log("Executing FlashSwap...")
         console.log("")
 
+        // Call flashswap
         const tx = await flashSwap.flashswap(
             poolAddress,
             feePool1,
@@ -102,9 +117,11 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         console.log("")
         console.log("-----------------------")
 
+        // Get transaction reciept
         const txRecipt = await tx.wait()
         console.log("Transaction Recipt: ", txRecipt)
 
+        // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
         await arbQuote(route, amountIn, routeNumber, profitThreshold)
     } else {
         console.log("")
