@@ -20,6 +20,7 @@ const quoter2Address = networkConfig[chainId].quoter2
  * @param amountIn
  * @param routeNumber
  * @param profitThreshold
+ * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
  */
 async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     let arbitrageOpportunity = false
