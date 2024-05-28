@@ -2,6 +2,15 @@ const { ethers } = require("ethers")
 const { Chainlink } = require("dev3-sdk")
 const { getProvider } = require("./getProvider")
 
+/**
+ * @dev This function gets the price of a token
+ * from the sqrtpriceX96
+ * @param {*} sqrt
+ * @param {*} decimals0
+ * @param {*} decimals1
+ * @param {*} token0IsInput
+ * @returns price of the token
+ */
 function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     const numerator = sqrt ** 2
     const denominator = 2 ** 192
@@ -15,6 +24,10 @@ function sqrtToPrice(sqrt, decimals0, decimals1, token0IsInput) {
     return ratio
 }
 
+/**
+ * @dev This function gets the price of ETH in USD
+ * @returns gas estimate in usd
+ */
 async function getEthPriceUsd() {
     const ethSDK = Chainlink.instance(
         "https://ethereum.publicnode.com",
@@ -27,7 +40,12 @@ async function getEthPriceUsd() {
     return ethPriceUsdBigInt
 }
 
-// function to convert gasEstimate into usd value
+/**
+ * @dev This function gets the gas estimate in USD
+ * from a given gas estimate
+ * @param {*} gas
+ * @returns gas estimate in usd
+ */
 async function gasEstimateToUsd(gas) {
     const provider = getProvider()
 
@@ -45,6 +63,11 @@ async function gasEstimateToUsd(gas) {
     return gasEstimateUsd.toFixed(6)
 }
 
+/**
+ * @dev This function checks if the token is a USD token
+ * @param {*} symbol
+ * @returns boolean
+ */
 function isUSDToken(symbol) {
     const usdTokens = ["USDT", "USDC"]
 

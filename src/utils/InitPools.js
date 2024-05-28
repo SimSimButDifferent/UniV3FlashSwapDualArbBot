@@ -5,6 +5,11 @@ const {
 
 const { getProvider } = require("./getProvider.js")
 
+/**
+ * @dev This function initializes the pools
+ * @param {*} pools
+ * @returns {object} poolsArray
+ */
 async function initPools(pools) {
     const provider = getProvider()
     const poolsArray = []

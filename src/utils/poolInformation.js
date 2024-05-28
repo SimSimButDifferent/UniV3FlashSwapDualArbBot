@@ -1,5 +1,12 @@
 const { isUSDToken } = require("./utilities")
 
+/**
+ * @dev This function logs the pool information
+ * @param {*} pools
+ * @param {*} amountInUsd
+ * @returns token amounts in for each token based on
+ * the amountInUsd
+ */
 async function poolInformation(pools, amountInUsd) {
     console.log("List of pools to scan")
     console.log("-----------------------")

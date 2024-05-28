@@ -6,21 +6,31 @@ const { arbQuote } = require("./utils/arbQuote")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")
 const { poolInformation } = require("./utils/poolInformation")
 
+// Get the pools array from json file
 const pools = poolsData.pools
+// Set the amount in usd for each trade
+// For different erc-20 tokens this amount will be converted to the token amount
 const amountInUsd = "100"
+// Set the batch size and interval to give control over the number of promises executed per second.
 const BATCH_SIZE = 10 // Number of promises to execute in each batch
+// Interval between batches in milliseconds
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 
+/**
+ * @dev This function scans the pools for arbitrage opportunities
+ * If there is a profitable route, it executes the trade
+ * @param {*} pools
+ */
 async function dualArbScan(pools) {
     try {
         // Initialize the pools
         const poolsArray = await initPools(pools)
         console.log(`Found ${poolsArray.length} pools`)
 
-        // Output pool information
+        // Output pool information and token amounts in for each token included in query.
         const tokenAmountsIn = await poolInformation(pools, amountInUsd)
 
-        // Get possible arbitrage routes
+        // Get possible arbitrage routes where tokenIn and tokenOut are the same.
         const routesArray = await findArbitrageRoutes(
             pools,
             tokenAmountsIn,

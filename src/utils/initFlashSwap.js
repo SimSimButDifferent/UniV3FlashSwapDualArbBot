@@ -2,10 +2,17 @@ const { ethers } = require("hardhat")
 const {
     abi: flashSwapAbi,
 } = require("../../out/FlashSwapV3.sol/FlashSwapV3.json")
-
+const {
+    networkConfig,
+    developmentChains,
+} = require("../../helper-hardhat-config.js")
 const { getProvider } = require("./getProvider.js")
+const { networks } = require("../../hardhat.config.js")
 
-FLASHSWAP_CONTRACT_ADDRESS = "0xf42ec71a4440f5e9871c643696dd6dc9a38911f8"
+if (developmentChains.includes(network.name)) {
+    FLASHSWAP_CONTRACT_ADDRESS =
+        networkConfig[networks.localhost.chainId].flashSwapV3Address
+}
 
 async function initFlashSwap() {
     const provider = getProvider()
