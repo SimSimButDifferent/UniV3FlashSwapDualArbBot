@@ -7,8 +7,18 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+// EXAMPLE swap
+// DAI / WETH 0.3% swap fee (2000 DAI / WETH)
+// DAI / WETH 0.05% swap fee (2100 DAI / WETH)
+// 1. Flash swap on pool0 (receive WETH (tokenOut))
+// 2. Swap on pool1 (WETH -> DAI)
+// 3. Send DAI to pool0
+// profit = DAI received from pool1 - DAI repaid to pool0
 
-
+// Constant Variables
+/**
+* @dev Token addresses and decimals hardcoded to save on API calls and gas.
+*/ 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
 address constant USDT_ADDRESS = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -27,14 +37,16 @@ contract FlashSwapV3 is ReentrancyGuard {
 
     /* State Variables */
     address private immutable owner;
-    address private tokenInAddress;
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
+    // Profit tracking
     uint256 private WethProfit;
     uint256 private UsdtProfit;
     uint256 private UsdcProfit;
     uint256 private DaiProfit;
     uint256 private PepeProfit;
+
+    address private tokenInAddress;
 
     uint160 private constant MIN_SQRT_RATIO = 4295128739;
     uint160 private constant MAX_SQRT_RATIO =
@@ -50,13 +62,6 @@ contract FlashSwapV3 is ReentrancyGuard {
         require(msg.sender == owner, "Not owner");
         _;
     }
-    // EXAMPLE swap
-    // DAI / WETH 0.3% swap fee (2000 DAI / WETH)
-    // DAI / WETH 0.05% swap fee (2100 DAI / WETH)
-    // 1. Flash swap on pool0 (receive WETH (tokenOut))
-    // 2. Swap on pool1 (WETH -> DAI)
-    // 3. Send DAI to pool0
-    // profit = DAI received from pool1 - DAI repaid to pool0
 
     /* Functions */
 
@@ -67,6 +72,7 @@ contract FlashSwapV3 is ReentrancyGuard {
      * @param tokenIn Address of the tokenIn
      * @param tokenOut Address of the token Out to receive flashloan
      * @param amountIn Amount of tokenIn to borrow
+     * @param amountOutMin Minimum amount of tokenOut to receive
      */
     function flashSwap(
         address pool0,
@@ -84,7 +90,7 @@ contract FlashSwapV3 is ReentrancyGuard {
             ? MIN_SQRT_RATIO + 1
             : MAX_SQRT_RATIO - 1;
 
-        // Encode data for callback
+        // Encode data for uniswapV3callback function (where the loaned tokens are swapped back)
         bytes memory data = abi.encode(
             msg.sender,
             pool0,
@@ -127,7 +133,7 @@ contract FlashSwapV3 is ReentrancyGuard {
         uint256 amountIn,
         uint256 amountOutMin
     ) private returns (uint256 amountOut) {
-        // IERC20(tokenIn).approve(address(router), amountIn);
+        IERC20(tokenIn).approve(address(router), amountIn);
 
         ISwapRouter02.ExactInputSingleParams memory params = ISwapRouter02
             .ExactInputSingleParams({
@@ -173,10 +179,10 @@ function uniswapV3SwapCallback(
 
     uint256 amountOut = zeroForOne ? uint256(-amount1) : uint256(-amount0);
 
-    // Approve tokens for swap
+    // Approve tokens for swap - tokenOut for tokenIn
     IERC20(tokenOut).approve(address(router), amountOut);
 
-    // Perform the swap
+    // Swap tokenOut for tokenIn
     uint256 buyBackAmount = _swap({
         tokenIn: tokenOut,
         tokenOut: tokenIn,
@@ -185,7 +191,7 @@ function uniswapV3SwapCallback(
         amountOutMin: amountOutMin
     });
 
-    // Normalize amounts to 18 decimals
+    // Normalize amounts to 18 decimals to calculate profit
     uint256 normalizedAmountIn = _normalize(tokenIn, amountIn);
     uint256 normalizedBuyBackAmount = _normalize(tokenIn, buyBackAmount);
 

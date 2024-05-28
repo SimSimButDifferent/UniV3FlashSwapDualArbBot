@@ -1,12 +1,16 @@
-/** @type import('hardhat/config').HardhatUserConfig */
 require("@nomicfoundation/hardhat-toolbox")
 require("@nomicfoundation/hardhat-foundry")
+// require("@nomiclabs/hardhat-etherscan")
+require("@nomicfoundation/hardhat-verify")
+require("hardhat-deploy")
 require("dotenv").config()
 
-const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
-const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
-const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY
+const {
+    ALCHEMY_MAINNET_API,
+    BOT_PRIVATE_KEY,
+    ETHERSCAN_API_KEY,
+    BASESCAN_API_KEY,
+} = process.env
 
 module.exports = {
     networks: {
@@ -24,13 +28,12 @@ module.exports = {
         mainnet: {
             url: ALCHEMY_MAINNET_API,
             chainId: 1,
-            accounts: BOT_PRIVATE_KEY !== undefined ? [BOT_PRIVATE_KEY] : [],
+            accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
             blockConfirmations: 6,
         },
-        // BASE network
         "base-mainnet": {
             url: "https://mainnet.base.org",
-            accounts: BOT_PRIVATE_KEY !== undefined ? [BOT_PRIVATE_KEY] : [],
+            accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
             chainId: 8453,
             blockConfirmations: 6,
         },
@@ -39,7 +42,9 @@ module.exports = {
     etherscan: {
         apiKey: ETHERSCAN_API_KEY,
     },
-    basescan: {
-        apiKey: BASESCAN_API_KEY,
+    namedAccounts: {
+        deployer: {
+            default: 0,
+        },
     },
 }

@@ -1,16 +1,15 @@
 const hre = require("hardhat")
 
 async function verify(contractAddress) {
-    await hre.run("verify:verify", {
-        address: contractAddress,
-    })
-    console.log("Contract verified! : ", contractAddress)
+    try {
+        await hre.run("verify:verify", {
+            address: contractAddress,
+        })
+        console.log("Contract verified! : ", contractAddress)
+    } catch (error) {
+        console.error("Verification failed: ", error)
+    }
     console.log("--------------------------------------------------")
 }
 
-verify().catch((error) => {
-    console.error(error)
-    process.exitCode = 1
-})
-
-exports.verify = verify
+module.exports = { verify }
