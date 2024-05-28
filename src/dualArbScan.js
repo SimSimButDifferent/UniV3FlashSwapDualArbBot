@@ -6,16 +6,24 @@ const { arbQuote } = require("./utils/arbQuote")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")
 const { poolInformation } = require("./utils/poolInformation")
 
+// Config Variables
+
 // Get the pools array from json file
 const pools = poolsData.pools
 // Set the amount in usd for each trade
 // For different erc-20 tokens this amount will be converted to the token amount
 const amountInUsd = "100"
+
+/**
+ * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
+ */
+
 // Set the batch size and interval to give control over the number of promises executed per second.
 const BATCH_SIZE = 10 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 
+// Main function
 /**
  * @dev This function scans the pools for arbitrage opportunities
  * If there is a profitable route, it executes the trade
@@ -47,17 +55,20 @@ async function dualArbScan(pools) {
         )
         console.log("")
 
-        let counter = 0
+        // Initialize counters
+        let loopCounter = 0
         let tradeCounter = 0
-        let profitCounter = 0
 
+        // Execute the batch of route quotes
         async function executeBatch(batch) {
             try {
                 const outputs = await Promise.all(batch)
                 for (const output of outputs) {
-                    if (output[1] === true) {
+                    const arbitrageOpportunity = output[1]
+                    if (arbitrageOpportunity === true) {
+                        // Execute the trade if there is an arbitrage opportunity
+                        // Update trade and profit counter.
                         tradeCounter++
-                        profitCounter += output[0].profit
                     }
                 }
             } catch (error) {
@@ -66,7 +77,7 @@ async function dualArbScan(pools) {
         }
 
         async function runLoop() {
-            counter++
+            loopCounter++
             console.log("Scan run number: ", counter)
             let batchPromises = []
 
