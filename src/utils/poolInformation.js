@@ -8,8 +8,9 @@ const { isUSDToken } = require("./utilities")
  * the amountInUsd
  */
 async function poolInformation(pools, amountInUsd) {
-    console.log("List of pools to scan")
-    console.log("-----------------------")
+    // Turn off when hardhat tests are running
+    // console.log("List of pools to scan")
+    // console.log("-----------------------")
 
     let tokenAmountsIn = {}
 
@@ -47,20 +48,20 @@ async function poolInformation(pools, amountInUsd) {
                         : Number(priceToken0).toFixed(6)
             }
 
-            // Log pool information
+            // Log pool information - Turn off when running hardhat tests!
 
-            console.log(
-                `\n${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${price}`,
-            )
-            console.log(
-                `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
-            )
-            console.log("-----------------------")
+            // console.log(
+            //     `\n${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${price}`,
+            // )
+            // console.log(
+            //     `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
+            // )
+            // console.log("-----------------------")
         } catch (error) {
             console.error(`Error processing pool at index ${i}:`, error)
         }
     }
-    console.log("\nNon USD token amountIn's calculated", tokenAmountsIn)
+    // console.log("\nNon USD token amountIn's calculated", tokenAmountsIn)
 
     return tokenAmountsIn
 }
