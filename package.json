@@ -1,7 +1,7 @@
 {
-    "name": "UniswapV3Foundry",
+    "name": "UniswapV3DualArbBot",
     "version": "1.0.0",
-    "description": "Boilerplate for testing Uniswap V3 Projects locally",
+    "description": "Boilerplate to use as a starting point to build more complex arbitrage bots. Complete with a basic example of a dual-arbitrage bot that uses Uniswap V3 SDK to find profitable trades.",
     "main": "index.js",
     "repository": "https://github.com/SimSimButDifferent/UniswapV3Foundry",
     "author": "Simeon Campbell",

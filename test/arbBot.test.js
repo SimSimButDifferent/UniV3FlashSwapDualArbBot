@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat")
+const { ethers, network } = require("hardhat")
 const { expect } = require("chai")
 
 const { dualArbScan } = require("../src/dualArbScan")
@@ -13,6 +13,8 @@ const {
     UsdcAbi: UsdcAbi,
 } = require("../test/mainnetTokens.json")
 
+const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
+
 const pools = poolsData.pools
 const amountInUsd = "100"
 const BATCH_SIZE = 10
@@ -25,29 +27,20 @@ describe("DualArbBot Tests", function () {
     let deployer
     let weth, usdc, flashswap
 
-    beforeEach(async function () {
+    before(async function () {
         // create arb opportunity by swapping weth for usdc
-        ;[deployer] = await ethers.getSigners()
-
-        // Impersonate a whale account
-        const whale = "0x9359eCF077186D4543Bd53Bc3528dA4a80938C79" // Replace with a WETH or USDC whale address
-        await network.provider.request({
-            method: "hardhat_impersonateAccount",
-            params: [whale],
-        })
-
-        const whaleSigner = await ethers.getSigner(whale)
+        ;[deployer, addr1] = await ethers.getSigner(0)
 
         // Get the WETH and USDC contracts
-        weth = new ethers.Contract(WETH_ADDRESS, weth9abi, whaleSigner)
-        usdc = new ethers.Contract(USDC_ADDRESS, UsdcAbi, whaleSigner)
+        weth = new ethers.Contract(WETH_ADDRESS, weth9abi, deployer)
+        usdc = new ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
 
-        const whaleWethBalance = await weth.balanceOf(whale)
+        // const whaleWethBalance = await weth.balanceOf(whale)
 
-        const whaleUsdcBalance = await usdc.balanceOf(whale)
+        // const whaleUsdcBalance = await usdc.balanceOf(whale)
 
-        console.log(whaleWethBalance.toString())
-        console.log(whaleUsdcBalance.toString())
+        // console.log(whaleWethBalance.toString())
+        // console.log(whaleUsdcBalance.toString())
     })
     describe("getPools", function () {
         it("Should correctly create uniswapPools json file", async function () {
