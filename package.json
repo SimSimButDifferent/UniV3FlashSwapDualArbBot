@@ -8,14 +8,11 @@
     "license": "MIT",
     "private": false,
     "dependencies": {
-        "@uniswap/sdk": "^3.0.3",
-        "@uniswap/sdk-core": "^3.2.2",
         "@uniswap/v3-core": "^1.0.1",
         "@uniswap/v3-periphery": "^1.4.4",
-        "@uniswap/v3-sdk": "^3.9.0",
         "dev3-sdk": "^1.0.1",
         "dotenv": "^16.4.5",
-        "ethers": "^5.7.2",
+        "ethers": "^6.12.1",
         "fs": "^0.0.1-security",
         "path": "^0.12.7"
     },
