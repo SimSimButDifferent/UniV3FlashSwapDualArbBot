@@ -40,13 +40,17 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
 
     // Simulate the swap
     async function simSwap(amountIn) {
-        const swapPath = ethers.utils.solidityPack(
+        const swapPath = ethers.solidityPacked(
             ["address", "uint24", "address", "uint24", "address"],
             [route[0], route[1], route[2], route[3], route[4]],
         )
 
         // Call the quoteExactInput function and get the output
-        const output = await quoter2.callStatic.quoteExactInput(
+        // const output = await quoter2.callStatic.quoteExactInput(
+        //     swapPath,
+        //     amountIn,
+        // )
+        const output = await quoter2.quoteExactInput.staticCall(
             swapPath,
             amountIn,
         )
