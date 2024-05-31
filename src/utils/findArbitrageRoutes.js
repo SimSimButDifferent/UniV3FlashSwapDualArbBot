@@ -13,12 +13,10 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     ? Number(
                           (amountIn = ethers.parseUnits(
                               tokenAmountsIn[pools[i].token0.symbol],
-                              "ether",
+                              18,
                           )),
                       )
-                    : Number(
-                          (amountIn = ethers.parseUnits(amountInUsd, "mwei")),
-                      )
+                    : Number((amountIn = ethers.parseUnits(amountInUsd, 6)))
 
                 // Assuming amountIn is a BigInt
                 let profitThresholdBigInt = (amountIn * 100n) / 10n // Keep everything as BigInt

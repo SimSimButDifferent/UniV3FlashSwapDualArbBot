@@ -60,7 +60,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         const gasEstimate = output.gasEstimate.toString()
         const gasEstimateUsd = ethers.parseUnits(
             await gasEstimateToUsd(gasEstimate),
-            "mwei",
+            6,
         )
         console.log("Gas Estimate: ", gasEstimate)
         console.log("Gas Estimate USD: ", gasEstimateUsd.toString())
