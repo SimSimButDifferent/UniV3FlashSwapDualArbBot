@@ -40,13 +40,17 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
 
     // Simulate the swap
     async function simSwap(amountIn) {
-        const swapPath = ethers.utils.solidityPack(
+        const swapPath = ethers.solidityPacked(
             ["address", "uint24", "address", "uint24", "address"],
             [route[0], route[1], route[2], route[3], route[4]],
         )
 
         // Call the quoteExactInput function and get the output
-        const output = await quoter2.callStatic.quoteExactInput(
+        // const output = await quoter2.callStatic.quoteExactInput(
+        //     swapPath,
+        //     amountIn,
+        // )
+        const output = await quoter2.quoteExactInput.staticCall(
             swapPath,
             amountIn,
         )
@@ -54,10 +58,12 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         // Log neccesary outputs
         const amountOut = output.amountOut
         const gasEstimate = output.gasEstimate.toString()
-        const gasEstimateUsd = ethers.utils.parseUnits(
+        const gasEstimateUsd = ethers.parseUnits(
             await gasEstimateToUsd(gasEstimate),
             6,
         )
+        console.log("Gas Estimate: ", gasEstimate)
+        console.log("Gas Estimate USD: ", gasEstimateUsd.toString())
 
         // Calculate the minimum amount required to make the trade profitable / worthwhile
         const minimumAmountOut =

@@ -83,7 +83,7 @@ async function dualArbScan(pools) {
          */
         async function runLoop() {
             loopCounter++
-            console.log("Scan run number: ", counter)
+            console.log("Scan run number: ", loopCounter)
             let batchPromises = []
 
             // Loop through the route batches

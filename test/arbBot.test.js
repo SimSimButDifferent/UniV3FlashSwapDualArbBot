@@ -9,7 +9,7 @@ const { findArbitrageRoutes } = require("../src/utils/findArbitrageRoutes")
 
 const { data: poolsData } = require("../src/jsonPoolData/uniswapPools.json")
 const {
-    weth9abi: weth9abi,
+    weth9Abi: weth9Abi,
     UsdcAbi: UsdcAbi,
 } = require("../test/mainnetTokens.json")
 
@@ -27,20 +27,29 @@ describe("DualArbBot Tests", function () {
     let deployer
     let weth, usdc, flashswap
 
-    before(async function () {
+    beforeEach(async function () {
         // create arb opportunity by swapping weth for usdc
-        ;[deployer, addr1] = await ethers.getSigner(0)
+        ;[deployer] = await ethers.getSigners()
 
-        // Get the WETH and USDC contracts
-        weth = new ethers.Contract(WETH_ADDRESS, weth9abi, deployer)
+        // Impersonate a whale account
+        const whale = "0x2feb1512183545f48f6b9c5b4ebfcaf49cfca6f3" // Replace with a WETH or USDC whale address
+        await network.provider.request({
+            method: "hardhat_impersonateAccount",
+            params: [whale],
+        })
+
+        const whaleSigner = await ethers.getSigner(whale)
+
+        // // Get the WETH and USDC contracts
+        weth = new ethers.Contract(WETH_ADDRESS, weth9Abi, deployer)
         usdc = new ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
 
-        // const whaleWethBalance = await weth.balanceOf(whale)
+        const whaleWethBalance = await weth.balanceOf(whale)
 
-        // const whaleUsdcBalance = await usdc.balanceOf(whale)
+        const whaleUsdcBalance = await usdc.balanceOf(whale)
 
-        // console.log(whaleWethBalance.toString())
-        // console.log(whaleUsdcBalance.toString())
+        console.log(whaleWethBalance.toString())
+        console.log(whaleUsdcBalance.toString())
     })
     describe("getPools", function () {
         it("Should correctly create uniswapPools json file", async function () {

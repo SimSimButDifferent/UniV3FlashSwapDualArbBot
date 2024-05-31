@@ -10,16 +10,17 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
             // Ensure not to compare the same pool
             if (i !== j) {
                 !isUSDToken(pools[i].token0.symbol)
-                    ? (amountIn = ethers.utils
-                          .parseUnits(
+                    ? Number(
+                          (amountIn = ethers.parseUnits(
                               tokenAmountsIn[pools[i].token0.symbol],
-                              pools[i].token0.decimals,
-                          )
-                          .toString())
-                    : (amountIn = ethers.utils
-                          .parseUnits(amountInUsd, 6)
-                          .toString())
+                              18,
+                          )),
+                      )
+                    : Number((amountIn = ethers.parseUnits(amountInUsd, 6)))
 
+                // Assuming amountIn is a BigInt
+                let profitThresholdBigInt = (amountIn * 100n) / 10n // Keep everything as BigInt
+                let profitThresholdString = profitThresholdBigInt.toString() // Convert to string at the end
                 // Example route: token0 -> token1 in one pool, and token1 -> token0 in another pool
                 let route1 = [
                     pools[i].token0.id, // [0]
@@ -30,7 +31,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     pools[i].token0.decimals, // [5] token in/out decimals
                     pools[i].token1.decimals, // [6] swap token decimals
                     amountIn, // [7] amount in
-                    (Number(amountIn * 100) / 10).toString(), // [8] profit threshhold
+                    profitThresholdString, // [8] profit threshhold
                     pools[i].token0.symbol, // [9] token in symbol
                     pools[i].id, // [10] pool0 address
                 ]
@@ -43,7 +44,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     pools[i].token1.decimals, // [5] token in/out decimals
                     pools[i].token0.decimals, // [6] swap token decimals
                     amountIn, // [7] amount in
-                    (Number(amountIn * 100) / 10).toString(), // [8] profit threshhold
+                    profitThresholdString, // [8] profit threshhold
                     pools[i].token0.symbol, // [9] token in symbol
                     pools[i].id, // [10] pool0 address
                 ]
