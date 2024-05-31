@@ -60,8 +60,10 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         const gasEstimate = output.gasEstimate.toString()
         const gasEstimateUsd = ethers.parseUnits(
             await gasEstimateToUsd(gasEstimate),
-            6,
+            "mwei",
         )
+        console.log("Gas Estimate: ", gasEstimate)
+        console.log("Gas Estimate USD: ", gasEstimateUsd.toString())
 
         // Calculate the minimum amount required to make the trade profitable / worthwhile
         const minimumAmountOut =
