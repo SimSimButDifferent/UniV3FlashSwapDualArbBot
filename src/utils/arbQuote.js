@@ -62,8 +62,6 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
             await gasEstimateToUsd(gasEstimate),
             6,
         )
-        console.log("Gas Estimate: ", gasEstimate)
-        console.log("Gas Estimate USD: ", gasEstimateUsd.toString())
 
         // Calculate the minimum amount required to make the trade profitable / worthwhile
         const minimumAmountOut =
