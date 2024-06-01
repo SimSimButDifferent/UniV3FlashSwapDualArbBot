@@ -108,17 +108,37 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
             minimumAmountOut,
         )
 
+        // Log the smart contract profit of each token
+        const wethProfit = ethers.formatUnits(
+            await flashSwap.getWethProfit(),
+            18,
+        )
+        const usdcProfit = ethers.formatUnits(
+            await flashSwap.getUsdcProfit(),
+            6,
+        )
+        const usdtProfit = ethers.formatUnits(
+            await flashSwap.getUsdtProfit(),
+            6,
+        )
+
         console.log(`Route ${routeNumber} Info:`)
         console.log(
             `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
         )
 
         console.log(
-            `profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
+            `${route[9]} profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
         )
         console.log(
             `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
         )
+        console.log("-----------------------")
+        console.log("")
+        console.log("Total Smart Contract Profits:")
+        console.log(`WETH Profit: ${wethProfit}`)
+        console.log(`USDC Profit: ${usdcProfit}`)
+        console.log(`USDT Profit: ${usdtProfit}`)
         console.log("")
         console.log("-----------------------")
 

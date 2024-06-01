@@ -134,7 +134,6 @@ async function dualArbScan(pools) {
             }
 
             console.log("Number of trades executed: ", tradeCounter)
-            console.log("Total Profit for this session: $", profitCounter)
         }
 
         // Run the loop the first time
