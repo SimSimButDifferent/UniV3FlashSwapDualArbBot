@@ -47,4 +47,7 @@ module.exports = {
             default: 0,
         },
     },
+    ignition: {
+        requiredConfirmations: 5,
+    },
 }
