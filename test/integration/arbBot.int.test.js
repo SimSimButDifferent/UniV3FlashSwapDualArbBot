@@ -8,7 +8,6 @@ const { poolInformation } = require("../../src/utils/poolInformation")
 const { initPools } = require("../../src/utils/InitPools")
 const { findArbitrageRoutes } = require("../../src/utils/findArbitrageRoutes")
 const { dualArbScan } = require("../../src/dualArbScan")
-const Flas = require("../../ignition/modules/igniteFlashSwap")
 
 const { data: poolsData } = require("../../src/jsonPoolData/uniswapPools.json")
 const artifacts = {
@@ -32,6 +31,7 @@ let deployer
 let weth,
     usdc,
     wethAmount,
+    FlashSwap,
     flashSwap,
     uniswapV3Router,
     whale,
@@ -41,25 +41,9 @@ let weth,
     tokenAmountsIn
 
 describe("DualArbBot Tests", function () {
-    // let deployer
-    // let weth,
-    //     usdc,
-    //     wethAmount,
-    //     FlashSwap,
-    //     flashSwap,
-    //     uniswapV3Router,
-    //     whale,
-    //     whaleSigner,
-    //     poolsArray,
-    //     routesArray,
-    //     tokenAmountsIn
-
-    before(async function () {
+    it("runs tests", async function () {
         // create arb opportunity by swapping weth for usdc
         ;[deployer] = await hre.ethers.getSigners()
-
-        // // Create instance of flashswap contract
-        // const { flashSwap } = await hre.ignition.deploy(FlashSwap)
 
         FlashSwap = buildModule("FlashSwapV3", (m) => {
             const flashSwap = m.contractAt(
@@ -69,6 +53,9 @@ describe("DualArbBot Tests", function () {
 
             return { flashSwap }
         })
+
+        // const { flashswap } = await hre.ignition.deploy(FlashSwap)
+        // console.log(`deploying flashswap contract: ${flashswap.address}`)
 
         // Impersonate a whale account
         whale = "0x2feb1512183545f48f6b9c5b4ebfcaf49cfca6f3" // Replace with a WETH or USDC whale address
@@ -84,7 +71,6 @@ describe("DualArbBot Tests", function () {
         usdc = new hre.ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
 
         // Get the flashswap contract
-        f
 
         const whaleWethBalance = await weth.balanceOf(whale)
 
@@ -169,41 +155,30 @@ describe("DualArbBot Tests", function () {
             amountInUsd,
         )
 
-        // return { poolsArray, routesArray }
-    })
-    describe("FlashSwapV3", function () {
-        beforeEach(async function () {})
-        it("Should correctly log profit of each token", async function () {
-            const { flashswap } = await hre.ignition.deploy(FlashSwap)
-        })
-    })
-    describe("Dual Arb Scan", function () {
-        it("runs tests", async function () {
-            const route = routesArray[9]
-            const amountInFromArray = route[7]
-            const routeNumber = 9
-            const profitThreshold = route[8]
-            console.log("testing...")
-            console.log("route", route)
-            console.log("amount in from array", amountInFromArray)
-            console.log("route number", routeNumber)
-            console.log("profit threshold", profitThreshold)
-            await dualArbScan(pools)
-            // await new Promise((resolve) => setTimeout(resolve, 60000))
-            // await arbQuote(
-            //     route,
-            //     amountInFromArray,
-            //     routeNumber,
-            //     profitThreshold,
-            // )
-            console.log(
-                "Deployer Weth balance after Arb",
-                await weth.balanceOf(deployer.address),
-            )
-            console.log(
-                "Deployer Usdc balance after Arb",
-                await usdc.balanceOf(deployer.address),
-            )
-        }, 90000)
-    })
+        const route = routesArray[9]
+        const amountInFromArray = route[7]
+        const routeNumber = 9
+        const profitThreshold = route[8]
+        console.log("testing...")
+        console.log("route", route)
+        console.log("amount in from array", amountInFromArray)
+        console.log("route number", routeNumber)
+        console.log("profit threshold", profitThreshold)
+        await dualArbScan(pools)
+        // await new Promise((resolve) => setTimeout(resolve, 60000))
+        // await arbQuote(
+        //     route,
+        //     amountInFromArray,
+        //     routeNumber,
+        //     profitThreshold,
+        // )
+        console.log(
+            "Deployer Weth balance after Arb",
+            await weth.balanceOf(deployer.address),
+        )
+        console.log(
+            "Deployer Usdc balance after Arb",
+            await usdc.balanceOf(deployer.address),
+        )
+    }, 90000)
 })
