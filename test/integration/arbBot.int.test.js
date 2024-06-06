@@ -1,5 +1,5 @@
 const hre = require("hardhat")
-const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules")
+// const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules")
 const { expect } = require("chai")
 
 // const { dualArbScan } = require("../../src/dualArbScan")
@@ -7,13 +7,16 @@ const { arbQuote } = require("../../src/utils/arbQuote")
 const { poolInformation } = require("../../src/utils/poolInformation")
 const { initPools } = require("../../src/utils/InitPools")
 const { findArbitrageRoutes } = require("../../src/utils/findArbitrageRoutes")
-const { dualArbScan } = require("../../src/dualArbScan")
+// const { dualArbScan } = require("../../src/dualArbScan")
 
 const { data: poolsData } = require("../../src/jsonPoolData/uniswapPools.json")
 const artifacts = {
     UniswapV3Router: require("@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json"),
 }
 const { weth9Abi, UsdcAbi } = require("../mainnetTokens.json")
+const {
+    abi: flashSwapAbi,
+} = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 
 const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
 
@@ -26,6 +29,7 @@ WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 USDC_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 
 const UNISWAP_V3_ROUTER_ADDRESS = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+const FLASHSWAP_ADDRESS = "0xf42ec71a4440f5e9871c643696dd6dc9a38911f8"
 
 let deployer
 let weth,
@@ -45,17 +49,11 @@ describe("DualArbBot Tests", function () {
         // create arb opportunity by swapping weth for usdc
         ;[deployer] = await hre.ethers.getSigners()
 
-        FlashSwap = buildModule("FlashSwapV3", (m) => {
-            const flashSwap = m.contractAt(
-                "FlashSwapV3",
-                "0xf42ec71a4440f5e9871c643696dd6dc9a38911f8",
-            )
-
-            return { flashSwap }
-        })
-
-        // const { flashswap } = await hre.ignition.deploy(FlashSwap)
-        // console.log(`deploying flashswap contract: ${flashswap.address}`)
+        flashSwap = new hre.ethers.Contract(
+            FLASHSWAP_ADDRESS,
+            flashSwapAbi,
+            deployer,
+        )
 
         // Impersonate a whale account
         whale = "0x2feb1512183545f48f6b9c5b4ebfcaf49cfca6f3" // Replace with a WETH or USDC whale address
@@ -159,19 +157,19 @@ describe("DualArbBot Tests", function () {
         const amountInFromArray = route[7]
         const routeNumber = 9
         const profitThreshold = route[8]
-        console.log("testing...")
-        console.log("route", route)
-        console.log("amount in from array", amountInFromArray)
-        console.log("route number", routeNumber)
-        console.log("profit threshold", profitThreshold)
-        await dualArbScan(pools)
-        // await new Promise((resolve) => setTimeout(resolve, 60000))
-        // await arbQuote(
-        //     route,
-        //     amountInFromArray,
-        //     routeNumber,
-        //     profitThreshold,
-        // )
+        console.log("Quoting...")
+
+        // await dualArbScan(pools)
+
+        const quote = await arbQuote(
+            route,
+            amountInFromArray,
+            routeNumber,
+            profitThreshold,
+        )
+
+        await new Promise((resolve) => setTimeout(resolve, 10000))
+
         console.log(
             "Deployer Weth balance after Arb",
             await weth.balanceOf(deployer.address),
