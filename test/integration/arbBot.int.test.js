@@ -7,23 +7,21 @@ const { arbQuote } = require("../../src/utils/arbQuote")
 const { poolInformation } = require("../../src/utils/poolInformation")
 const { initPools } = require("../../src/utils/InitPools")
 const { findArbitrageRoutes } = require("../../src/utils/findArbitrageRoutes")
-// const { dualArbScan } = require("../../src/dualArbScan")
 
 const { data: poolsData } = require("../../src/jsonPoolData/uniswapPools.json")
 const artifacts = {
     UniswapV3Router: require("@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json"),
 }
+const {
+    abi: PoolAbi,
+} = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 const { weth9Abi, UsdcAbi } = require("../mainnetTokens.json")
 const {
     abi: flashSwapAbi,
 } = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 
-const ALCHEMY_MAINNET_API = process.env.ALCHEMY_MAINNET_API
-
 const pools = poolsData.pools
-const amountInUsd = "100"
-const BATCH_SIZE = 10
-const BATCH_INTERVAL = 8000
+const amountInUsd = "10000"
 
 WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 USDC_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
@@ -35,7 +33,6 @@ let deployer
 let weth,
     usdc,
     wethAmount,
-    FlashSwap,
     flashSwap,
     uniswapV3Router,
     whale,
@@ -49,11 +46,23 @@ describe("DualArbBot Tests", function () {
         // create arb opportunity by swapping weth for usdc
         ;[deployer] = await hre.ethers.getSigners()
 
+        // Get the FlashSwap contract
         flashSwap = new hre.ethers.Contract(
             FLASHSWAP_ADDRESS,
             flashSwapAbi,
             deployer,
         )
+
+        // Get the WETH and USDC contracts
+        weth = new hre.ethers.Contract(WETH_ADDRESS, weth9Abi, deployer)
+        usdc = new hre.ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
+
+        // Initialize the pools
+        poolsArray = await initPools(pools)
+        console.log(`Found ${poolsArray.length} pools`)
+
+        // Output pool information and token amounts in for each token included in query.
+        tokenAmountsIn = await poolInformation(pools, amountInUsd)
 
         // Impersonate a whale account
         whale = "0x2feb1512183545f48f6b9c5b4ebfcaf49cfca6f3" // Replace with a WETH or USDC whale address
@@ -63,12 +72,6 @@ describe("DualArbBot Tests", function () {
         })
 
         whaleSigner = await hre.ethers.getSigner(whale)
-
-        // // Get the WETH and USDC contracts
-        weth = new hre.ethers.Contract(WETH_ADDRESS, weth9Abi, deployer)
-        usdc = new hre.ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
-
-        // Get the flashswap contract
 
         const whaleWethBalance = await weth.balanceOf(whale)
 
@@ -139,13 +142,6 @@ describe("DualArbBot Tests", function () {
             hre.ethers.formatUnits(newWhaleUsdcBalance.toString(), 6),
         )
 
-        // Initialize the pools
-        poolsArray = await initPools(pools)
-        console.log(`Found ${poolsArray.length} pools`)
-
-        // Output pool information and token amounts in for each token included in query.
-        tokenAmountsIn = await poolInformation(pools, amountInUsd)
-
         // Get possible arbitrage routes where tokenIn and tokenOut are the same.
         routesArray = await findArbitrageRoutes(
             pools,
@@ -153,22 +149,49 @@ describe("DualArbBot Tests", function () {
             amountInUsd,
         )
 
-        const route = routesArray[9]
+        let route
+        for (let i = 0; i < routesArray.length; i++) {
+            if (
+                routesArray[i][0] === WETH_ADDRESS &&
+                routesArray[i][1] === "3000" &&
+                routesArray[i][2] === USDC_ADDRESS &&
+                routesArray[i][3] === "500"
+            ) {
+                route = routesArray[i]
+            }
+        }
+        // console.log("test route: ", route)
+
         const amountInFromArray = route[7]
-        const routeNumber = 9
+        const routeNumber = 0
         const profitThreshold = route[8]
         console.log("Quoting...")
-
+        await new Promise((resolve) => setTimeout(resolve, 5000))
         // await dualArbScan(pools)
+        console.log(route)
 
-        const quote = await arbQuote(
-            route,
-            amountInFromArray,
-            routeNumber,
-            profitThreshold,
+        const [amountOut, arbitrageOpportunity, profit, amountOutMinimum] =
+            await arbQuote(
+                route,
+                amountInFromArray,
+                routeNumber,
+                profitThreshold,
+            )
+
+        // console.log(quote)
+
+        // await new Promise((resolve) => setTimeout(resolve, 120000))
+
+        const deployerUsdcBalance = await usdc.balanceOf(deployer.address)
+        console.log(
+            `amountIn - ${hre.ethers.formatUnits(amountInFromArray.toString(), Number(route[5]))} ${route[9]}`,
         )
 
-        await new Promise((resolve) => setTimeout(resolve, 10000))
+        console.log(
+            `${route[9]} profit - ${hre.ethers.formatUnits(profit, Number(route[5]))}`,
+        )
+
+        expect(deployerUsdcBalance).to.be.greaterThan(0)
 
         console.log(
             "Deployer Weth balance after Arb",
@@ -178,5 +201,5 @@ describe("DualArbBot Tests", function () {
             "Deployer Usdc balance after Arb",
             await usdc.balanceOf(deployer.address),
         )
-    }, 90000)
+    })
 })

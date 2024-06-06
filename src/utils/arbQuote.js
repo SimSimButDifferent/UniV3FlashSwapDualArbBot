@@ -45,11 +45,6 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
             [route[0], route[1], route[2], route[3], route[4]],
         )
 
-        // Call the quoteExactInput function and get the output
-        // const output = await quoter2.callStatic.quoteExactInput(
-        //     swapPath,
-        //     amountIn,
-        // )
         const output = await quoter2.quoteExactInput.staticCall(
             swapPath,
             amountIn,

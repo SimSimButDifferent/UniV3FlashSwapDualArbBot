@@ -50,4 +50,7 @@ module.exports = {
     ignition: {
         requiredConfirmations: 5,
     },
+    mocha: {
+        timeout: 120000,
+    },
 }

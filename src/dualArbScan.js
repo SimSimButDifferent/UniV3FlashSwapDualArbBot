@@ -147,8 +147,8 @@ async function dualArbScan(pools) {
     }
 }
 
-dualArbScan(pools).catch((error) => {
-    console.error(error)
-})
+// dualArbScan(pools).catch((error) => {
+//     console.error(error)
+// })
 
 exports.dualArbScan = dualArbScan
