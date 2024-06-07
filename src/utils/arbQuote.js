@@ -29,8 +29,12 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     let tokenIn
     let tokenOut
 
+    const amountInUsd = route[7]
+
     const token0Decimals = route[5]
     const token1Decimals = route[6]
+
+    console.log("token amount In", amountIn)
 
     // Create a new provider
     const provider = getProvider()
@@ -53,14 +57,18 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         // Log neccesary outputs
         const amountOut = output.amountOut
         const gasEstimate = output.gasEstimate.toString()
-        const gasEstimateUsd = ethers.parseUnits(
-            await gasEstimateToUsd(gasEstimate),
-            6,
-        )
+        // const gasEstimateUsd = ethers.parseUnits(
+        //     await gasEstimateToUsd(gasEstimate),
+        //     6,
+        // )
+        const gasEstimateUsd = await gasEstimateToUsd(gasEstimate)
+        const gasEstimateUsdBigInt = ethers.parseUnits(gasEstimateUsd, 6)
 
         // Calculate the minimum amount required to make the trade profitable / worthwhile
         const minimumAmountOut =
-            Number(amountIn) + Number(gasEstimateUsd) + Number(profitThreshold)
+            Number(amountInUsd) +
+            Number(gasEstimateUsdBigInt) +
+            Number(profitThreshold)
 
         // Calculate the profit
         const profit = Number(amountOut) - minimumAmountOut
@@ -71,10 +79,28 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
             gasEstimateUsd,
             minimumAmountOut,
             profit,
+            gasEstimateUsdBigInt,
         }
     }
 
-    const { amountOut, minimumAmountOut, profit } = await simSwap(amountIn)
+    const {
+        amountOut,
+        gasEstimate,
+        gasEstimateUsd,
+        minimumAmountOut,
+        profit,
+        gasEstimateUsdBigInt,
+    } = await simSwap(amountIn)
+
+    console.log("amount in usd: ", amountInUsd, typeof amountInUsd)
+
+    console.log(
+        "gas estimate usd Bigint: ",
+        gasEstimateUsdBigInt,
+        typeof gasEstimateUsdBigInt,
+    )
+    console.log("profit threshhold", profitThreshold, typeof profitThreshold)
+    console.log("gas estimate usd: ", gasEstimateUsd, typeof gasEstimateUsd)
 
     // Calculate wether the arbitrage opportunity is profitable
     if (profit > profitThreshold) {
@@ -150,7 +176,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         console.log("-----------------------")
     }
 
-    return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
+    return [amountOut, arbitrageOpportunity, profit, minimumAmountOut, route[9]]
 }
 
 exports.arbQuote = arbQuote

@@ -44,6 +44,7 @@ async function dualArbScan(pools) {
             tokenAmountsIn,
             amountInUsd,
         )
+        console.log(routesArray)
 
         // Calculate how often the loop needs to run to scan all routes
         const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)

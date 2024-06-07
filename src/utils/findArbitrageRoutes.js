@@ -19,8 +19,8 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     : Number((amountIn = ethers.parseUnits(amountInUsd, 6)))
 
                 // Assuming amountIn is a BigInt
-                let profitThresholdBigInt = (amountIn * 100n) / 10n // Keep everything as BigInt
-                let profitThresholdString = profitThresholdBigInt.toString() // Convert to string at the end
+                let profitThresholdBigInt = amountIn / 10n // Keep everything as BigInt
+                let profitThresholdString = profitThresholdBigInt // Convert to string at the end
                 // Example route: token0 -> token1 in one pool, and token1 -> token0 in another pool
                 let route1 = [
                     pools[i].token0.id, // [0]
