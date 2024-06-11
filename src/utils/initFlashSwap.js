@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat")
 const {
     abi: flashSwapAbi,
-} = require("../../out/FlashSwapV3.sol/FlashSwapV3.json")
+} = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 const {
     networkConfig,
     developmentChains,

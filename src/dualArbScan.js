@@ -14,6 +14,8 @@ const pools = poolsData.pools
 // For different erc-20 tokens this amount will be converted to the token amount
 const amountInUsd = "100"
 
+const badRoutesArray = []
+
 /**
  * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
  */
@@ -44,7 +46,21 @@ async function dualArbScan(pools) {
             tokenAmountsIn,
             amountInUsd,
         )
-        console.log(routesArray)
+
+        badRoutesArray.push(routesArray[39])
+        badRoutesArray.push(routesArray[41])
+        badRoutesArray.push(routesArray[43])
+        badRoutesArray.push(routesArray[47])
+        badRoutesArray.push(routesArray[49])
+        badRoutesArray.push(routesArray[51])
+        badRoutesArray.push(routesArray[55])
+        badRoutesArray.push(routesArray[57])
+        badRoutesArray.push(routesArray[59])
+        badRoutesArray.push(routesArray[79])
+        badRoutesArray.push(routesArray[81])
+        badRoutesArray.push(routesArray[83])
+
+        console.log("Bad routes: ", badRoutesArray)
 
         // Calculate how often the loop needs to run to scan all routes
         const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)
@@ -111,7 +127,11 @@ async function dualArbScan(pools) {
                                 amountInFromArray,
                                 routeNumber,
                                 profitThreshold,
-                            ),
+                            ).then((result) => {
+                                if (result.badRoute == true) {
+                                    badRoutesArray.push(route)
+                                }
+                            }),
                         )
                     } catch (error) {
                         console.error(
@@ -133,6 +153,8 @@ async function dualArbScan(pools) {
                 // Wait for the batch promises to resolve
                 await Promise.all(batchPromises)
             }
+
+            console.log("Bad routes: ", badRoutesArray)
 
             console.log("Number of trades executed: ", tradeCounter)
         }
