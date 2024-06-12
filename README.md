@@ -1,17 +1,23 @@
-## Uniswap V3 Stablecoin Flashswap Arbitrage bot.
+## Uniswap V3 Flashswap Arbitrage bot.
 
 This project is broken down into 2 main parts.
 
-**Flashswap function smart contract + Arbitrage scanner**
+### Flashswap function smart contract + Arbitrage scanner
 
-The idea is for the script to scan the pools for current prices and find profitable routes for profitable arbitrage.
+The idea is for the script to scan the pools for current prices and execute flashswap arbitrage with a given amountIn.
 
--   Find a profitable route.
+You do this my first running getPools.js, which queries the [uniswapV3 subgraph](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3) and writes a json file to ./src/jsonPoolData/ that is an object containing all the neccesary pool information. 
+
+Right now it is configured to pool for pools that include WETH, USDC and USDT that have totalValueLocked of above $1,000,000. 
+
+You can configure the query how you like, the script should still run the same way.
+
+**Here is an overview of what the script does:**
+
+-   Scans all routes between a given set of pools.
 -   Is the route profitable after gas + fees?
 -   Format the route for input into the flashswap function.
--   Execute Flashswap smart contract function.
-
-The script should then calculate if the trade will be profitable before executing the flashswap function.
+-   Execute Flashswap smart contract function and log profits.
 
 **To get started...**
 
