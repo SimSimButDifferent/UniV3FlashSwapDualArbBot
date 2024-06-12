@@ -6,7 +6,7 @@ This project is broken down into 2 main parts.
 
 The idea is for the script to scan the pools for current prices and execute flashswap arbitrage with a given amountIn.
 
-You do this my first running getPools.js, which queries the [uniswapV3 subgraph](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3) and writes a json file to ./src/jsonPoolData/ that is an object containing all the neccesary pool information. 
+You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information. 
 
 Right now it is configured to pool for pools that include WETH, USDC and USDT that have totalValueLocked of above $1,000,000. 
 
@@ -18,6 +18,15 @@ You can configure the query how you like, the script should still run the same w
 -   Is the route profitable after gas + fees?
 -   Format the route for input into the flashswap function.
 -   Execute Flashswap smart contract function and log profits.
+
+![image](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/assets/88177427/ade9bef7-4367-4bef-9c7b-215f38d06907)
+
+
+**Created using both:**
+
+[Foundry](https://book.getfoundry.sh/) - For testing the Smart contract, written in Solidity
+
+[Hardhat](https://hardhat.org/) - For testing the scanner and all of it's dependencies, written in javascript.
 
 **To get started...**
 
