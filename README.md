@@ -51,16 +51,16 @@ If you haven't already, go get a mainnet API key from [Alchemy](https://www.alch
 FORK_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY_
 ```
 
+### Foundry testing ❤️‍🔥
+
 **Run the local node**
 
 You can go to etherscan.io if you want to get a more recent block number.
 
-**Foundry testing**
-
 ```bash
 anvil --fork-url FORK_URL --fork-block-number 19721861 --fork-chain-id 1 --chain-id 1
 ```
-Split the terminal and deploy flashSwapV3.sol to the forked mainnet:
+Split the terminal and deploy flashSwapV3.sol to the forked mainnet: 🚀
 
 ```bash
 forge script script/DeployFlashSwapV3.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --legacy
@@ -139,9 +139,30 @@ Logs:
 Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 120.54s (9.84s CPU time)
 ```
 
-**Hardhat testing**
+### Hardhat testing 👷
+
+**Run the local node**
+
+You can go to etherscan.io if you want to get a more recent block number.
+
 ```bash
 yarn hardhat node --fork FORK_URL --fork-block-number 20066221 --network hardhat
+```
+
+Split the terminal and deploy flashSwapV3.sol to the forked mainnet:
+```bash
+yarn hardhat ignition deploy ignition/modules/igniteFlashSwap.js --network localhost
+```
+**IF YOU GET AN ERROR** - delete the deployments folder for 31337 in the ignition folder, then run ```yarn hardhat clean```. Then run the ignition command above again.
+
+**Unit tests** - For all the dependincies for the dualArbScan script.
+```bash
+yarn hardhat test test/unit/arbBot.unit.test.js --network localhost
+```
+
+**Integration test** - for the dualArbScan script itself
+```bash
+yarn hardhat test test/integration/arbBot.int.test.js --network localhost
 ```
 
 ## To Run
