@@ -53,7 +53,7 @@ async function gasEstimateToUsd(gas) {
 
     // const gasPrice = (await provider.getFeeData()).gasPrice
     const gasPrice = ethers.parseUnits(await getGasPrice(), "gwei")
-    console.log(typeof gasPrice, gasPrice, "gasPrice")
+
     const gasEstimate = BigInt(gas)
 
     const ethPriceUsd = ethers.formatUnits(await getEthPriceUsd(), 8)

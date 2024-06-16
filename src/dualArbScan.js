@@ -47,20 +47,20 @@ async function dualArbScan(pools) {
             amountInUsd,
         )
 
-        badRoutesArray.push(routesArray[39])
-        badRoutesArray.push(routesArray[41])
-        badRoutesArray.push(routesArray[43])
-        badRoutesArray.push(routesArray[47])
-        badRoutesArray.push(routesArray[49])
-        badRoutesArray.push(routesArray[51])
-        badRoutesArray.push(routesArray[55])
-        badRoutesArray.push(routesArray[57])
-        badRoutesArray.push(routesArray[59])
-        badRoutesArray.push(routesArray[79])
-        badRoutesArray.push(routesArray[81])
-        badRoutesArray.push(routesArray[83])
+        // badRoutesArray.push(routesArray[39])
+        // badRoutesArray.push(routesArray[41])
+        // badRoutesArray.push(routesArray[43])
+        // badRoutesArray.push(routesArray[47])
+        // badRoutesArray.push(routesArray[49])
+        // badRoutesArray.push(routesArray[51])
+        // badRoutesArray.push(routesArray[55])
+        // badRoutesArray.push(routesArray[57])
+        // badRoutesArray.push(routesArray[59])
+        // badRoutesArray.push(routesArray[79])
+        // badRoutesArray.push(routesArray[81])
+        // badRoutesArray.push(routesArray[83])
 
-        console.log("Bad routes: ", badRoutesArray)
+        // console.log("Bad routes: ", badRoutesArray)
 
         // Calculate how often the loop needs to run to scan all routes
         const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)
@@ -170,8 +170,8 @@ async function dualArbScan(pools) {
     }
 }
 
-// dualArbScan(pools).catch((error) => {
-//     console.error(error)
-// })
+dualArbScan(pools).catch((error) => {
+    console.error(error)
+})
 
 exports.dualArbScan = dualArbScan

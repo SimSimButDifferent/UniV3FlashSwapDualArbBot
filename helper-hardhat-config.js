@@ -10,7 +10,7 @@ const networkConfig = {
     31337: {
         name: "localhost",
         quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
-        flashSwapV3Address: "0xf42ec71a4440f5e9871c643696dd6dc9a38911f8",
+        flashSwapV3Address: "0xf93b0549cd50c849d792f0eae94a598fa77c7718",
     },
 }
 

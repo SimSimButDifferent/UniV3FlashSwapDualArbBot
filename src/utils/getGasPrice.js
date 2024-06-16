@@ -9,7 +9,7 @@ async function getGasPrice() {
 
     // print the JSON response
     let abi = data.result
-    console.log(abi.SafeGasPrice)
+    // console.log(typeof abi.SafeGasPrice, "safegasprice: ", abi.SafeGasPrice)
     return abi.SafeGasPrice
 }
 
