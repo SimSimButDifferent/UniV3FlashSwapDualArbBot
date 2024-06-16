@@ -2,7 +2,7 @@ const hre = require("hardhat")
 // const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules")
 const { expect } = require("chai")
 
-const { dualArbScan } = require("../../src/dualArbScan")
+// const { dualArbScan } = require("../../src/dualArbScan")
 const { arbQuote } = require("../../src/utils/arbQuote")
 const { poolInformation } = require("../../src/utils/poolInformation")
 const { initPools } = require("../../src/utils/InitPools")
@@ -58,7 +58,7 @@ describe("DualArbBot Tests", function () {
         tokenAmountsIn = await poolInformation(pools, amountInUsd)
 
         // Impersonate a whale account
-        whale = "0x2feb1512183545f48f6b9c5b4ebfcaf49cfca6f3" // Replace with a WETH or USDC whale address
+        whale = "0x6B44ba0a126a2A1a8aa6cD1AdeeD002e141Bcd44" // Replace with a WETH or USDC whale address
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: [whale],
@@ -176,8 +176,8 @@ describe("DualArbBot Tests", function () {
                 feePool1,
                 tokenIn,
                 tokenOut,
-                amountIn,
-                minimumAmountOut,
+                amountInUsd,
+                0,
             )
 
             // Log the smart contract profit of each token
@@ -218,8 +218,8 @@ describe("DualArbBot Tests", function () {
             const txReceipt = await tx.wait()
             console.log("Transaction Receipt: ", txReceipt)
 
-            // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
-            await arbQuote(route, amountIn, routeNumber, profitThreshold)
+            // // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
+            // await arbQuote(route, amountIn, routeNumber, profitThreshold)
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
@@ -244,18 +244,18 @@ describe("DualArbBot Tests", function () {
         // await new Promise((resolve) => setTimeout(resolve, 120000))
 
         const deployerUsdcBalance = await usdc.balanceOf(deployer.address)
-        console.log(`amountIn - ${amountInFromArray}`)
+        // console.log(`amountIn - ${amountInFromArray}`)
 
-        console.log(`${route[9]} profit - ${profit}`)
-
-        console.log(
-            `amount out - ${hre.ethers.formatUnits(amountOut, 6)} ${tokenOutSymbol}`,
-        )
+        // // console.log(`${route[9]} profit - ${profit}`)
 
         // console.log(
-        //     `minimum amount out - ${hre.ethers.formatUnits(amountOutMinimum.toString(), 6)}`,
+        //     `amount out - ${hre.ethers.formatUnits(amountOut, 6)} ${tokenOutSymbol}`,
         // )
-        console.log(`minimum amount out - ${amountOutMinimum.toString()}`)
+
+        // // console.log(
+        // //     `minimum amount out - ${hre.ethers.formatUnits(amountOutMinimum.toString(), 6)}`,
+        // // )
+        // console.log(`minimum amount out - ${amountOutMinimum.toString()}`)
 
         expect(deployerUsdcBalance).to.be.greaterThan(0)
 
