@@ -84,4 +84,4 @@ module.exports = {
     isUSDToken,
     getEthPriceUsd,
 }
-gasEstimateToUsd(1000000).then((res) => console.log(res))
+// gasEstimateToUsd(1000000).then((res) => console.log(res))

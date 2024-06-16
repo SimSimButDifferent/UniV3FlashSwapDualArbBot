@@ -1,5 +1,7 @@
 const { ethers } = require("ethers")
 const { isUSDToken } = require("./utilities")
+
+// FOR TESTING
 const { data: poolsData } = require("../jsonPoolData/uniswapPools.json")
 const pools = poolsData.pools
 const amountInUsd = "100"
@@ -13,8 +15,8 @@ const amountInUsd = "100"
  */
 async function poolInformation(pools, amountInUsd) {
     // Turn off when hardhat tests are running
-    console.log("List of pools to scan")
-    console.log("-----------------------")
+    // console.log("List of pools to scan")
+    // console.log("-----------------------")
 
     let tokenAmountsIn = {}
 
@@ -31,16 +33,24 @@ async function poolInformation(pools, amountInUsd) {
 
             let price
 
-            console.log(`price token 0: ${priceToken0}`, typeof priceToken0)
-            console.log(`price token 1: ${priceToken1}`, typeof priceToken1)
-
-            if (isUSDToken(token0.symbol)) {
-                price = ethers.parseUnits(priceToken0.toFixed(6), 6)
-                tokenAmountsIn[token1.symbol] = (
-                    Number(amountInUsd) / priceToken0
-                ).toString()
-            } else {
-                price = ethers.parseUnits(priceToken1.toFixed(6), 6)
+            if (
+                (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
+                (!isUSDToken(token0.symbol) && isUSDToken(token1.symbol))
+            ) {
+                // Add the token price to the tokenPrices object
+                if (isUSDToken(token0.symbol)) {
+                    price = Number(priceToken0).toFixed(6)
+                    tokenAmountsIn[token1.symbol] = (
+                        Number(amountInUsd) / Number(price)
+                    ).toString()
+                } else {
+                    price = Number(priceToken1).toFixed(6)
+                }
+            } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
+                price =
+                    token0.symbol === "USDT"
+                        ? Number(priceToken1).toFixed(6)
+                        : Number(priceToken0).toFixed(6)
             }
 
             // Log pool information - Turn off when running hardhat tests!

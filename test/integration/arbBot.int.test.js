@@ -161,7 +161,70 @@ describe("DualArbBot Tests", function () {
         const amountInFromArray = route[7]
         const routeNumber = 0
         const profitThreshold = route[8]
-        console.log("Quoting...")
+
+        console.log("Calling Flashswap...")
+
+        poolAddress = ethers.getAddress(route[10])
+        feePool1 = route[3]
+        tokenIn = route[0]
+        tokenOut = route[2]
+
+        try {
+            // Call flashswap
+            const tx = await flashSwap.flashswap(
+                poolAddress,
+                feePool1,
+                tokenIn,
+                tokenOut,
+                amountIn,
+                minimumAmountOut,
+            )
+
+            // Log the smart contract profit of each token
+            const wethProfit = ethers.formatUnits(
+                await flashSwap.getWethProfit(),
+                18,
+            )
+            const usdcProfit = ethers.formatUnits(
+                await flashSwap.getUsdcProfit(),
+                6,
+            )
+            const usdtProfit = ethers.formatUnits(
+                await flashSwap.getUsdtProfit(),
+                6,
+            )
+
+            console.log(`Route ${routeNumber} Info:`)
+            console.log(
+                `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
+            )
+
+            console.log(
+                `${route[9]} profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
+            )
+            console.log(
+                `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
+            )
+            console.log("-----------------------")
+            console.log("")
+            console.log("Total Smart Contract Profits:")
+            console.log(`WETH Profit: ${wethProfit}`)
+            console.log(`USDC Profit: ${usdcProfit}`)
+            console.log(`USDT Profit: ${usdtProfit}`)
+            console.log("")
+            console.log("-----------------------")
+
+            // Get transaction receipt
+            const txReceipt = await tx.wait()
+            console.log("Transaction Receipt: ", txReceipt)
+
+            // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
+            await arbQuote(route, amountIn, routeNumber, profitThreshold)
+        } catch (error) {
+            console.error("Error executing flashswap:", error)
+        }
+
+        // console.log("Quoting...")
         // await new Promise((resolve) => setTimeout(resolve, 5000))
 
         // const [
@@ -177,8 +240,8 @@ describe("DualArbBot Tests", function () {
         //     profitThreshold,
         // )
 
-        await dualArbScan(pools)
-        await new Promise((resolve) => setTimeout(resolve, 120000))
+        // await dualArbScan(pools)
+        // await new Promise((resolve) => setTimeout(resolve, 120000))
 
         const deployerUsdcBalance = await usdc.balanceOf(deployer.address)
         console.log(`amountIn - ${amountInFromArray}`)
