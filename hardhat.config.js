@@ -1,8 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox")
 require("@nomicfoundation/hardhat-foundry")
-require("@nomicfoundation/hardhat-verify")
-require("@nomicfoundation/hardhat-ethers")
-require("@nomicfoundation/hardhat-ignition-ethers")
+
 require("dotenv").config()
 
 const {

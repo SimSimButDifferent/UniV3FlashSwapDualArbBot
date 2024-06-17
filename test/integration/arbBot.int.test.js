@@ -8,11 +8,16 @@ const { poolInformation } = require("../../src/utils/poolInformation")
 const { initPools } = require("../../src/utils/InitPools")
 const { findArbitrageRoutes } = require("../../src/utils/findArbitrageRoutes")
 const { initFlashSwap } = require("../../src/utils/initFlashSwap")
+const { getProvider } = require("../../src/utils/getProvider")
 
 const { data: poolsData } = require("../../src/jsonPoolData/uniswapPools.json")
 const artifacts = {
     UniswapV3Router: require("@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json"),
 }
+const {
+    abi: flashSwapAbi,
+} = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
+
 const {
     abi: PoolAbi,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
@@ -25,13 +30,13 @@ WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 USDC_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 
 const UNISWAP_V3_ROUTER_ADDRESS = "0xE592427A0AEce92De3Edee1F18E0157C05861564"
-const FLASHSWAP_ADDRESS = "0xf42ec71a4440f5e9871c643696dd6dc9a38911f8"
+const FLASHSWAP_ADDRESS = "0x725314746e727f586e9fca65aed5dbe45aa71b99"
 
 let deployer
 let weth,
     usdc,
     wethAmount,
-    flashSwap,
+    flashSwapContract,
     uniswapV3Router,
     whale,
     whaleSigner,
@@ -45,7 +50,16 @@ describe("DualArbBot Tests", function () {
         ;[deployer] = await hre.ethers.getSigners()
 
         // Get the FlashSwap contract
-        flashSwap = initFlashSwap()
+        // flashSwapContract = initFlashSwap()
+
+        const provider = getProvider()
+
+        const flashSwapContract = new hre.ethers.Contract(
+            FLASHSWAP_ADDRESS,
+            flashSwapAbi,
+            provider,
+        )
+
         // Get the WETH and USDC contracts
         weth = new hre.ethers.Contract(WETH_ADDRESS, weth9Abi, deployer)
         usdc = new hre.ethers.Contract(USDC_ADDRESS, UsdcAbi, deployer)
@@ -168,40 +182,43 @@ describe("DualArbBot Tests", function () {
         feePool1 = route[3]
         tokenIn = route[0]
         tokenOut = route[2]
+        token0Decimals = Number(route[5])
 
         try {
-            // Call flashswap
-            const tx = await flashSwap.flashswap(
-                poolAddress,
-                feePool1,
-                tokenIn,
-                tokenOut,
-                amountInUsd,
-                0,
-            )
+            // // Call flashswap
+            // const tx = await flashSwapContract
+            //     .connect(deployer)
+            //     .flashSwap(
+            //         poolAddress,
+            //         feePool1,
+            //         tokenIn,
+            //         tokenOut,
+            //         amountInUsd,
+            //         0,
+            //     )
 
             // Log the smart contract profit of each token
-            const wethProfit = ethers.formatUnits(
-                await flashSwap.getWethProfit(),
+            const wethProfit = hre.ethers.formatUnits(
+                await flashSwapContract.connect(deployer).getWethProfit(),
                 18,
             )
-            const usdcProfit = ethers.formatUnits(
-                await flashSwap.getUsdcProfit(),
+            const usdcProfit = hre.ethers.formatUnits(
+                await flashSwapContract.connect(deployer).getUsdcProfit(),
                 6,
             )
-            const usdtProfit = ethers.formatUnits(
-                await flashSwap.getUsdtProfit(),
+            const usdtProfit = hre.ethers.formatUnits(
+                await flashSwapContract.connect(deployer).getUsdtProfit(),
                 6,
             )
 
             console.log(`Route ${routeNumber} Info:`)
             console.log(
-                `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
+                `amountIn - ${hre.ethers.formatUnits(amountInUsd.toString(), token0Decimals)} ${route[9]}`,
             )
 
-            console.log(
-                `${route[9]} profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
-            )
+            // console.log(
+            //     `${route[9]} profit - ${hre.ethers.formatUnits(profit, token0Decimals)}`,
+            // )
             console.log(
                 `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
             )
@@ -214,9 +231,9 @@ describe("DualArbBot Tests", function () {
             console.log("")
             console.log("-----------------------")
 
-            // Get transaction receipt
-            const txReceipt = await tx.wait()
-            console.log("Transaction Receipt: ", txReceipt)
+            // // Get transaction receipt
+            // const txReceipt = await tx.wait()
+            // console.log("Transaction Receipt: ", txReceipt)
 
             // // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
             // await arbQuote(route, amountIn, routeNumber, profitThreshold)

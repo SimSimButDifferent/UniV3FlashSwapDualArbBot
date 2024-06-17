@@ -135,7 +135,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
 
         try {
             // Call flashswap
-            const tx = await flashSwap.flashswap(
+            const tx = await flashSwap.flashSwap(
                 poolAddress,
                 feePool1,
                 tokenIn,
