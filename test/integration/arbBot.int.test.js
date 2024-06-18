@@ -24,7 +24,7 @@ const {
 const { weth9Abi, UsdcAbi } = require("../mainnetTokens.json")
 
 const pools = poolsData.pools
-const amountInUsd = "10"
+const amountInUsd = "100"
 
 WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 USDC_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
@@ -54,7 +54,7 @@ describe("DualArbBot Tests", function () {
 
         const provider = getProvider()
 
-        const flashSwapContract = new hre.ethers.Contract(
+        flashSwapContract = new hre.ethers.Contract(
             FLASHSWAP_ADDRESS,
             flashSwapAbi,
             provider,
@@ -185,17 +185,15 @@ describe("DualArbBot Tests", function () {
         token0Decimals = Number(route[5])
 
         try {
-            // // Call flashswap
-            // const tx = await flashSwapContract
-            //     .connect(deployer)
-            //     .flashSwap(
-            //         poolAddress,
-            //         feePool1,
-            //         tokenIn,
-            //         tokenOut,
-            //         amountInUsd,
-            //         0,
-            //     )
+            // Call flashswap
+            const tx = await flashSwapContract.connect(deployer).flashSwap(
+                poolAddress,
+                feePool1,
+                tokenIn,
+                tokenOut,
+                hre.ethers.parseUnits(amountInUsd, 6), // Make sure any amountIn inputs are formatted like this.
+                0,
+            )
 
             // Log the smart contract profit of each token
             const wethProfit = hre.ethers.formatUnits(
@@ -212,13 +210,8 @@ describe("DualArbBot Tests", function () {
             )
 
             console.log(`Route ${routeNumber} Info:`)
-            console.log(
-                `amountIn - ${hre.ethers.formatUnits(amountInUsd.toString(), token0Decimals)} ${route[9]}`,
-            )
+            console.log(`amountIn - ${amountInUsd} ${route[9]}`)
 
-            // console.log(
-            //     `${route[9]} profit - ${hre.ethers.formatUnits(profit, token0Decimals)}`,
-            // )
             console.log(
                 `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
             )
@@ -231,48 +224,14 @@ describe("DualArbBot Tests", function () {
             console.log("")
             console.log("-----------------------")
 
-            // // Get transaction receipt
-            // const txReceipt = await tx.wait()
-            // console.log("Transaction Receipt: ", txReceipt)
-
-            // // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
-            // await arbQuote(route, amountIn, routeNumber, profitThreshold)
+            // Get transaction receipt
+            const txReceipt = await tx.wait()
+            console.log("Transaction Receipt: ", txReceipt)
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
 
-        // console.log("Quoting...")
-        // await new Promise((resolve) => setTimeout(resolve, 5000))
-
-        // const [
-        //     amountOut,
-        //     arbitrageOpportunity,
-        //     profit,
-        //     amountOutMinimum,
-        //     tokenOutSymbol,
-        // ] = await arbQuote(
-        //     route,
-        //     amountInFromArray,
-        //     routeNumber,
-        //     profitThreshold,
-        // )
-
-        // await dualArbScan(pools)
-        // await new Promise((resolve) => setTimeout(resolve, 120000))
-
         const deployerUsdcBalance = await usdc.balanceOf(deployer.address)
-        // console.log(`amountIn - ${amountInFromArray}`)
-
-        // // console.log(`${route[9]} profit - ${profit}`)
-
-        // console.log(
-        //     `amount out - ${hre.ethers.formatUnits(amountOut, 6)} ${tokenOutSymbol}`,
-        // )
-
-        // // console.log(
-        // //     `minimum amount out - ${hre.ethers.formatUnits(amountOutMinimum.toString(), 6)}`,
-        // // )
-        // console.log(`minimum amount out - ${amountOutMinimum.toString()}`)
 
         expect(deployerUsdcBalance).to.be.greaterThan(0)
 
