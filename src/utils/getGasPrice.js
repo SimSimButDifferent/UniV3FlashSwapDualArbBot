@@ -1,16 +1,16 @@
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const ARBSCAN_API_KEY = process.env.ARBSCAN_API_KEY
 
 async function getGasPrice() {
     // make an API call to the ABIs endpoint
     const response = await fetch(
-        `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_API_KEY}`,
+        `https://api.arbiscan.io/api?module=proxy&action=eth_gasPrice&apikey=${ARBSCAN_API_KEY}`,
     )
     const data = await response.json()
 
     // print the JSON response
-    let abi = data.result
-    // console.log(typeof abi.SafeGasPrice, "safegasprice: ", abi.SafeGasPrice)
-    return abi.SafeGasPrice
+    let abi = BigInt(data.result)
+    // console.log(abi)
+    return abi
 }
 
 getGasPrice()

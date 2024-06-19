@@ -8,41 +8,7 @@ const SUBGRAPH_API_KEY = process.env.SUBGRAPH_API_KEY
  */
 async function getPools() {
     // The query to get the pools from the Uniswap V3 subgraph
-    //   const query = `
-    //   {
-    //     pools(
-    //       where: {
-    //         token0_in: [
-    //           ${USDT}, ${USDC}, ${WETH}
-    //         ]
-    //         token1_in: [
-    //           ${USDT}, ${USDC}, ${WETH}
-    //         ]
-    //         totalValueLockedUSD_gt: 1000000
-    //       }
-    //       first: 1000
-    //     ) {
-    //       id
-    //       feeTier
-    //       totalValueLockedUSD
-    //       tick
-    //       token0 {
-    //         id
-    //         symbol
-    //         name
-    //         decimals
-    //       }
-    //       token1 {
-    //         id
-    //         symbol
-    //         name
-    //         decimals
-    //       }
-    //       token0Price
-    //       token1Price
-    //     }
-    //   }
-    // `
+
     const query = `
     {
       pools(
