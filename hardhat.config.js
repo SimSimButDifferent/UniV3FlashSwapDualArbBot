@@ -5,9 +5,10 @@ require("dotenv").config()
 
 const {
     ALCHEMY_MAINNET_API,
+    ARBITRUM_MAINNET_API,
     BOT_PRIVATE_KEY,
     ETHERSCAN_API_KEY,
-    BASESCAN_API_KEY,
+    ARBSCAN_API_KEY,
 } = process.env
 
 module.exports = {
@@ -29,6 +30,12 @@ module.exports = {
             accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
             blockConfirmations: 6,
         },
+        arbitrum: {
+            url: ARBITRUM_MAINNET_API,
+            chainId: 42161,
+            accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
+            blockConfirmations: 6,
+        },
         "base-mainnet": {
             url: "https://mainnet.base.org",
             accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
@@ -37,6 +44,7 @@ module.exports = {
         },
     },
     solidity: "0.7.6",
+
     etherscan: {
         apiKey: ETHERSCAN_API_KEY,
     },
