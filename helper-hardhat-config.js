@@ -7,6 +7,10 @@ const networkConfig = {
         name: "base mainnet",
         quoter2: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a",
     },
+    42161: {
+        name: "arbitrum",
+        quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+    },
     31337: {
         name: "localhost",
         quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",

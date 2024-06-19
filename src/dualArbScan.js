@@ -14,8 +14,6 @@ const pools = poolsData.pools
 // For different erc-20 tokens this amount will be converted to the token amount
 const amountInUsd = "100"
 
-const badRoutesArray = []
-
 /**
  * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
  */
@@ -138,8 +136,6 @@ async function dualArbScan(pools) {
                 // Wait for the batch promises to resolve
                 await Promise.all(batchPromises)
             }
-
-            console.log("Bad routes: ", badRoutesArray)
 
             console.log("Number of trades executed: ", tradeCounter)
         }
