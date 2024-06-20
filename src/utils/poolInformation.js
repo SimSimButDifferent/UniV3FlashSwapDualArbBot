@@ -1,10 +1,9 @@
-const { ethers } = require("ethers")
 const { isUSDToken } = require("./utilities")
 
 // FOR TESTING
-const { data: poolsData } = require("../jsonPoolData/uniswapPools.json")
-const pools = poolsData.pools
-const amountInUsd = "100"
+// const { data: poolsData } = require("../jsonPoolData/uniswapPools.json")
+// const pools = poolsData.pools
+// const amountInUsd = "100"
 
 /**
  * @dev This function logs the pool information

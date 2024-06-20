@@ -9,11 +9,9 @@ async function getGasPrice() {
 
     // print the JSON response
     let abi = BigInt(data.result)
-    // console.log(abi)
+
     return abi
 }
-
-getGasPrice()
 
 exports.getGasPrice = getGasPrice
 // Path: web3refresherL7/src/utils/utilities.js
