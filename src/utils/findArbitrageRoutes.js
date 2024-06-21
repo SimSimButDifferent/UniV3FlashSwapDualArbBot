@@ -1,6 +1,3 @@
-const { isUSDToken } = require("./utilities")
-const { ethers } = require("ethers")
-
 async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
     let routes = []
     let amountIn
@@ -10,12 +7,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
         for (let j = 0; j < pools.length; j++) {
             // Ensure not to compare the same pool
             if (i !== j) {
-                !isUSDToken(pools[i].token0.symbol)
-                    ? (amountIn = ethers.parseUnits(
-                          tokenAmountsIn[pools[i].token0.symbol],
-                          18,
-                      ))
-                    : (amountIn = ethers.parseUnits(amountInUsd, 6))
+                amountIn = tokenAmountsIn[pools[i].token0.symbol]
 
                 // Assuming amountIn is a BigInt
                 let profitThresholdBigInt = amountIn / 100n // Keep everything as BigInt
