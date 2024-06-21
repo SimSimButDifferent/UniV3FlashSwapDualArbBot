@@ -1,6 +1,6 @@
 require("./utils/getProvider")
 
-const { data: poolsData } = require("./jsonPoolData/uniswapPools")
+const { data: poolsData } = require("./jsonPoolData/arbitrumUniPools.json")
 const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")

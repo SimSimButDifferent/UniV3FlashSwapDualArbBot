@@ -1,7 +1,7 @@
 const { isUSDToken } = require("./utilities")
 
 // FOR TESTING
-// const { data: poolsData } = require("../jsonPoolData/uniswapPools.json")
+// const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
 // const pools = poolsData.pools
 // const amountInUsd = "100"
 
@@ -70,8 +70,8 @@ async function poolInformation(pools, amountInUsd) {
     return tokenAmountsIn
 }
 
-poolInformation(pools, amountInUsd).catch((error) => {
-    console.error(error)
-})
+// poolInformation(pools, amountInUsd).catch((error) => {
+//     console.error(error)
+// })
 
 exports.poolInformation = poolInformation
