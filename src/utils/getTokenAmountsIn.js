@@ -1,40 +1,5 @@
 const axios = require("axios")
-const ethers = require("ethers")
 const { getProvider } = require("./getProvider")
-
-const getTokenAmountsIn = async (tokens, amountInUsd) => {
-    const provider = getProvider() // Ensure this matches your setup
-    const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
-
-    const tokenSymbols = Object.keys(tokens)
-    const prices = await axios.get(
-        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest`,
-        {
-            params: {
-                symbol: tokenSymbols.join(","),
-            },
-            headers: {
-                "X-CMC_PRO_API_KEY": COINMARKETCAP_API_KEY,
-            },
-        },
-    )
-
-    console.log(`Prices: `, prices.data.data)
-
-    const amountsIn = {}
-    for (const tokenSymbol of tokenSymbols) {
-        const tokenInfo = tokens[tokenSymbol] // Now expecting an object with address and decimals
-        const priceInUsd = prices.data.data[tokenSymbol].quote.USD.price
-        console.log(`Price ${tokenSymbol} in usd: `, priceInUsd)
-        // const amountInWei = ethers.parseUnits(
-        //     (amountInUsd / priceInUsd).toString(),
-        //     tokenInfo.decimals, // Use decimals from the tokenInfo object
-        // )
-        // amountsIn[tokenSymbol] = amountInWei
-    }
-
-    return amountsIn
-}
 
 const tokens = {
     USDT: {
@@ -65,15 +30,46 @@ const tokens = {
         address: "0x808507121B80c02388fAd14726482e061B8da827",
         decimals: 18,
     },
-} // Assuming GMX has 18 decimals as an example
-// Add more tokens here following the same pattern
+}
 
-const amountInUsd = 100
+const getTokenAmountsIn = async (tokens, amountInUsd) => {
+    const provider = getProvider() // Ensure this matches your setup
+    const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 
-getTokenAmountsIn(tokens, amountInUsd)
-    .then((amountsIn) => {
-        console.log(amountsIn)
-    })
-    .catch((error) => {
-        console.error(error)
-    })
+    const tokenSymbols = Object.keys(tokens)
+    const prices = await axios.get(
+        `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest`,
+        {
+            params: {
+                symbol: tokenSymbols.join(","),
+            },
+            headers: {
+                "X-CMC_PRO_API_KEY": COINMARKETCAP_API_KEY,
+            },
+        },
+    )
+
+    const amountsIn = {}
+    for (const tokenSymbol of tokenSymbols) {
+        const tokenInfo = tokens[tokenSymbol] // Now expecting an object with address and decimals
+        const priceInUsd = prices.data.data[tokenSymbol].quote.USD.price
+        // console.log(`Price ${tokenSymbol} in usd: `, priceInUsd)
+        const amountInDecimal = (amountInUsd / priceInUsd).toString()
+        const baseUnit = BigInt(
+            Math.floor(parseFloat(amountInDecimal) * 10 ** tokenInfo.decimals),
+        )
+        amountsIn[tokenSymbol] = baseUnit
+    }
+
+    return amountsIn
+}
+
+module.exports = { getTokenAmountsIn }
+
+// getTokenAmountsIn(tokens, "100")
+//     .then((amountsIn) => {
+//         console.log(amountsIn)
+//     })
+//     .catch((error) => {
+//         console.error(error)
+//     })
