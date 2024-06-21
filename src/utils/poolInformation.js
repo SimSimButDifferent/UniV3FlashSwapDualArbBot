@@ -1,9 +1,9 @@
-const { isUSDToken } = require("./utilities")
+const { getTokenAmountsIn } = require("./getTokenAmountsIn")
 
 // FOR TESTING
-// const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
-// const pools = poolsData.pools
-// const amountInUsd = "100"
+const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
+const pools = poolsData.pools
+const amountInUsd = "100"
 
 /**
  * @dev This function logs the pool information
@@ -17,7 +17,8 @@ async function poolInformation(pools, amountInUsd) {
     // console.log("List of pools to scan")
     // console.log("-----------------------")
 
-    let tokenAmountsIn = {}
+    let tokenAmountsIn
+    let tokens = {}
 
     for (let i = 0; i < pools.length; i++) {
         try {
@@ -27,35 +28,25 @@ async function poolInformation(pools, amountInUsd) {
             const feeTier = pool.feeTier
             const totalValueLockedUSD = pool.totalValueLockedUSD
 
-            const priceToken0 = parseFloat(pool.token0Price)
-            const priceToken1 = parseFloat(pool.token1Price)
+            const token0Address = pool.token0.id
+            const token1Address = pool.token1.id
+            const token0Decimals = pool.token0.decimals
+            const token1Decimals = pool.token1.decimals
 
-            let price
+            tokens[token0.symbol] = {
+                address: token0Address,
+                decimals: token0Decimals,
+            }
 
-            if (
-                (isUSDToken(token0.symbol) && !isUSDToken(token1.symbol)) ||
-                (!isUSDToken(token0.symbol) && isUSDToken(token1.symbol))
-            ) {
-                // Add the token price to the tokenPrices object
-                if (isUSDToken(token0.symbol)) {
-                    price = Number(priceToken0).toFixed(6)
-                    tokenAmountsIn[token1.symbol] = (
-                        Number(amountInUsd) / Number(price)
-                    ).toString()
-                } else {
-                    price = Number(priceToken1).toFixed(6)
-                }
-            } else if (isUSDToken(token0.symbol) && isUSDToken(token1.symbol)) {
-                price =
-                    token0.symbol === "USDT"
-                        ? Number(priceToken1).toFixed(6)
-                        : Number(priceToken0).toFixed(6)
+            tokens[token1.symbol] = {
+                address: token1Address,
+                decimals: token1Decimals,
             }
 
             // Log pool information - Turn off when running hardhat tests!
 
             console.log(
-                `\n${token0.symbol}/${token1.symbol} - Fee tier(${feeTier}) - Price: ${price}`,
+                `\n${token0.symbol}/${token1.symbol} - Fee tier(${feeTier})`,
             )
             console.log(
                 `${token0.symbol}/${token1.symbol} - Amount locked in USD: ${Number(totalValueLockedUSD).toFixed(2)} $ - Address: ${pool.id}`,
@@ -65,13 +56,13 @@ async function poolInformation(pools, amountInUsd) {
             console.error(`Error processing pool at index ${i}:`, error)
         }
     }
-    console.log("\nNon USD token amountIn's calculated", tokenAmountsIn)
+    tokenAmountsIn = await getTokenAmountsIn(tokens, amountInUsd)
 
     return tokenAmountsIn
 }
 
-// poolInformation(pools, amountInUsd).catch((error) => {
-//     console.error(error)
-// })
+poolInformation(pools, amountInUsd).catch((error) => {
+    console.error(error)
+})
 
 exports.poolInformation = poolInformation

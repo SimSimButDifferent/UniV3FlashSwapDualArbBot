@@ -1,39 +1,7 @@
 const axios = require("axios")
-const { getProvider } = require("./getProvider")
-
-const tokens = {
-    USDT: {
-        address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-        decimals: 6,
-    },
-    USDC: {
-        address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-        decimals: 6,
-    },
-    WETH: {
-        address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-        decimals: 18,
-    },
-    GMX: {
-        address: "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-        decimals: 18,
-    },
-    WBTC: {
-        address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
-        decimals: 8,
-    },
-    ARB: {
-        address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-        decimals: 18,
-    },
-    PENDLE: {
-        address: "0x808507121B80c02388fAd14726482e061B8da827",
-        decimals: 18,
-    },
-}
+require("./getProvider")
 
 const getTokenAmountsIn = async (tokens, amountInUsd) => {
-    const provider = getProvider() // Ensure this matches your setup
     const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 
     const tokenSymbols = Object.keys(tokens)
@@ -60,11 +28,44 @@ const getTokenAmountsIn = async (tokens, amountInUsd) => {
         )
         amountsIn[tokenSymbol] = baseUnit
     }
-
+    console.log("Amounts in: ", amountsIn)
     return amountsIn
 }
 
 module.exports = { getTokenAmountsIn }
+
+// ---------------- FOR TESTING ---------------- run: node src/utils/getTokenAmountsIn.js
+
+// const tokens = {
+//     USDT: {
+//         address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+//         decimals: 6,
+//     },
+//     USDC: {
+//         address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+//         decimals: 6,
+//     },
+//     WETH: {
+//         address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+//         decimals: 18,
+//     },
+//     GMX: {
+//         address: "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+//         decimals: 18,
+//     },
+//     WBTC: {
+//         address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+//         decimals: 8,
+//     },
+//     ARB: {
+//         address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+//         decimals: 18,
+//     },
+//     PENDLE: {
+//         address: "0x808507121B80c02388fAd14726482e061B8da827",
+//         decimals: 18,
+//     },
+// }
 
 // getTokenAmountsIn(tokens, "100")
 //     .then((amountsIn) => {
