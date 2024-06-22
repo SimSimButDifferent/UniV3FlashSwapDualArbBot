@@ -19,7 +19,7 @@ const amountInUsd = "100"
  */
 
 // Set the batch size and interval to give control over the number of promises executed per second.
-const BATCH_SIZE = 10 // Number of promises to execute in each batch
+const BATCH_SIZE = 5 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 

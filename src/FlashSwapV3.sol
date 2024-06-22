@@ -21,15 +21,23 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 */ 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-address constant USDT_ADDRESS = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-address constant USDC_ADDRESS = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-address constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-address constant PEPE_ADDRESS = 0x6982508145454Ce325dDbE47a25d4ec3d2311933;
+address constant USDT_ADDRESS = 0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9;
+address constant USDC_ADDRESS = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831;
+address constant BRIDGED_USDC_ADDRESS = 0xff970a61a04b1ca14834a43f5de4533ebddb5cc8;
+address constant WETH_ADDRESS = 0x82af49447d8a07e3bd95bd0d56f35241523fbab1;
+address constant WBTC_ADDRESS = 0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f;
+address constant GMX_ADDRESS = 0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a;
+address constant ARB_ADDRESS = 0x912ce59144191c1204e64559fe8253a0e49e6548;
+address constant PENDLE_ADDRESS = 0x808507121B80c02388fAd14726482e061B8da827;
 
 uint16 constant USDT_DECIMALS = 6;
 uint16 constant USDC_DECIMALS = 6;
-uint16 constant DAI_DECIMALS = 18;
-uint16 constant PEPE_DECIMALS = 18;
+uint16 constant BRIDGED_USDC_DECIMALS = 6;
+uint16 constant WETH_DECIMALS = 18;
+uint16 constant WBTC_DECIMALS = 8;
+uint16 constant GMX_DECIMALS = 18;
+uint16 constant ARB_DECIMALS = 18;
+uint16 constant PENDLE_DECIMALS = 18;
 
 contract FlashSwapV3 is ReentrancyGuard {
     /* Events */
@@ -40,11 +48,14 @@ contract FlashSwapV3 is ReentrancyGuard {
     ISwapRouter02 constant router = ISwapRouter02(SWAP_ROUTER_02);
 
     // Profit tracking
-    uint256 private WethProfit;
     uint256 private UsdtProfit;
     uint256 private UsdcProfit;
-    uint256 private DaiProfit;
-    uint256 private PepeProfit;
+    uint256 private BridgedUsdcProfit;
+    uint256 private WethProfit;
+    uint256 private WbtcProfit;
+    uint256 private GmxProfit;
+    uint256 private ArbProfit;
+    uint256 private PendleProfit;
 
     address private tokenInAddress;
 
@@ -199,19 +210,24 @@ function uniswapV3SwapCallback(
     uint256 profit = (normalizedBuyBackAmount > normalizedAmountIn) ? normalizedBuyBackAmount - normalizedAmountIn : 0;
 
     require(profit > 0, "profit = 0");
-
     if (tokenIn == USDT_ADDRESS) {
         UsdtProfit += profit;
     } else if (tokenIn == USDC_ADDRESS) {
         UsdcProfit += profit;
-    } else if (tokenIn == PEPE_ADDRESS) {
-        PepeProfit += profit;
-    } else if (tokenIn == DAI_ADDRESS) {
-        DaiProfit += profit;
+    } else if (tokenIn == BRIDGED_USDC_ADDRESS) {
+        BridgedUsdcProfit += profit;
+    } else if (tokenIn == WBTC_ADDRESS) {
+        WbtcProfit += profit;
+    } else if (tokenIn == GMX_ADDRESS) {
+        GmxProfit += profit;
+    } else if (tokenIn == ARB_ADDRESS) {
+        ArbProfit += profit;
+    } else if (tokenIn == PENDLE_ADDRESS) {
+        PendleProfit += profit;
     } else {
         WethProfit += profit;
     }
-
+    
     // Repay pool 0
     IERC20(tokenIn).transfer(pool0, amountIn);
     IERC20(tokenIn).transfer(caller, profit);
@@ -219,36 +235,48 @@ function uniswapV3SwapCallback(
     emit FlashSwapExecuted(caller, profit);
 }
 
-
-    // Normalize token amounts to 18 decimals
+// Normalize token amounts to 18 decimals
 function _normalize(address token, uint256 amount) private pure returns (uint256) {
-    if (token == USDT_ADDRESS || token == USDC_ADDRESS) {
+    if (token == USDT_ADDRESS || token == USDC_ADDRESS || token == BRIDGED_USDC_ADDRESS) {
         return amount * 1e12; // Convert from 6 to 18 decimals
+    } else if (token == WBTC_ADDRESS) {
+        return amount * 1e10; // Convert from 8 to 18 decimals
     } else {
         return amount; // Already 18 decimals
     }
 }
 
-    
     // Getter Functions
-function getWethProfit() public view returns (uint256) {
-    return WethProfit;
-}
-function getUsdtProfit() public view returns (uint256) {
-    return UsdtProfit;
-}
-function getUsdcProfit() public view returns (uint256) {
-    return UsdcProfit;
-}
-function getPepeProfit() public view returns (uint256) {
-    return PepeProfit;
-}
-function getDaiProfit() public view returns (uint256) {
-    return DaiProfit;
-}
+    function getWethProfit() public view returns (uint256) {
+        return WethProfit;
+    }
+    function getUsdtProfit() public view returns (uint256) {
+        return UsdtProfit;
+    }
+    function getUsdcProfit() public view returns (uint256) {
+        return UsdcProfit;
+    }
+    function getBridgedUsdcProfit() public view returns (uint256) {
+        return BridgedUsdcProfit;
+    }
+    function getWbtcProfit() public view returns (uint256) {
+        return WbtcProfit;
+    }
+    function getGmxProfit() public view returns (uint256) {
+        return GmxProfit;
+    }
+    function getArbProfit() public view returns (uint256) {
+        return ArbProfit;
+    }
+    function getPendleProfit() public view returns (uint256) {
+        return PendleProfit;
+    }
+    function getOwner() public view returns (address) {
+        return owner;
 
-}
 
+    }
+}
 
 interface ISwapRouter02 {
     struct ExactInputSingleParams {

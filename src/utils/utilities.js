@@ -49,7 +49,7 @@ async function getEthPriceUsd() {
  */
 
 async function gasEstimateToUsd(gas) {
-    const provider = getProvider()
+    // const provider = getProvider()
 
     const gasPrice = await getGasPrice()
 
@@ -63,7 +63,7 @@ async function gasEstimateToUsd(gas) {
 
     const gasEstimateUsd = gasEstimateEth * Number(ethPriceUsd)
 
-    console.log("Gas estimate in USD: ", gasEstimateUsd.toFixed(6))
+    console.log("Gas estimate in USD: $", gasEstimateUsd.toFixed(6))
 
     return gasEstimateUsd.toFixed(6)
 }

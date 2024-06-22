@@ -55,7 +55,9 @@ async function poolInformation(pools, amountInUsd) {
         } catch (error) {
             console.error(`Error processing pool at index ${i}:`, error)
         }
+        console.log(tokens)
     }
+
     tokenAmountsIn = await getTokenAmountsIn(tokens, amountInUsd)
 
     return tokenAmountsIn
