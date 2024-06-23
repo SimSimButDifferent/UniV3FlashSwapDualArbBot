@@ -36,7 +36,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
                     pools[i].token0.decimals, // [6] swap token decimals
                     amountIn, // [7] amount in
                     profitThresholdBigInt, // [8] profit threshhold
-                    pools[i].token0.symbol, // [9] token in symbol
+                    pools[i].token1.symbol, // [9] token in symbol
                     pools[i].id, // [10] pool0 address
                 ]
 
@@ -56,7 +56,7 @@ async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
             }
         }
     }
-
+    console.log(routes)
     // Return an object with all the routes
 
     return routes

@@ -6,29 +6,39 @@ import {Test, console} from "forge-std/Test.sol";
 import {FlashSwapV3, IUniswapV3Pool, ISwapRouter02, IERC20, IWETH9} from "../src/FlashSwapV3.sol";
 import {IQuoterV2} from "@uniswap/v3-periphery/contracts/interfaces/IQuoterV2.sol";
 
-address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-address constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-address constant PEPE = 0x6982508145454Ce325dDbE47a25d4ec3d2311933;
+address constant USDT_ADDRESS = 0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9;
+address constant USDC_ADDRESS = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831;
+address constant BRIDGED_USDC_ADDRESS = 0xff970a61a04b1ca14834a43f5de4533ebddb5cc8;
+address constant WETH_ADDRESS = 0x82af49447d8a07e3bd95bd0d56f35241523fbab1;
+address constant WBTC_ADDRESS = 0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f;
+address constant GMX_ADDRESS = 0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a;
+address constant ARB_ADDRESS = 0x912ce59144191c1204e64559fe8253a0e49e6548;
+address constant PENDLE_ADDRESS = 0x808507121B80c02388fAd14726482e061B8da827;
+
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 address constant QUOTER2 = 0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6;
-address constant DAI_WETH_POOL_3000 = 0xC2e9F25Be6257c210d7Adf0D4Cd6E3E881ba25f8;
-address constant DAI_WETH_POOL_500 = 0x60594a405d53811d3BC4766596EFD80fd545A270;
-address constant USDT_WETH_POOL_3000 = 0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36;
-address constant USDT_WETH_POOL_500 = 0x11b815efB8f581194ae79006d24E0d814B7697F6;
-address constant PEPE_WETH_POOL_3000 = 0x11950d141EcB863F01007AdD7D1A342041227b58;
-address constant PEPE_WETH_POOL_10000 = 0xF239009A101B6B930A527DEaaB6961b6E7deC8a6;
+address constant WETH_USDC_POOL_500 = 0xc6962004f452be9203591991d15f6b388e09e8d0;
+address constant WBTC_WETH_POOL_500 = 0x2f5e87c9312fa29aed5c179e456625d79015299c;
+address constant WETH_USDC_POOL_500_2 = 0xc31e54c7a869b9fcbecc14363cf510d1c41fa443;
+address constant WETH_GMX_POOL_10000 = 0x80a9ae39310abf666a87c743d6ebbd0e8c42158e;
+address constant WETH_USDT_POOL_500 = 0x641c00a822e8b671738d32a431a4fb6074e5c79d;
+address constant WETH_ARB_POOL_500 = 0xc6f780497a95e246eb9449f5e4770916dcd6396a;
+address constant PENDLE_WETH_POOL_3000 = 0xdbaeb7f0dfe3a0aafd798ccecb5b22e708f7852c;
+
 uint24 constant FEE_0 = 3000;
 uint24 constant FEE_1 = 500;
 uint24 constant FEE_2 = 10000;
 
 contract UniswapV3FlashTest is Test {
-    IERC20 private constant dai = IERC20(DAI);
+    
+    IERC20 private constant usdc = IERC20(USDC);
     IERC20 private constant usdt = IERC20(USDT);
-    IERC20 private constant pepe = IERC20(PEPE);
+    IERC20 private constant arb = IERC20(ARB);
     IWETH9 private constant weth = IWETH9(WETH);
+
     ISwapRouter02 private constant router = ISwapRouter02(SWAP_ROUTER_02);
     IQuoterV2 private constant quoter = IQuoterV2(QUOTER2);
+
     IUniswapV3Pool private constant test1pool0 = IUniswapV3Pool(DAI_WETH_POOL_3000);
     IUniswapV3Pool private constant test1pool1 = IUniswapV3Pool(DAI_WETH_POOL_500);
     IUniswapV3Pool private constant test2pool0 = IUniswapV3Pool(USDT_WETH_POOL_3000);
@@ -40,9 +50,9 @@ contract UniswapV3FlashTest is Test {
     address owner = address(this);
     address account1 = address(17);
 
-    uint256 private constant DAI_AMOUNT_IN = 100 * 1e18;
+    uint256 private constant USDC_AMOUNT_IN = 100 * 1e18;
     uint256 private constant USDT_AMOUNT_IN = 100 * 1e6;
-    uint256 private constant PEPE_AMOUNT_IN = 6000000 * 1e18;
+    uint256 private constant ARB_AMOUNT_IN = 2 * 1e18;
   
     function setUp() public {
         vm.startPrank(owner);

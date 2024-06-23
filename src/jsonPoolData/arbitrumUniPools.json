@@ -3,143 +3,183 @@
     "pools": [
       {
         "feeTier": "500",
-        "id": "0xc6962004f452be9203591991d15f6b388e09e8d0",
-        "tick": "-194602",
-        "token0": {
-          "decimals": "18",
-          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-          "name": "Wrapped Ethereum",
-          "symbol": "WETH"
-        },
-        "token0Price": "0.0002824943966302675861295095589183747",
-        "token1": {
-          "decimals": "6",
-          "id": "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-          "name": "USD Coin",
-          "symbol": "USDC"
-        },
-        "token1Price": "3539.893222408985569951191351299219",
-        "totalValueLockedUSD": "52370830.15704507075616062218355406"
-      },
-      {
-        "feeTier": "500",
         "id": "0x2f5e87c9312fa29aed5c179e456625d79015299c",
-        "tick": "259428",
+        "tick": "259351",
         "token0": {
           "decimals": "8",
           "id": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
           "name": "Wrapped BTC",
           "symbol": "WBTC"
         },
-        "token0Price": "0.05416832209730378931767957027488718",
+        "token0Price": "0.05458485932066226950329852905130245",
         "token1": {
           "decimals": "18",
           "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
           "name": "Wrapped Ethereum",
           "symbol": "WETH"
         },
-        "token1Price": "18.46097426100216377218294038491993",
-        "totalValueLockedUSD": "47329713.48951189188665687124506011"
-      },
-      {
-        "feeTier": "500",
-        "id": "0xc31e54c7a869b9fcbecc14363cf510d1c41fa443",
-        "tick": "-194601",
-        "token0": {
-          "decimals": "18",
-          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-          "name": "Wrapped Ethereum",
-          "symbol": "WETH"
-        },
-        "token0Price": "0.0002824704766395246021608942355977954",
-        "token1": {
-          "decimals": "6",
-          "id": "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-          "name": "USD Coin",
-          "symbol": "USDC"
-        },
-        "token1Price": "3540.192985464291458899798700626513",
-        "totalValueLockedUSD": "44201469.99640654175011544354199807"
-      },
-      {
-        "feeTier": "10000",
-        "id": "0x80a9ae39310abf666a87c743d6ebbd0e8c42158e",
-        "tick": "47770",
-        "token0": {
-          "decimals": "18",
-          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-          "name": "Wrapped Ethereum",
-          "symbol": "WETH"
-        },
-        "token0Price": "0.008422455028245907190437037779967565",
-        "token1": {
-          "decimals": "18",
-          "id": "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-          "name": "GMX",
-          "symbol": "GMX"
-        },
-        "token1Price": "118.7302273085884126115388699027846",
-        "totalValueLockedUSD": "35868522.10219087387348618069650571"
+        "token1Price": "18.32009851166668093298474009675981",
+        "totalValueLockedUSD": "49372582.81695557669359100696749303"
       },
       {
         "feeTier": "500",
         "id": "0x641c00a822e8b671738d32a431a4fb6074e5c79d",
-        "tick": "-194599",
+        "tick": "-194672",
         "token0": {
           "decimals": "18",
           "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
           "name": "Wrapped Ethereum",
           "symbol": "WETH"
         },
-        "token0Price": "0.0002824137207344372947276808494673679",
+        "token0Price": "0.0002844932942672604818945249875123285",
         "token1": {
           "decimals": "6",
           "id": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
           "name": "Tether USD",
           "symbol": "USDT"
         },
-        "token1Price": "3540.904448266280108934161869158412",
-        "totalValueLockedUSD": "25860240.55299775886718103714168262"
+        "token1Price": "3515.021338466324985544129427402251",
+        "totalValueLockedUSD": "26470899.26752693510792697708088294"
       },
       {
         "feeTier": "500",
         "id": "0xc6f780497a95e246eb9449f5e4770916dcd6396a",
-        "tick": "83713",
+        "tick": "83723",
         "token0": {
           "decimals": "18",
           "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
           "name": "Wrapped Ethereum",
           "symbol": "WETH"
         },
-        "token0Price": "0.0002315047843052845969489114176765571",
+        "token0Price": "0.0002312585054447623890294051652650536",
         "token1": {
           "decimals": "18",
           "id": "0x912ce59144191c1204e64559fe8253a0e49e6548",
           "name": "Arbitrum",
           "symbol": "ARB"
         },
-        "token1Price": "4319.565157155902627062337772073288",
-        "totalValueLockedUSD": "15550453.77267832750447741298412274"
+        "token1Price": "4324.16528022082439480865319922882",
+        "totalValueLockedUSD": "15298051.98085386131167008004004223"
       },
       {
         "feeTier": "3000",
-        "id": "0xdbaeb7f0dfe3a0aafd798ccecb5b22e708f7852c",
-        "tick": "-64271",
+        "id": "0x149e36e72726e0bcea5c59d40df2c43f60f5a22d",
+        "tick": "259375",
         "token0": {
-          "decimals": "18",
-          "id": "0x0c880f6761f1af8d9aa9c466984b80dab9a8c9e8",
-          "name": "Pendle",
-          "symbol": "PENDLE"
+          "decimals": "8",
+          "id": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+          "name": "Wrapped BTC",
+          "symbol": "WBTC"
         },
-        "token0Price": "618.1180247474170156955598799307571",
+        "token0Price": "0.05445647299296437737413770594741585",
         "token1": {
           "decimals": "18",
           "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
           "name": "Wrapped Ethereum",
           "symbol": "WETH"
         },
-        "token1Price": "0.001617814009563355300284349918640875",
-        "totalValueLockedUSD": "13641002.50134274067552641135187703"
+        "token1Price": "18.36328989079401410812886652671081",
+        "totalValueLockedUSD": "10719887.94730743132687032269443065"
+      },
+      {
+        "feeTier": "3000",
+        "id": "0x92c63d0e701caae670c9415d91c474f686298f00",
+        "tick": "83745",
+        "token0": {
+          "decimals": "18",
+          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "Wrapped Ethereum",
+          "symbol": "WETH"
+        },
+        "token0Price": "0.0002307529891293076159011382663897218",
+        "token1": {
+          "decimals": "18",
+          "id": "0x912ce59144191c1204e64559fe8253a0e49e6548",
+          "name": "Arbitrum",
+          "symbol": "ARB"
+        },
+        "token1Price": "4333.638336704828376038606138323513",
+        "totalValueLockedUSD": "9213728.987107609881062195177287389"
+      },
+      {
+        "feeTier": "500",
+        "id": "0x5969efdde3cf5c0d9a88ae51e47d721096a97203",
+        "tick": "64675",
+        "token0": {
+          "decimals": "8",
+          "id": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+          "name": "Wrapped BTC",
+          "symbol": "WBTC"
+        },
+        "token0Price": "0.00001553566868266427817759706143334972",
+        "token1": {
+          "decimals": "6",
+          "id": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "name": "Tether USD",
+          "symbol": "USDT"
+        },
+        "token1Price": "64368.00503578361126891024603476961",
+        "totalValueLockedUSD": "3560736.684757923386477344784211742"
+      },
+      {
+        "feeTier": "3000",
+        "id": "0xc82819f72a9e77e2c0c3a69b3196478f44303cf4",
+        "tick": "-194697",
+        "token0": {
+          "decimals": "18",
+          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "Wrapped Ethereum",
+          "symbol": "WETH"
+        },
+        "token0Price": "0.0002851803830013588495971014212429436",
+        "token1": {
+          "decimals": "6",
+          "id": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "name": "Tether USD",
+          "symbol": "USDT"
+        },
+        "token1Price": "3506.552552723218421641986133656552",
+        "totalValueLockedUSD": "2603095.003996755440294787421629086"
+      },
+      {
+        "feeTier": "10000",
+        "id": "0x92fd143a8fa0c84e016c2765648b9733b0aa519e",
+        "tick": "83816",
+        "token0": {
+          "decimals": "18",
+          "id": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+          "name": "Wrapped Ethereum",
+          "symbol": "WETH"
+        },
+        "token0Price": "0.0002291386489539258778796927936626622",
+        "token1": {
+          "decimals": "18",
+          "id": "0x912ce59144191c1204e64559fe8253a0e49e6548",
+          "name": "Arbitrum",
+          "symbol": "ARB"
+        },
+        "token1Price": "4364.169923167676955247297743866814",
+        "totalValueLockedUSD": "2459193.760696315646384852377855901"
+      },
+      {
+        "feeTier": "3000",
+        "id": "0x53c6ca2597711ca7a73b6921faf4031eedf71339",
+        "tick": "64654",
+        "token0": {
+          "decimals": "8",
+          "id": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+          "name": "Wrapped BTC",
+          "symbol": "WBTC"
+        },
+        "token0Price": "0.00001556725870866591857290209646096382",
+        "token1": {
+          "decimals": "6",
+          "id": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+          "name": "Tether USD",
+          "symbol": "USDT"
+        },
+        "token1Price": "64237.38557407824457101892579217588",
+        "totalValueLockedUSD": "1198369.44558037193987238221780417"
       }
     ]
   }
