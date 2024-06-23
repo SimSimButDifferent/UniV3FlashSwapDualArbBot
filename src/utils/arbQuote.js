@@ -18,19 +18,20 @@ const quoter2Address = networkConfig[chainId].quoter2
  * If the route is profitable calls flashswap. Then recursively calls
  * flashswap again until there is no arbitrage opportunity left.
  * @param route
- * @param amountIn
  * @param routeNumber
- * @param profitThreshold
  * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
  */
-async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
+async function arbQuote(route, routeNumber, amountInUsd) {
     let arbitrageOpportunity
     let poolAddress
     let feePool1
     let tokenIn
     let tokenOut
 
-    const amountInUsd = route[7]
+    const amountInSim = route[7]
+    const amountInFlash = route[11]
+    const profitThresholdToken = route[8]
+    const profitThresholdUsd = amountInUsd / 100n
 
     const token0Decimals = route[5]
     const token1Decimals = route[6]
@@ -68,7 +69,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
 
             // Calculate the minimum amount required to make the trade profitable / worthwhile
             const minimumAmountOut =
-                amountInUsd + gasEstimateUsdBigInt + profitThreshold
+                amountInUsd + gasEstimateUsdBigInt + profitThresholdUsd
 
             // Calculate the profit
             const profit = amountOut - minimumAmountOut
@@ -97,7 +98,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
         }
     }
 
-    const { amountOut, minimumAmountOut, profit } = await simSwap(amountInUsd)
+    const { amountOut, minimumAmountOut, profit } = await simSwap(amountInSim)
 
     console.log("SimSwap complete")
 
@@ -138,7 +139,7 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
                 feePool1,
                 tokenIn,
                 tokenOut,
-                amountIn,
+                amountInFlash,
                 minimumAmountOut,
             )
 

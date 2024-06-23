@@ -1,9 +1,9 @@
-const { getTokenAmountsIn } = require("./getTokenAmountsIn")
+const { getTokenInfo } = require("./getTokenInfo")
 
 // FOR TESTING
-const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
-const pools = poolsData.pools
-const amountInUsd = "100"
+// const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
+// const pools = poolsData.pools
+// const amountInUsd = "100"
 
 /**
  * @dev This function logs the pool information
@@ -17,7 +17,7 @@ async function poolInformation(pools, amountInUsd) {
     // console.log("List of pools to scan")
     // console.log("-----------------------")
 
-    let tokenAmountsIn
+    let tokenInfo
     let tokens = {}
 
     for (let i = 0; i < pools.length; i++) {
@@ -58,13 +58,13 @@ async function poolInformation(pools, amountInUsd) {
     }
     console.log(tokens)
 
-    tokenAmountsIn = await getTokenAmountsIn(tokens, amountInUsd)
+    tokenInfo = await getTokenInfo(tokens, amountInUsd)
 
-    return tokenAmountsIn
+    return tokenInfo
 }
 
-poolInformation(pools, amountInUsd).catch((error) => {
-    console.error(error)
-})
+// poolInformation(pools, amountInUsd).catch((error) => {
+//     console.error(error)
+// })
 
 exports.poolInformation = poolInformation

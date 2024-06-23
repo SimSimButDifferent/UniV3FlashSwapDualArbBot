@@ -1,7 +1,7 @@
 const axios = require("axios")
 require("./getProvider")
 
-const getTokenAmountsIn = async (tokens, amountInUsd) => {
+const getTokenInfo = async (tokens, amountInUsd) => {
     const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 
     const tokenSymbols = Object.keys(tokens)
@@ -17,22 +17,25 @@ const getTokenAmountsIn = async (tokens, amountInUsd) => {
         },
     )
 
-    const amountsIn = {}
+    const result = {}
     for (const tokenSymbol of tokenSymbols) {
-        const tokenInfo = tokens[tokenSymbol] // Now expecting an object with address and decimals
+        const tokenInfo = tokens[tokenSymbol]
         const priceInUsd = prices.data.data[tokenSymbol].quote.USD.price
-        // console.log(`Price ${tokenSymbol} in usd: `, priceInUsd)
         const amountInDecimal = (amountInUsd / priceInUsd).toString()
         const baseUnit = BigInt(
             Math.floor(parseFloat(amountInDecimal) * 10 ** tokenInfo.decimals),
         )
-        amountsIn[tokenSymbol] = baseUnit
+        result[tokenSymbol] = {
+            amountIn: baseUnit,
+            profitThreshold: baseUnit / 100n,
+            priceInUsd: priceInUsd,
+        }
     }
-    console.log("Amounts in: ", amountsIn)
-    return amountsIn
+    console.log("Token Info: ", result)
+    return result
 }
 
-module.exports = { getTokenAmountsIn }
+module.exports = { getTokenInfo }
 
 // ---------------- FOR TESTING ---------------- run: node src/utils/getTokenAmountsIn.js
 
@@ -67,10 +70,6 @@ module.exports = { getTokenAmountsIn }
 //     },
 // }
 
-// getTokenAmountsIn(tokens, "100")
-//     .then((amountsIn) => {
-//         console.log(amountsIn)
-//     })
-//     .catch((error) => {
-//         console.error(error)
-//     })
+// getTokenInfo(tokens, "100").catch((error) => {
+//     console.error(error)
+// })

@@ -36,10 +36,10 @@ async function dualArbScan(pools) {
         console.log(`Found ${poolsArray.length} pools`)
 
         // Output pool information and token amounts in for each token included in query.
-        const tokenAmountsIn = await poolInformation(pools, amountInUsd)
+        const tokenInfo = await poolInformation(pools, amountInUsd)
 
         // Get possible arbitrage routes where tokenIn and tokenOut are the same.
-        const routesArray = await findArbitrageRoutes(pools, tokenAmountsIn)
+        const routesArray = await findArbitrageRoutes(pools, tokenInfo)
 
         // Calculate how often the loop needs to run to scan all routes
         const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)
@@ -94,24 +94,11 @@ async function dualArbScan(pools) {
                 ) {
                     // name input variables for arbQuote function
                     const route = routesArray[i + j]
-                    const amountInFromArray = route[7]
                     const routeNumber = i + j
-                    const profitThreshold = route[8]
 
                     // Push the promise to the batch
                     try {
-                        batch.push(
-                            arbQuote(
-                                route,
-                                amountInFromArray,
-                                routeNumber,
-                                profitThreshold,
-                            ).then((result) => {
-                                if (result.badRoute == true) {
-                                    badRoutesArray.push(route)
-                                }
-                            }),
-                        )
+                        batch.push(arbQuote(route, routeNumber))
                     } catch (error) {
                         console.error(
                             `Error creating arbQuote promise for route ${i + j}: `,
