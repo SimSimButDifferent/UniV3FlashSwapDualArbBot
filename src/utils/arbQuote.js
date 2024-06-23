@@ -11,6 +11,7 @@ const { initFlashSwap } = require("./initFlashSwap")
 
 const chainId = network.config.chainId
 const quoter2Address = networkConfig[chainId].quoter2
+
 /**
  * @dev This function checks for arbitrage opportunities in a given route
  * Calls the Quoter contract to get the output of a swap
@@ -23,7 +24,7 @@ const quoter2Address = networkConfig[chainId].quoter2
  * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
  */
 async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
-    let arbitrageOpportunity = false
+    let arbitrageOpportunity
     let poolAddress
     let feePool1
     let tokenIn
@@ -76,7 +77,6 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
                 amountOut,
                 minimumAmountOut,
                 profit,
-                badRoute: false,
             }
         } catch (error) {
             console.error("Error during quoteExactInput.staticCall:", error)
@@ -93,13 +93,11 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
                 amountOut: 0n,
                 minimumAmountOut: 0n,
                 profit: 0n,
-                badRoute: true,
             }
         }
     }
 
-    const { amountOut, minimumAmountOut, profit, badRoute } =
-        await simSwap(amountInUsd)
+    const { amountOut, minimumAmountOut, profit } = await simSwap(amountInUsd)
 
     console.log("SimSwap complete")
 
@@ -190,11 +188,16 @@ async function arbQuote(route, amountIn, routeNumber, profitThreshold) {
     } else {
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
+        console.log("Amount In: ", amountInUsd)
+        console.log("Amount Out: ", amountOut)
+        console.log("Minimum Amount Out: ", minimumAmountOut)
+        console.log("Profit: ", profit)
         console.log("")
         console.log("-----------------------")
+        arbitrageOpportunity = false
     }
 
-    return [amountOut, arbitrageOpportunity, profit, minimumAmountOut, badRoute]
+    return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
 }
 
 exports.arbQuote = arbQuote

@@ -39,11 +39,7 @@ async function dualArbScan(pools) {
         const tokenAmountsIn = await poolInformation(pools, amountInUsd)
 
         // Get possible arbitrage routes where tokenIn and tokenOut are the same.
-        const routesArray = await findArbitrageRoutes(
-            pools,
-            tokenAmountsIn,
-            amountInUsd,
-        )
+        const routesArray = await findArbitrageRoutes(pools, tokenAmountsIn)
 
         // Calculate how often the loop needs to run to scan all routes
         const BATCH_TOTAL = Math.ceil(routesArray.length / BATCH_SIZE)

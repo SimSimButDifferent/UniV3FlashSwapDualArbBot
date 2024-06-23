@@ -9,8 +9,10 @@ const networkConfig = {
     },
     42161: {
         name: "arbitrum",
-        quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        // quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        quoter2: "0x5e55c9e631fae526cd4b0526c4818d6e0a9ef0e3", // VIEW ONLY QUOTER
     },
+    quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
     31337: {
         name: "localhost",
         quoter2: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",

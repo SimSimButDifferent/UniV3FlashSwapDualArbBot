@@ -1,4 +1,4 @@
-async function findArbitrageRoutes(pools, tokenAmountsIn, amountInUsd) {
+async function findArbitrageRoutes(pools, tokenAmountsIn) {
     let routes = []
     let amountIn
 
