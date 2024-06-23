@@ -21,10 +21,11 @@ async function findArbitrageRoutes(pools, tokenAmountsIn) {
                     pools[j].token0.id, // [4] token out hop2 address
                     pools[i].token0.decimals, // [5] token in/out decimals
                     pools[i].token1.decimals, // [6] swap token decimals
-                    amountIn, // [7] amount in
+                    tokenAmountsIn[pools[i].token0.symbol], // [7] simSwap amountIn
                     profitThresholdBigInt, // [8] profit threshhold
                     pools[i].token0.symbol, // [9] token in symbol
                     pools[i].id, // [10] pool0 address
+                    tokenAmountsIn[pools[i].token1.symbol], // [11] Flashswap amountIn
                 ]
                 let route2 = [
                     pools[i].token1.id, // [0] tokenIn hop1 address
@@ -34,10 +35,11 @@ async function findArbitrageRoutes(pools, tokenAmountsIn) {
                     pools[j].token1.id, // [4] token out hop2 address
                     pools[i].token1.decimals, // [5] token in/out decimals
                     pools[i].token0.decimals, // [6] swap token decimals
-                    amountIn, // [7] amount in
+                    tokenAmountsIn[pools[i].token1.symbol], // [7] simSwap amount in
                     profitThresholdBigInt, // [8] profit threshhold
                     pools[i].token1.symbol, // [9] token in symbol
                     pools[i].id, // [10] pool0 address
+                    tokenAmountsIn[pools[i].token1.symbol], // [11] Flashswap amountIn
                 ]
 
                 // Check if the routes are valid
