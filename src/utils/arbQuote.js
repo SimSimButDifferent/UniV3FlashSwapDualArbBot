@@ -30,8 +30,9 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
     const amountInSim = route[7]
     const amountInFlash = route[11]
+    const amountInUsdBigInt = BigInt(amountInUsd)
     const profitThresholdToken = route[8]
-    const profitThresholdUsd = amountInUsd / 100n
+    const profitThresholdUsd = amountInUsdBigInt / 100n
 
     const token0Decimals = route[5]
     const token1Decimals = route[6]
@@ -68,9 +69,9 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             const gasEstimateUsdBigInt = ethers.parseUnits(gasEstimateUsd, 6)
 
             // Calculate the minimum amount required to make the trade profitable / worthwhile
-            const minimumAmountOut =
-                amountInUsd + gasEstimateUsdBigInt + profitThresholdUsd
-
+            // const minimumAmountOut =
+            //     amountInSim + gasEstimateUsdBigInt + profitThresholdUsd
+            const minimumAmountOut = amountInSim + profitThresholdToken
             // Calculate the profit
             const profit = amountOut - minimumAmountOut
 
@@ -103,7 +104,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
     console.log("SimSwap complete")
 
     // Calculate wether the arbitrage opportunity is profitable
-    if (profit > profitThreshold) {
+    if (profit > profitThresholdToken) {
         arbitrageOpportunity = true
 
         // Inputs for calling Flashswap
@@ -159,11 +160,11 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
             console.log(`Route ${routeNumber} Info:`)
             console.log(
-                `amountIn - ${ethers.utils.formatUnits(amountIn.toString(), token0Decimals)} ${route[9]}`,
+                `amountIn - ${ethers.formatUnits(amountInFlash, token1Decimals)} ${route[9]}`,
             )
 
             console.log(
-                `${route[9]} profit - ${ethers.utils.formatUnits(profit, token0Decimals)}`,
+                `${route[9]} profit - ${ethers.formatUnits(profit, token0Decimals)}`,
             )
             console.log(
                 `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
@@ -182,17 +183,22 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             console.log("Transaction Receipt: ", txReceipt)
 
             // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
-            await arbQuote(route, amountIn, routeNumber, profitThreshold)
+            await arbQuote(route, amountIn, routeNumber)
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
     } else {
+        const formattedProfit = ethers.formatUnits(
+            profit,
+            Number(token0Decimals),
+        )
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        console.log("Amount In: ", amountInUsd)
+        console.log("Amount In: ", amountInSim)
         console.log("Amount Out: ", amountOut)
         console.log("Minimum Amount Out: ", minimumAmountOut)
-        console.log("Profit: ", profit)
+
+        console.log(`Profit: ${formattedProfit} - ${route[9]}`)
         console.log("")
         console.log("-----------------------")
         arbitrageOpportunity = false

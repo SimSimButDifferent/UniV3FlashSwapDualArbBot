@@ -52,7 +52,7 @@ async function findArbitrageRoutes(pools, tokenInfo) {
             }
         }
     }
-    console.log(routes)
+    // console.log(routes)
     // Return an object with all the routes
 
     return routes

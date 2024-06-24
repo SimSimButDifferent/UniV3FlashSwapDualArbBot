@@ -98,7 +98,7 @@ async function dualArbScan(pools) {
 
                     // Push the promise to the batch
                     try {
-                        batch.push(arbQuote(route, routeNumber))
+                        batch.push(arbQuote(route, routeNumber, amountInUsd))
                     } catch (error) {
                         console.error(
                             `Error creating arbQuote promise for route ${i + j}: `,
