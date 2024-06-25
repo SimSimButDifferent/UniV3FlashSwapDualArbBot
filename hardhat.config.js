@@ -35,6 +35,9 @@ module.exports = {
             chainId: 42161,
             accounts: BOT_PRIVATE_KEY ? [BOT_PRIVATE_KEY] : [],
             blockConfirmations: 6,
+            ignition: {
+                requiredConfirmations: 6,
+            },
         },
         "base-mainnet": {
             url: "https://mainnet.base.org",
@@ -53,9 +56,7 @@ module.exports = {
             default: 0,
         },
     },
-    ignition: {
-        requiredConfirmations: 5,
-    },
+
     mocha: {
         timeout: 120000,
     },
