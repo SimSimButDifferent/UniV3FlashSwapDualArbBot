@@ -13,7 +13,7 @@ address constant WBTC_ADDRESS = 0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f;
 address constant ARB_ADDRESS = 0x912CE59144191C1204E64559FE8253a0e49E6548;
 
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
-address constant QUOTER2 = 0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6;
+address constant QUOTER2 = 0x61fFE014bA17989E743c5F6cB21bF9697530B21e;
 
 address constant WETH_USDT_POOL_500 = 0x641C00A822e8b671738d32a431a4Fb6074E5c79d;
 address constant WETH_USDT_POOL_3000 = 0xc82819F72A9e77E2c0c3A69B3196478f44303cf4;
@@ -44,6 +44,7 @@ contract UniswapV3FlashTest is Test {
     FlashSwapV3 private flashSwap;
 
     address owner = address(this);
+    address account0 = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     address account1 = address(17);
 
     uint256 private constant USDT_AMOUNT_IN = 100 * 1e6;
@@ -85,7 +86,7 @@ contract UniswapV3FlashTest is Test {
                 tokenIn: WETH_ADDRESS,
                 tokenOut: USDT_ADDRESS,
                 fee: FEE_1,
-                recipient: address(0),
+                recipient: account0,
                 amountIn: 500 * 1e18,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
