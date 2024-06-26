@@ -1,10 +1,5 @@
 const { getTokenInfo } = require("./getTokenInfo")
 
-// FOR TESTING
-// const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
-// const pools = poolsData.pools
-// const amountInUsd = "100"
-
 /**
  * @dev This function logs the pool information
  * @param {*} pools
@@ -14,8 +9,8 @@ const { getTokenInfo } = require("./getTokenInfo")
  */
 async function poolInformation(pools, amountInUsd) {
     // Turn off when hardhat tests are running
-    // console.log("List of pools to scan")
-    // console.log("-----------------------")
+    console.log("List of pools to scan")
+    console.log("-----------------------")
 
     let tokenInfo
     let tokens = {}
@@ -63,8 +58,13 @@ async function poolInformation(pools, amountInUsd) {
     return tokenInfo
 }
 
+exports.poolInformation = poolInformation
+
+// // FOR TESTING
+// const { data: poolsData } = require("../jsonPoolData/arbitrumUniPools.json")
+// const pools = poolsData.pools
+// const amountInUsd = "100"
+
 // poolInformation(pools, amountInUsd).catch((error) => {
 //     console.error(error)
 // })
-
-exports.poolInformation = poolInformation

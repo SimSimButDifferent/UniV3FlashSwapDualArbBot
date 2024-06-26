@@ -22,14 +22,12 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 address constant SWAP_ROUTER_02 = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
 address constant USDT_ADDRESS = 0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9;
-address constant USDC_ADDRESS = 0xaf88d065e77c8cC2239327C5EDb3A432268e5831;
 address constant WETH_ADDRESS = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
 address constant WBTC_ADDRESS = 0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f;
 address constant ARB_ADDRESS = 0x912CE59144191C1204E64559FE8253a0e49E6548;
 
 
 uint16 constant USDT_DECIMALS = 6;
-uint16 constant USDC_DECIMALS = 6;
 uint16 constant WETH_DECIMALS = 18;
 uint16 constant WBTC_DECIMALS = 8;
 uint16 constant ARB_DECIMALS = 18;
@@ -206,8 +204,6 @@ function uniswapV3SwapCallback(
     require(profit > 0, "profit = 0");
     if (tokenIn == USDT_ADDRESS) {
         UsdtProfit += profit;
-    } else if (tokenIn == USDC_ADDRESS) {
-        UsdcProfit += profit;
     } else if (tokenIn == WBTC_ADDRESS) {
         WbtcProfit += profit;
     } else if (tokenIn == ARB_ADDRESS) {
@@ -225,7 +221,7 @@ function uniswapV3SwapCallback(
 
 // Normalize token amounts to 18 decimals
 function _normalize(address token, uint256 amount) private pure returns (uint256) {
-    if (token == USDT_ADDRESS || token == USDC_ADDRESS) {
+    if (token == USDT_ADDRESS) {
         return amount * 1e12; // Convert from 6 to 18 decimals
     } else if (token == WBTC_ADDRESS) {
         return amount * 1e10; // Convert from 8 to 18 decimals
@@ -241,10 +237,7 @@ function _normalize(address token, uint256 amount) private pure returns (uint256
     function getUsdtProfit() public view returns (uint256) {
         return UsdtProfit;
     }
-    function getUsdcProfit() public view returns (uint256) {
-        return UsdcProfit;
-    }
-  
+    
     function getWbtcProfit() public view returns (uint256) {
         return WbtcProfit;
     }

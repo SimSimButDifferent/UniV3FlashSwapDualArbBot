@@ -17,7 +17,8 @@ address constant QUOTER2 = 0x61fFE014bA17989E743c5F6cB21bF9697530B21e;
 
 address constant WETH_USDT_POOL_500 = 0x641C00A822e8b671738d32a431a4Fb6074E5c79d;
 address constant WETH_USDT_POOL_3000 = 0xc82819F72A9e77E2c0c3A69B3196478f44303cf4;
-// address constant WBTC_WETH_POOL_500 = 0x2f5e87c9312fa29aed5c179e456625d79015299c;
+address constant WBTC_WETH_POOL_500 = 0x2f5e87C9312fa29aed5c179E456625D79015299c;
+address constant WBTC_WETH_POOL_3000 = 0x149e36E72726e0BceA5c59d40df2c43F60f5A22D;
 // address constant WETH_ARB_POOL_500 = 0xc6f780497a95e246eb9449f5e4770916dcd6396a;
 
 
@@ -37,8 +38,8 @@ contract UniswapV3FlashTest is Test {
 
     IUniswapV3Pool private constant test1pool0 = IUniswapV3Pool(WETH_USDT_POOL_500);
     IUniswapV3Pool private constant test1pool1 = IUniswapV3Pool(WETH_USDT_POOL_3000);
-    // IUniswapV3Pool private constant test2pool0 = IUniswapV3Pool(USDT_WETH_POOL_3000);
-    // IUniswapV3Pool private constant test2pool1 = IUniswapV3Pool(USDT_WETH_POOL_500);
+    IUniswapV3Pool private constant test2pool0 = IUniswapV3Pool(WBTC_WETH_POOL_500);
+    IUniswapV3Pool private constant test2pool1 = IUniswapV3Pool(WBTC_WETH_POOL_3000);
     // IUniswapV3Pool private constant test3pool0 = IUniswapV3Pool(PEPE_WETH_POOL_3000);
     // IUniswapV3Pool private constant test3pool1 = IUniswapV3Pool(PEPE_WETH_POOL_10000);
     FlashSwapV3 private flashSwap;
@@ -48,8 +49,8 @@ contract UniswapV3FlashTest is Test {
     address account1 = address(17);
 
     uint256 private constant USDT_AMOUNT_IN = 100 * 1e6;
-    uint256 private constant WBTC_AMOUNT_IN = 100 * 1e18;
-    uint256 private constant ARB_AMOUNT_IN = 2 * 1e18;
+    uint256 private constant WBTC_AMOUNT_IN = 162000;
+    uint256 private constant ARB_AMOUNT_IN = 120 * 1e18;
   
     function setUp() public {
         vm.startPrank(owner);
@@ -67,31 +68,30 @@ contract UniswapV3FlashTest is Test {
         weth.deposit{value: 1500 * 1e18}();
         weth.approve(address(router), 1500 * 1e18);
 
-        // // Create an arbitrage opportunity - make WETH cheaper on test1pool0
-        // router.exactInputSingle(
-        //     ISwapRouter02.ExactInputSingleParams({
-        //         tokenIn: WETH,
-        //         tokenOut: USDT,
-        //         fee: FEE_1,
-        //         recipient: address(0),
-        //         amountIn: 500 * 1e18,
-        //         amountOutMinimum: 0,
-        //         sqrtPriceLimitX96: 0
-        //     })
-        // );
-
-        // Create an arbitrage opportunity - make WETH cheaper on test2pool0
+        // Create an arbitrage opportunity - make WETH cheaper on test1pool0
         router.exactInputSingle(
             ISwapRouter02.ExactInputSingleParams({
                 tokenIn: WETH_ADDRESS,
                 tokenOut: USDT_ADDRESS,
-                fee: FEE_1,
+                fee: FEE_0,
                 recipient: account0,
                 amountIn: 500 * 1e18,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
             })
         );
+        // // Create an arbitrage opportunity - make WETH cheaper on test2pool0
+        // router.exactInputSingle(
+        //     ISwapRouter02.ExactInputSingleParams({
+        //         tokenIn: WETH_ADDRESS,
+        //         tokenOut: WBTC_ADDRESS,
+        //         fee: FEE_0,
+        //         recipient: account0,
+        //         amountIn: 500 * 1e18,
+        //         amountOutMinimum: 0,
+        //         sqrtPriceLimitX96: 0
+        //     })
+        // );
 
         // // Create an arbitrage opportunity - make WETH cheaper on test3pool0
         // router.exactInputSingle(
@@ -108,47 +108,15 @@ contract UniswapV3FlashTest is Test {
 
         vm.stopPrank();
         uint256 usdtBalanceBefore = usdt.balanceOf(owner);
-        // uint256 daiBalanceBefore = dai.balanceOf(owner);
+        uint256 wbtcBalanceBefore = wbtc.balanceOf(owner);
         // uint256 pepeBalanceBefore = pepe.balanceOf(owner);
        
         console.log("Usdt balance before test:", usdtBalanceBefore);
-        // console.log("Dai balance before test:", daiBalanceBefore);
+        console.log("Wbtc balance before test:", wbtcBalanceBefore);
         // console.log("Pepe balance before test:", pepeBalanceBefore);
     }
 
     
-//     function test_flashSwap_DAI() public {
-//     uint256 initialDaiBalance = dai.balanceOf(address(this));
-
-//     // Impersonate owner to perform the flash swap
-//     vm.startPrank(owner);
-
-//     try flashSwap.flashSwap({
-//         pool0: address(test1pool0),
-//         fee1: FEE_1,
-//         tokenIn: DAI,
-//         tokenOut: WETH,
-//         amountIn: DAI_AMOUNT_IN,
-//         amountOutMin: 0
-//     }) {
-//         vm.stopPrank();
-
-//         uint256 finalDaiBalance = dai.balanceOf(address(this));
-//         uint256 profit = finalDaiBalance > initialDaiBalance ? finalDaiBalance - initialDaiBalance : 0;
-
-//         console.log("Profit:", profit);
-//         assertEq(profit, flashSwap.getDaiProfit(), "Profit should be equal to DaiProfit");
-//         assertGt(profit, 0, "Profit should be greater than zero");
-//     } catch Error(string memory reason) {
-//         vm.stopPrank();
-//         console.log("Reverted with reason:", reason);
-//         assertEq(reason, "profit = 0", "Expected revert reason not met");
-//     } catch (bytes memory reason) {
-//         vm.stopPrank();
-//         console.log("Reverted with reason:", string(reason));
-//         assertEq(string(reason), "profit = 0", "Expected revert reason not met");
-//     }
-// }
     function test_flashswap_USDT() public {
         uint256 initialUsdtBalance = usdt.balanceOf(address(this));
 
@@ -182,6 +150,38 @@ contract UniswapV3FlashTest is Test {
         }
     }
 
+//     function test_flashSwap_WBTC() public {
+//     uint256 initialWbtcBalance = wbtc.balanceOf(address(this));
+
+//     // Impersonate owner to perform the flash swap
+//     vm.startPrank(owner);
+
+//     try flashSwap.flashSwap({
+//         pool0: address(test1pool0),
+//         fee1: FEE_1,
+//         tokenIn: WBTC_ADDRESS,
+//         tokenOut: WETH_ADDRESS,
+//         amountIn: WBTC_AMOUNT_IN,
+//         amountOutMin: 0
+//     }) {
+//         vm.stopPrank();
+
+//         uint256 finalWbtcBalance = wbtc.balanceOf(address(this));
+//         uint256 profit = finalWbtcBalance > initialWbtcBalance ? finalWbtcBalance - initialWbtcBalance : 0;
+
+//         console.log("Profit:", profit);
+//         assertEq(profit, flashSwap.getWbtcProfit(), "Profit should be equal to WbtcProfit");
+//         assertGt(profit, 0, "Profit should be greater than zero");
+//     } catch Error(string memory reason) {
+//         vm.stopPrank();
+//         console.log("Reverted with reason:", reason);
+//         assertEq(reason, "profit = 0", "Expected revert reason not met");
+//     } catch (bytes memory reason) {
+//         vm.stopPrank();
+//         console.log("Reverted with reason:", string(reason));
+//         assertEq(string(reason), "profit = 0", "Expected revert reason not met");
+//     }
+// }
 
     // function test_flashSwap_PEPE() public {
     //     uint256 initialPepeBalance = pepe.balanceOf(address(this));
