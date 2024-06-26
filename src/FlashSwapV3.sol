@@ -202,6 +202,7 @@ function uniswapV3SwapCallback(
     uint256 profit = (normalizedBuyBackAmount > normalizedAmountIn) ? normalizedBuyBackAmount - normalizedAmountIn : 0;
 
     require(profit > 0, "profit = 0");
+    
     if (tokenIn == USDT_ADDRESS) {
         UsdtProfit += profit;
     } else if (tokenIn == WBTC_ADDRESS) {
