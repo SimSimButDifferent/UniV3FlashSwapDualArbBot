@@ -43,7 +43,6 @@ contract FlashSwapV3 is ReentrancyGuard {
 
     // Profit tracking
     uint256 private UsdtProfit;
-    uint256 private UsdcProfit;
     uint256 private WethProfit;
     uint256 private WbtcProfit;
     uint256 private ArbProfit;
