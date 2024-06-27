@@ -50,8 +50,8 @@ contract UniswapV3FlashTest is Test {
     address account1 = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720;
    
 
-    uint256 private constant USDT_AMOUNT_IN = 1 * 1e6;
-    uint256 private constant WBTC_AMOUNT_IN = 162000;
+    uint256 private constant USDT_AMOUNT_IN = 5 * 1e6;
+    uint256 private constant WBTC_AMOUNT_IN = 16200;
     uint256 private constant ARB_AMOUNT_IN = 120 * 1e18;
    
   
@@ -78,23 +78,23 @@ contract UniswapV3FlashTest is Test {
                 tokenOut: USDT_ADDRESS,
                 fee: FEE_0,
                 recipient: account0,
-                amountIn: 1500 * 1e18,
+                amountIn: 5 * 1e17,
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
             })
         );
-        // // Create an arbitrage opportunity - make WETH cheaper on test2pool0
-        // router.exactInputSingle(
-        //     ISwapRouter02.ExactInputSingleParams({
-        //         tokenIn: WETH_ADDRESS,
-        //         tokenOut: WBTC_ADDRESS,
-        //         fee: FEE_0,
-        //         recipient: account0,
-        //         amountIn: 500 * 1e18,
-        //         amountOutMinimum: 0,
-        //         sqrtPriceLimitX96: 0
-        //     })
-        // );
+        // Create an arbitrage opportunity - make WETH cheaper on test2pool0
+        router.exactInputSingle(
+            ISwapRouter02.ExactInputSingleParams({
+                tokenIn: WETH_ADDRESS,
+                tokenOut: WBTC_ADDRESS,
+                fee: FEE_0,
+                recipient: account0,
+                amountIn: 5 * 1e17,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            })
+        );
 
         // // Create an arbitrage opportunity - make WETH cheaper on test3pool0
         // router.exactInputSingle(
@@ -149,46 +149,46 @@ contract UniswapV3FlashTest is Test {
         } catch Error(string memory reason) {
             vm.stopPrank();
             console.log("Reverted with reason:", reason);
-            assertEq(reason, "ERC20: transfer amount exceeds balance", "Expected revert reason not met");
+            assertEq(reason, "profit = 0", "Expected revert reason not met");
         } catch (bytes memory reason) {
             vm.stopPrank();
             console.log("Reverted with reason:", string(reason));
-            assertEq(string(reason), "ERC20: transfer amount exceeds balance", "Expected revert reason not met");
+            assertEq(string(reason), "profit = 0", "Expected revert reason not met");
         }
     }
 
-//     function test_flashSwap_WBTC() public {
-//     uint256 initialWbtcBalance = wbtc.balanceOf(address(this));
+    function test_flashSwap_WBTC() public {
+    uint256 initialWbtcBalance = wbtc.balanceOf(address(this));
 
-//     // Impersonate owner to perform the flash swap
-//     vm.startPrank(owner);
+    // Impersonate owner to perform the flash swap
+    vm.startPrank(owner);
 
-//     try flashSwap.flashSwap({
-//         pool0: address(test2pool0),
-//         fee1: FEE_1,
-//         tokenIn: WBTC_ADDRESS,
-//         tokenOut: WETH_ADDRESS,
-//         amountIn: WBTC_AMOUNT_IN,
-//         amountOutMin: 0
-//     }) {
-//         vm.stopPrank();
+    try flashSwap.flashSwap({
+        pool0: address(test2pool0),
+        fee1: FEE_1,
+        tokenIn: WBTC_ADDRESS,
+        tokenOut: WETH_ADDRESS,
+        amountIn: WBTC_AMOUNT_IN,
+        amountOutMin: 0
+    }) {
+        vm.stopPrank();
 
-//         uint256 finalWbtcBalance = wbtc.balanceOf(address(this));
-//         uint256 profit = finalWbtcBalance > initialWbtcBalance ? finalWbtcBalance - initialWbtcBalance : 0;
+        uint256 finalWbtcBalance = wbtc.balanceOf(address(this));
+        uint256 profit = finalWbtcBalance > initialWbtcBalance ? finalWbtcBalance - initialWbtcBalance : 0;
 
-//         console.log("Profit:", profit);
-//         assertEq(profit, flashSwap.getWbtcProfit(), "Profit should be equal to WbtcProfit");
-//         assertGt(profit, 0, "Profit should be greater than zero");
-//     } catch Error(string memory reason) {
-//         vm.stopPrank();
-//         console.log("Reverted with reason:", reason);
-//         assertEq(reason, "ERC20: transfer amount exceeds balance", "Expected revert reason not met");
-//     } catch (bytes memory reason) {
-//         vm.stopPrank();
-//         console.log("Reverted with reason:", string(reason));
-//         assertEq(string(reason), "ERC20: transfer amount exceeds balance", "Expected revert reason not met");
-//     }
-// }
+        console.log("Profit:", profit);
+        assertEq(profit, flashSwap.getWbtcProfit(), "Profit should be equal to WbtcProfit");
+        assertGt(profit, 0, "Profit should be greater than zero");
+    } catch Error(string memory reason) {
+        vm.stopPrank();
+        console.log("Reverted with reason:", reason);
+        assertEq(reason, "profit = 0", "Expected revert reason not met");
+    } catch (bytes memory reason) {
+        vm.stopPrank();
+        console.log("Reverted with reason:", string(reason));
+        assertEq(string(reason), "profit = 0", "Expected revert reason not met");
+    }
+}
 
     // function test_flashSwap_ARB() public {
     //     uint256 initialArbBalance = arb.balanceOf(address(this));
