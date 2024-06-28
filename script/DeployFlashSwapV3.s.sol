@@ -11,8 +11,8 @@ contract DeployFlashSwapV3 is Script {
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
     function run() external returns (FlashSwapV3) {
-        // uint256 deployerPrivateKey = vm.envUint("BOT_PRIVATE_KEY");
-        vm.startBroadcast();
+        uint256 deployerPrivateKey = vm.envUint("BOT_PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
         FlashSwapV3 flashSwapV3 = new FlashSwapV3();
         vm.stopBroadcast();
         return flashSwapV3;
