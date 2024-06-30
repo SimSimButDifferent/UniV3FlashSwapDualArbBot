@@ -5,7 +5,6 @@ const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")
 const { poolInformation } = require("./utils/poolInformation")
-const { initFlashSwap } = require("./utils/initFlashSwap")
 
 // Config Variables
 
@@ -22,7 +21,7 @@ const amountInUsd = "10"
 // Set the batch size and interval to give control over the number of promises executed per second.
 const BATCH_SIZE = 1 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
-const BATCH_INTERVAL = 1000 // Interval between batches in milliseconds
+const BATCH_INTERVAL = 1600 // Interval between batches in milliseconds
 
 // Main function
 /**
@@ -50,9 +49,6 @@ async function dualArbScan(pools) {
         console.log(
             `Scanning ${routesArray.length} routes for arbitrage opportunities\n every ${EPOCH_INTERVAL / 1000} seconds`,
         )
-        console.log("")
-        console.log("Initializing Flashswap...")
-        console.log("")
 
         // Initialize counters
         let loopCounter = 0
@@ -64,14 +60,7 @@ async function dualArbScan(pools) {
          */
         async function executeBatch(batch) {
             try {
-                const outputs = await Promise.all(batch)
-                for (const output of outputs) {
-                    const arbitrageOpportunity = output[1]
-                    if (arbitrageOpportunity === true) {
-                        // Execute the trade if there is an arbitrage opportunity and update trade counter.
-                        tradeCounter++
-                    }
-                }
+                await Promise.all(batch)
             } catch (error) {
                 console.error("Error executing batch: ", error)
             }
@@ -88,7 +77,7 @@ async function dualArbScan(pools) {
             // Loop through the route batches
             for (let i = 0; i < routesArray.length; i += BATCH_SIZE) {
                 const batch = []
-                console.log("Batch number: ", i / BATCH_SIZE + 1)
+                console.log("Contract Call number: ", i / BATCH_SIZE + 1)
                 // Loop through the batch and create a promise for each route
                 for (
                     let j = 0;
@@ -101,7 +90,7 @@ async function dualArbScan(pools) {
 
                     // Push the promise to the batch
                     try {
-                        batch.push(arbQuote(route, routeNumber, amountInUsd))
+                        batch.push(arbQuote(route, routeNumber))
                     } catch (error) {
                         console.error(
                             `Error creating arbQuote promise for route ${i + j}: `,
@@ -123,7 +112,7 @@ async function dualArbScan(pools) {
                 await Promise.all(batchPromises)
             }
 
-            console.log("Number of trades executed: ", tradeCounter)
+            // console.log("Number of trades executed: ", tradeCounter)
         }
 
         // Run the loop the first time
