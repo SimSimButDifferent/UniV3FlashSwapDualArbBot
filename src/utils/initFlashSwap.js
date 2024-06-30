@@ -12,11 +12,17 @@ const {
 const { getProvider } = require("./getProvider.js")
 const { networks } = require("../../hardhat.config.js")
 
-if (developmentChains.includes(network.name)) {
-    FLASHSWAP_CONTRACT_ADDRESS =
-        networkConfig[networks.localhost.chainId].flashSwapV3Address
-}
+// let FLASHSWAP_CONTRACT_ADDRESS
 
+// if (developmentChains.includes(network.name)) {
+//     FLASHSWAP_CONTRACT_ADDRESS =
+//         networkConfig[networks.localhost.chainId].flashSwapV3Address
+// } else {
+//     FLASHSWAP_CONTRACT_ADDRESS =
+//         networkConfig[networks.arbitrum.chainId].flashSwapV3Address
+// }
+
+FLASHSWAP_CONTRACT_ADDRESS = "0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0"
 async function initFlashSwap() {
     const provider = getProvider()
 

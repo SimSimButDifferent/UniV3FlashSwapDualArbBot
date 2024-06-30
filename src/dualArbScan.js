@@ -5,6 +5,7 @@ const { initPools } = require("./utils/InitPools")
 const { arbQuote } = require("./utils/arbQuote")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")
 const { poolInformation } = require("./utils/poolInformation")
+const { initFlashSwap } = require("./utils/initFlashSwap")
 
 // Config Variables
 
@@ -12,16 +13,16 @@ const { poolInformation } = require("./utils/poolInformation")
 const pools = poolsData.pools
 // Set the amount in usd for each trade
 // For different erc-20 tokens this amount will be converted to the token amount
-const amountInUsd = "100"
+const amountInUsd = "10"
 
 /**
  * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
  */
 
 // Set the batch size and interval to give control over the number of promises executed per second.
-const BATCH_SIZE = 5 // Number of promises to execute in each batch
+const BATCH_SIZE = 1 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
-const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
+const BATCH_INTERVAL = 1000 // Interval between batches in milliseconds
 
 // Main function
 /**
@@ -49,6 +50,8 @@ async function dualArbScan(pools) {
         console.log(
             `Scanning ${routesArray.length} routes for arbitrage opportunities\n every ${EPOCH_INTERVAL / 1000} seconds`,
         )
+        console.log("")
+        console.log("Initializing Flashswap...")
         console.log("")
 
         // Initialize counters
