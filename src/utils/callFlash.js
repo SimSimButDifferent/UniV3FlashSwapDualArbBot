@@ -1,8 +1,9 @@
-const { ethers } = require("hardhat")
+const { ethers } = require("ethers")
 const {
     abi: flashSwapAbi,
 } = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 const { getProvider } = require("./getProvider.js")
+const { getGasPrice } = require("./getGasPrice.js")
 
 const FLASHSWAP_CONTRACT_ADDRESS = "0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0"
 const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
@@ -50,9 +51,11 @@ async function callFlash(route, routeNumber) {
 
     // Validate inputs
     if (!ethers.isAddress(poolAddress)) throw new Error("Invalid pool address")
-
     if (!ethers.isAddress(tokenIn)) throw new Error("Invalid tokenIn address")
     if (!ethers.isAddress(tokenOut)) throw new Error("Invalid tokenOut address")
+
+    const gasPrice = await getGasPrice()
+    const gasLimit = 500000n
 
     try {
         // Call flashswap
@@ -65,6 +68,11 @@ async function callFlash(route, routeNumber) {
                 tokenOut,
                 amountInFlash,
                 minimumAmountOut,
+                {
+                    gasPrice: gasPrice,
+                    gasLimit: gasLimit,
+                    // maxPriorityFeePerGas: gasPrice,
+                },
             )
 
         // Wait for the transaction to be mined
