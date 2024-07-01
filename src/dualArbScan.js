@@ -2,7 +2,7 @@ require("./utils/getProvider")
 
 const { data: poolsData } = require("./jsonPoolData/arbitrumUniPools.json")
 const { initPools } = require("./utils/InitPools")
-const { callFlash } = require("./utils/callFlash")
+const { quoteFlash } = require("./utils/quoteFlash")
 const { findArbitrageRoutes } = require("./utils/findArbitrageRoutes")
 const { poolInformation } = require("./utils/poolInformation")
 
@@ -84,16 +84,16 @@ async function dualArbScan(pools) {
                     j < BATCH_SIZE && i + j < routesArray.length;
                     j++
                 ) {
-                    // name input variables for callFlash function
+                    // name input variables for quoteFlash function
                     const route = routesArray[i + j]
                     const routeNumber = i + j
 
                     // Push the promise to the batch
                     try {
-                        batch.push(callFlash(route, routeNumber))
+                        batch.push(quoteFlash(route, routeNumber))
                     } catch (error) {
                         console.error(
-                            `Error creating callFlash promise for route ${i + j}: `,
+                            `Error creating quoteFlash promise for route ${i + j}: `,
                             error,
                         )
                     }

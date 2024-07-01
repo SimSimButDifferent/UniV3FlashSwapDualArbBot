@@ -17,7 +17,7 @@ const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
  * @param routeNumber
  * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
  */
-async function callFlash(route, routeNumber) {
+async function quoteFlash(route, routeNumber) {
     let arbitrageOpportunity
     let poolAddress
     let feePool1
@@ -107,4 +107,4 @@ async function callFlash(route, routeNumber) {
     return [arbitrageOpportunity, minimumAmountOut]
 }
 
-exports.callFlash = callFlash
+exports.quoteFlash = quoteFlash
