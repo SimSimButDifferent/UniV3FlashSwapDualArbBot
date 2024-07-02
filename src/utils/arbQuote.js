@@ -1,16 +1,18 @@
-const { ethers, network } = require("hardhat")
-const { networkConfig } = require("../../helper-hardhat-config.js")
+const { ethers } = require("hardhat")
 
 const {
     abi: Quoter2Abi,
 } = require("@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json")
-
+const {
+    abi: flashSwapAbi,
+} = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 const { getProvider } = require("./getProvider.js")
 const { gasEstimateToUsd } = require("./utilities")
-const { initFlashSwap } = require("./initFlashSwap")
+const { getGasPrice } = require("./getGasPrice")
 
-const chainId = network.config.chainId
-const quoter2Address = networkConfig[chainId].quoter2
+const quoter2Address = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
+const FLASHSWAP_CONTRACT_ADDRESS = "0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0"
+const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
 
 /**
  * @dev This function checks for arbitrage opportunities in a given route
@@ -41,6 +43,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
     // Create a new provider
     const provider = getProvider()
+    const owner = new ethers.Wallet(BOT_PRIVATE_KEY, provider)
 
     // Create a new instance of the Quoter contract
     const quoter2 = new ethers.Contract(quoter2Address, Quoter2Abi, provider)
@@ -71,7 +74,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             // Calculate the minimum amount required to make the trade profitable / worthwhile
             // const minimumAmountOut =
             //     amountInSim + gasEstimateUsdBigInt + profitThresholdUsd
-            const minimumAmountOut = amountInSim + profitThresholdToken
+            const minimumAmountOut = amountInFlash + profitThresholdToken
             // Calculate the profit
             const profit = amountOut - minimumAmountOut
 
@@ -113,7 +116,11 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         tokenIn = route[0]
         tokenOut = route[2]
 
-        const flashSwap = initFlashSwap()
+        const flashSwap = new ethers.Contract(
+            FLASHSWAP_CONTRACT_ADDRESS,
+            flashSwapAbi,
+            provider,
+        )
 
         console.log("")
         console.log(`Arbitrage opportunity found: Route ${routeNumber} `)
@@ -133,57 +140,51 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         if (!ethers.BigNumber.isBigNumber(minimumAmountOut))
             throw new Error("Invalid minimumAmountOut")
 
+        const gasPrice = await getGasPrice()
+        const gasLimit = 500000n
+
         try {
             // Call flashswap
-            const tx = await flashSwap.flashSwap(
-                poolAddress,
-                feePool1,
-                tokenIn,
-                tokenOut,
-                amountInFlash,
-                minimumAmountOut,
+            const tx = await flashSwap
+                .connect(owner)
+                .flashSwap(
+                    poolAddress,
+                    feePool1,
+                    tokenIn,
+                    tokenOut,
+                    amountInFlash,
+                    minimumAmountOut,
+                    {
+                        gasPrice: gasPrice,
+                        gasLimit: gasLimit,
+                        // maxPriorityFeePerGas: gasPrice,
+                    },
+                )
+
+            // Wait for the transaction to be mined
+            const receipt = await tx.wait()
+
+            console.log("Transaction successful!")
+            console.log("Transaction hash:", tx.hash)
+            console.log("Gas used:", receipt.gasUsed.toString())
+
+            // Check for events
+            const flashSwapExecutedEvent = receipt.events.find(
+                (event) => event.event === "FlashSwapExecuted",
             )
 
-            // Log the smart contract profit of each token
-            const wethProfit = ethers.formatUnits(
-                await flashSwap.getWethProfit(),
-                18,
-            )
-            const usdcProfit = ethers.formatUnits(
-                await flashSwap.getUsdcProfit(),
-                6,
-            )
-            const usdtProfit = ethers.formatUnits(
-                await flashSwap.getUsdtProfit(),
-                6,
-            )
-
-            console.log(`Route ${routeNumber} Info:`)
-            console.log(
-                `amountIn - ${ethers.formatUnits(amountInFlash, token1Decimals)} ${route[9]}`,
-            )
-
-            console.log(
-                `${route[9]} profit - ${ethers.formatUnits(profit, token0Decimals)}`,
-            )
-            console.log(
-                `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
-            )
-            console.log("-----------------------")
+            if (flashSwapExecutedEvent) {
+                console.log("FlashSwapExecuted event emitted")
+                // You can access event parameters here if needed
+            }
             console.log("")
-            console.log("Total Smart Contract Profits:")
-            console.log(`WETH Profit: ${wethProfit}`)
-            console.log(`USDC Profit: ${usdcProfit}`)
-            console.log(`USDT Profit: ${usdtProfit}`)
+            console.log("Validating inputs for recursive call:")
+            console.log("Route: ", route)
+            console.log("Amount In: ", amountInUsd)
+            console.log("Route Number: ", routeNumber)
             console.log("")
-            console.log("-----------------------")
-
-            // Get transaction receipt
-            const txReceipt = await tx.wait()
-            console.log("Transaction Receipt: ", txReceipt)
-
             // Call arb quote again. Code will loop until no arbitrage opportunity left in route.
-            await arbQuote(route, amountIn, routeNumber)
+            await arbQuote(route, amountInUsd, routeNumber)
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
@@ -194,7 +195,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         )
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        console.log("Amount In: ", amountInSim)
+        console.log("Amount In: ", amountInFlash)
         console.log("Amount Out: ", amountOut)
         console.log("Minimum Amount Out: ", minimumAmountOut)
 
