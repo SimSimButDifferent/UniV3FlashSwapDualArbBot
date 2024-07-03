@@ -74,7 +74,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             // Calculate the minimum amount required to make the trade profitable / worthwhile
             // const minimumAmountOut =
             //     amountInSim + gasEstimateUsdBigInt + profitThresholdUsd
-            const minimumAmountOut = amountInFlash + profitThresholdToken
+            const minimumAmountOut = amountInSim + profitThresholdToken
             // Calculate the profit
             const profit = amountOut - minimumAmountOut
 
@@ -195,7 +195,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         )
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        console.log("Amount In: ", amountInFlash)
+        console.log("Amount In: ", amountInSim)
         console.log("Amount Out: ", amountOut)
         console.log("Minimum Amount Out: ", minimumAmountOut)
 
