@@ -21,7 +21,7 @@ const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
  * flashswap again until there is no arbitrage opportunity left.
  * @param route
  * @param routeNumber
- * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
+ * @returns {Promise<[amountOut, arbitrageSuccess, profit, minimumAmountOut]>}
  */
 async function arbQuote(route, routeNumber, amountInUsd) {
     let arbitrageSuccess
@@ -104,8 +104,6 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
     // Calculate wether the arbitrage opportunity is profitable
     if (profit > profitThresholdToken) {
-        arbitrageOpportunity = true
-
         // Inputs for calling Flashswap
         poolAddress = ethers.getAddress(route[10])
         feePool1 = route[3]
@@ -202,7 +200,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         arbitrageSuccess = false
     }
 
-    return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
+    return [amountOut, arbitrageSuccess, profit, minimumAmountOut]
 }
 
 exports.arbQuote = arbQuote
