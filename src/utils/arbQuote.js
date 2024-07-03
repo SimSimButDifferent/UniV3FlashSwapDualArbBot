@@ -63,10 +63,6 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
             // Log necessary outputs
             const amountOut = output.amountOut
-            const gasEstimate = output.gasEstimate.toString()
-
-            const gasEstimateUsd = await gasEstimateToUsd(gasEstimate)
-            const gasEstimateUsdBigInt = ethers.parseUnits(gasEstimateUsd, 6)
 
             // Calculate the minimum amount required to make the trade profitable / worthwhile
             const minimumAmountOut = amountInSim + profitThresholdToken
@@ -129,10 +125,6 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             throw new Error("Invalid tokenIn address")
         if (!ethers.utils.isAddress(tokenOut))
             throw new Error("Invalid tokenOut address")
-        if (!ethers.BigNumber.isBigNumber(amountIn))
-            throw new Error("Invalid amountIn")
-        if (!ethers.BigNumber.isBigNumber(minimumAmountOut))
-            throw new Error("Invalid minimumAmountOut")
 
         const gasPrice = await getGasPrice()
         const gasLimit = 500000n
