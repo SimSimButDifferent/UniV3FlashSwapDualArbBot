@@ -75,6 +75,7 @@ async function dualArbScan(pools) {
             } catch (error) {
                 console.error("Error executing batch: ", error)
             }
+            console.log("Number of trades executed: ", tradeCounter)
         }
 
         /**
@@ -122,8 +123,6 @@ async function dualArbScan(pools) {
                 // Wait for the batch promises to resolve
                 await Promise.all(batchPromises)
             }
-
-            console.log("Number of trades executed: ", tradeCounter)
         }
 
         // Run the loop the first time

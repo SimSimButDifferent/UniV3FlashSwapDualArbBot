@@ -96,8 +96,6 @@ async function arbQuote(route, routeNumber, amountInUsd) {
 
     const { amountOut, minimumAmountOut, profit } = await simSwap(amountInSim)
 
-    console.log("SimSwap complete")
-
     // Calculate wether the arbitrage opportunity is profitable
     if (profit > profitThresholdToken) {
         // Inputs for calling Flashswap
@@ -182,8 +180,8 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         )
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        console.log("Amount In: ", amountInSim)
-        console.log("Amount Out: ", amountOut)
+        // console.log("Amount In: ", amountInSim)
+        // console.log("Amount Out: ", amountOut)
         console.log("Minimum Amount Out: ", minimumAmountOut)
 
         console.log(`Profit: ${formattedProfit} - ${route[9]}`)
