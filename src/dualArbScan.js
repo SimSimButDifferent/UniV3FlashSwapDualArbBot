@@ -63,10 +63,13 @@ async function dualArbScan(pools) {
             try {
                 const outputs = await Promise.all(batch)
                 for (const output of outputs) {
-                    const arbitrageOpportunity = output[1]
-                    if (arbitrageOpportunity === true) {
+                    const arbitrageSuccess = output[1]
+                    if (arbitrageSuccess === true) {
                         // Execute the trade if there is an arbitrage opportunity and update trade counter.
                         tradeCounter++
+                        console.log(
+                            `ARBITRAGE TRADE NUMBER ${tradeCounter} CONFIRMED!`,
+                        )
                     }
                 }
             } catch (error) {

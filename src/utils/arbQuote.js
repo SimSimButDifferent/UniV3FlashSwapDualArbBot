@@ -24,7 +24,7 @@ const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
  * @returns {Promise<[amountOut, arbitrageOpportunity, profit, minimumAmountOut]>}
  */
 async function arbQuote(route, routeNumber, amountInUsd) {
-    let arbitrageOpportunity
+    let arbitrageSuccess
     let poolAddress
     let feePool1
     let tokenIn
@@ -176,6 +176,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             if (flashSwapExecutedEvent) {
                 console.log("FlashSwapExecuted event emitted")
                 // You can access event parameters here if needed
+                arbitrageSuccess = true
             }
             console.log("")
             console.log("Validating inputs for recursive call:")
@@ -202,7 +203,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         console.log(`Profit: ${formattedProfit} - ${route[9]}`)
         console.log("")
         console.log("-----------------------")
-        arbitrageOpportunity = false
+        arbitrageSuccess = false
     }
 
     return [amountOut, arbitrageOpportunity, profit, minimumAmountOut]
