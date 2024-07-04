@@ -1,5 +1,9 @@
 ![image](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/assets/88177427/f4872696-36f5-429f-8cf2-70f87d911abf)
 
+**FlashQuoteTest notes** - This was to see if I could get a real accurate quote for a flashswap. I am not entirely sure If the quotes we get from quoteExactInput single are entirely accurate. However I have to get on with other things for the time being.
+
+The **[arbitrum branch](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/tree/arbitrum)** is the most up-to-date repository at this time.
+
 ## Uniswap V3 Flashswap Arbitrage bot.
 
 This project is broken down into 2 main parts.
