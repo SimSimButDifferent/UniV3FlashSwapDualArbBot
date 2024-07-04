@@ -1,3 +1,5 @@
+const { ethers } = require("hardhat")
+
 const networkConfig = {
     1: {
         name: "mainnet",

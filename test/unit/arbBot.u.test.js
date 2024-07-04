@@ -59,13 +59,13 @@ describe("DualArbBot Tests", function () {
                 tokenAmountsIn,
                 amountInUsd,
             )
-            route = routesArray[9]
+            route = routesArray[0]
             amountIn = route[7]
             routeNumber = 0
-            profitThreshold = route[8]
+            profitThreshold = amountIn / 100n
         })
         it("Should correctly calculate the arbitrage quote", async function () {
-            const quote = await arbQuote(route, amountIn, routeNumber)
+            const quote = await arbQuote(route, routeNumber, amountIn)
 
             expect(quote).to.be.an("array")
             expect(quote[0]).to.be.a("BigInt")

@@ -11,7 +11,8 @@ const { getProvider } = require("./getProvider.js")
 const { getGasPrice } = require("./getGasPrice")
 
 const quoter2Address = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
-const FLASHSWAP_CONTRACT_ADDRESS = "0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0"
+const FLASHSWAP_CONTRACT_ADDRESS = "0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0" // Arbitrum
+// const FLASHSWAP_CONTRACT_ADDRESS = "0xc5b7205454Ef2e4DDe093442bC1b1457E46B0352" // localhost
 const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY
 
 /**
