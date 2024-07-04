@@ -50,8 +50,8 @@ contract UniswapV3FlashTest is Test {
     address account1 = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720;
    
 
-    uint256 private constant USDT_AMOUNT_IN = 5 * 1e6;
-    uint256 private constant WBTC_AMOUNT_IN = 16200;
+    uint256 private constant USDT_AMOUNT_IN = 10 * 1e6;
+    uint256 private constant WBTC_AMOUNT_IN = 1700;
     uint256 private constant ARB_AMOUNT_IN = 120 * 1e18;
    
   
@@ -111,9 +111,9 @@ contract UniswapV3FlashTest is Test {
 
         vm.stopPrank();
 
-        console.log("Owner address:", owner);
-        console.log("Account0 address:", account0);
-        console.log("Account1 address:", account1);
+        // console.log("Owner address:", owner);
+        // console.log("Account0 address:", account0);
+        // console.log("Account1 address:", account1);
        
         uint256 usdtBalanceBefore = usdt.balanceOf(owner);
         console.log("Usdt balance before test:", usdtBalanceBefore);
