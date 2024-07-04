@@ -1,10 +1,14 @@
 ![image](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/assets/88177427/f4872696-36f5-429f-8cf2-70f87d911abf)
 
-## Arbitrum Branch
+## Arbitrum Branch (most up-to-date branch 🌿)
 
 The contract is now deployed to on arbitrum at the address - [0xf812197dbdbcd0f80cd003c20f695dc8d06bc3b0](https://arbiscan.io/address/0xf812197dbdbcd0f80cd003c20f695dc8d06bc3b0)
 
-As it stands the script spends about 1,400,000 compute units per day. Testing still continuing.
+As it stands the script spends about 1,400,000 compute units per day, roughly 42,000,000 per month. 
+
+I am currently testing it with an input of 10 usd value. the amountIn for each token is calculated using this value.
+
+Testing still continuing.
 
 ## Uniswap V3 Flashswap Arbitrage bot.
 
@@ -16,14 +20,14 @@ The idea is for the script to scan the pools for current prices and execute flas
 
 You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information. 
 
-Right now it is configured to pool for pools that include WETH, USDC and USDT that have totalValueLocked of above $1,000,000. 
+Right now it is configured to pool for pools that include WETH, WBTC, ARB and USDT, that have atotalValueLocked in USD of above $1,000,000. 
 
 You can configure the query how you like, the script should still run the same way.
 
 **Here is an overview of what the script does:**
 
 -   Scans all routes between a given set of pools.
--   Is the route profitable after gas + fees?
+-   Is the route profitable? (minimum amount out = amount in + profit threshhold(currently 1%))
 -   Format the route for input into the flashswap function.
 -   Execute Flashswap smart contract function and log profits.
 
@@ -37,7 +41,7 @@ You can configure the query how you like, the script should still run the same w
 ## Installation
 
 ```bash
-git clone https://github.com/SimSimButDifferent/UniStablecoinFlashSwapArbBot.git
+git clone https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot
 
 yarn
 
@@ -54,17 +58,17 @@ yarn hardhat init
 If you haven't already, go get a mainnet API key from [Alchemy](https://www.alchemy.com/), [Infura](https://www.infura.io/) or [Quicknode](https://www.quicknode.com/).
 
 ```bash
-FORK_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY_
+FORK_URL=https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY
 ```
 
 ### Foundry testing ❤️‍🔥
 
 **Run the local node**
 
-You can go to etherscan.io if you want to get a more recent block number.
+You can go to arbscan.io if you want to get a more recent block number.
 
 ```bash
-anvil --fork-url FORK_URL --fork-block-number 19721861 --fork-chain-id 1 --chain-id 1
+anvil --fork-url FORK_URL --fork-block-number 225459063 --fork-chain-id 42161 --chain-id 42161
 ```
 Split the terminal and deploy flashSwapV3.sol to the forked mainnet: 🚀
 
@@ -72,43 +76,36 @@ Split the terminal and deploy flashSwapV3.sol to the forked mainnet: 🚀
 forge script script/DeployFlashSwapV3.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --legacy
 ```
 ```bash
-[⠒] Compiling...
-No files changed, compilation skipped
+[⠊] Compiling...
+[⠰] Compiling 33 files with Solc 0.7.6
+[⠔] Solc 0.7.6 finished in 1.26s
+Compiler run successful!
 Script ran successfully.
 
 == Return ==
-0: contract FlashSwapV3 0xf42Ec71A4440F5e9871C643696DD6Dc9a38911F8
+0: contract FlashSwapV3 0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0
 
 ## Setting up 1 EVM.
 
 ==========================
 
-Chain 1
+Chain 42161
 
-Estimated gas price: 9.46125912 gwei
+Estimated gas price: 0.020000001 gwei
 
-Estimated total gas used for script: 941528
+Estimated total gas used for script: 951147
 
-Estimated amount required: 0.00890804037673536 ETH
-
-==========================
-##
-Sending transactions [0 - 0].
-⠁ [00:00:00] [###########################################################################################################################] 1/1 txes (0.0s)##
-Waiting for receipts.
-⠉ [00:00:01] [#######################################################################################################################] 1/1 receipts (0.0s)
-##### mainnet
-✅  [Success]Hash: 0x1e43c0eacc1a526993b033f2ffd16026196930a8cd8bc3eede25368eaff3645d
-Contract Address: 0xf42Ec71A4440F5e9871C643696DD6Dc9a38911F8
-Block: 19916364
-Paid: 0.00687404942985864 ETH (726547 gas * 9.46125912 gwei)
-
-
+Estimated amount required: 0.000019022940951147 ETH
 
 ==========================
 
-ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
-Total Paid: 0.00687404942985864 ETH (726547 gas * avg 9.46125912 gwei)
+##### arbitrum
+✅  [Success]Hash: 0x5b90cfccca9b3333887acabe36b8158af16946c6320ddebdf46576d5475a9b22
+Contract Address: 0xf812197DbdbcD0f80cD003C20f695dc8d06bC3b0
+Block: 20166493
+Paid: 0.000006401956463304 ETH (731652 gas * 0.008750002 gwei)
+
+✅ Sequence #1 on arbitrum | Total Paid: 0.000006401956463304 ETH (731652 gas * avg 0.008750002 gwei)
 ```
 
 **Run Foundry tests**
@@ -120,29 +117,20 @@ forge test -vv --rpc-url http://127.0.0.1:8545
 [⠒] Compiling...
 No files changed, compilation skipped
 
-Ran 3 tests for test/FlashSwapV3Test.t.sol:UniswapV3FlashTest
-[PASS] test_flashSwap_DAI() (gas: 216503)
+Ran 2 tests for test/FlashSwapV3Test.t.sol:UniswapV3FlashTest
+[PASS] test_flashSwap_WBTC() (gas: 244872)
 Logs:
-  Dai balance before test: 0
   Usdt balance before test: 0
-  Pepe balance before test: 0
+  Wbtc balance before test: 0
   Reverted with reason: profit = 0
 
-[PASS] test_flashSwap_PEPE() (gas: 242244)
+[PASS] test_flashswap_USDT() (gas: 248728)
 Logs:
-  Dai balance before test: 0
   Usdt balance before test: 0
-  Pepe balance before test: 0
-  Profit: 2301274211079176434509738
-
-[PASS] test_flashswap_USDT() (gas: 222453)
-Logs:
-  Dai balance before test: 0
-  Usdt balance before test: 0
-  Pepe balance before test: 0
+  Wbtc balance before test: 0
   Reverted with reason: profit = 0
 
-Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 120.54s (9.84s CPU time)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 14.58ms (7.34ms CPU time)
 ```
 
 ### Hardhat testing 👷
