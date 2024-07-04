@@ -163,7 +163,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
                 arbitrageSuccess = true
             }
             console.log("")
-            console.log("Validating inputs for recursive call:")
+            console.log("Validating inputs for recursive call of arbQuote:")
             console.log("Route: ", route)
             console.log("Amount In: ", amountInUsd)
             console.log("Route Number: ", routeNumber)
@@ -180,9 +180,11 @@ async function arbQuote(route, routeNumber, amountInUsd) {
         )
         console.log("")
         console.log("No arbitrage opportunity found in Route: ", routeNumber)
-        // console.log("Amount In: ", amountInSim)
-        // console.log("Amount Out: ", amountOut)
-        console.log("Minimum Amount Out: ", minimumAmountOut)
+
+        console.log(
+            "Minimum Amount Out: ",
+            ethers.formatUnits(minimumAmountOut, Number(token0Decimals)),
+        )
 
         console.log(`Profit: ${formattedProfit} - ${route[9]}`)
         console.log("")

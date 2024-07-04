@@ -12,7 +12,7 @@ const { poolInformation } = require("./utils/poolInformation")
 const pools = poolsData.pools
 // Set the amount in usd for each trade
 // For different erc-20 tokens this amount will be converted to the token amount
-const amountInUsd = "100"
+const amountInUsd = "10"
 
 /**
  * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
@@ -75,7 +75,10 @@ async function dualArbScan(pools) {
             } catch (error) {
                 console.error("Error executing batch: ", error)
             }
+            console.log("")
+            console.log("AmountIn USD value: ", amountInUsd)
             console.log("Number of trades executed: ", tradeCounter)
+            console.log("")
         }
 
         /**
