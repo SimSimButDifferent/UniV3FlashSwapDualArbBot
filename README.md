@@ -12,7 +12,19 @@ Testing still continuing.
 
 ## Uniswap V3 Flashswap Arbitrage bot.
 
-This project is broken down into 2 main parts.
+#### Project Overview
+This project is merely a working prototype, that can search for and carry out dual-arb trades. 
+
+I feel that a more suitable description for this project would be boilerplate code for anybody that wishes to explore flashswap arbitrage. That being said, this is uniswap v3 flashswap arbitrage seems a difficult game to get right, Probably due to the concentrated liquidity. With uniswap V2 it was relatively simple to calculate the exact optimal amount in for a trade. Whereas with V3, I have not yet been able to find a way to do this accuratly or efficiently.
+
+That being said, I only explored arbitrage between the same tokens on 2 different pools. The real money is made when one utilizes multiple hops through different tokens, for example triangular-arbitrage (trading a 3 token route) or more.
+
+#### Ideas for Future Development
+1. implement a 3 or more token hope strategy.
+2. Listen to the memepool for large trades then quote exactly when the transaction has been confirmed. Alternatively you could just directly call flashswap instead.
+3. Is there a more accurate way to quote this type of arbitrage?
+
+#### This project is broken down into 2 main parts.
 
 ### Flashswap function smart contract + Arbitrage scanner
 
@@ -37,6 +49,14 @@ You can configure the query how you like, the script should still run the same w
 [Foundry](https://book.getfoundry.sh/) - For testing the Smart contract, written in Solidity
 
 [Hardhat](https://hardhat.org/) - For testing the scanner and all of it's dependencies, written in javascript.
+
+## Disclaimer
+
+This project **will almost definatly not make you money**. The people and systems that you are up against are far more efficient than this system in it's current form. Use at your own risk. **I am not responsible for any mis-use or loss of funds**.
+
+## To Contribute
+
+If you would like to contribute to this project, please send me an email @ simsimbutdev@gmail.com I would be more than happy to talk with anyone who is interested in collaborating on any web3 projects. You are more than welcome to open create a pull request and take it in whichever direction you like.
 
 ## Installation
 
