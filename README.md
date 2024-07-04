@@ -166,36 +166,61 @@ yarn hardhat test test/integration/arbBot.int.test.js --network localhost
 Run this first to get the pools above the liquidity threshhold, which you can change in the query itself.
 
 ```javascript
-const USDC = `"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"`
-const USDT = `"0xdac17f958d2ee523a2206206994597c13d831ec7"`
-const WETH = `"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"`
-
 /**
  * @dev This function gets the pools from the Uniswap V3 subgraph
  * @returns {object} jsonDict
  */
 async function getPools() {
     // The query to get the pools from the Uniswap V3 subgraph
+
     const query = `
     {
       pools(
         where: {
-          token0_in: [
-            ${USDT}, ${USDC}, ${WETH}
-          ]
-          token1_in: [
-            ${USDT}, ${USDC}, ${WETH}
-          ]
-          totalValueLockedUSD_gt: 1000000
+          token0_in: ["0x82af49447d8a07e3bd95bd0d56f35241523fbab1",           "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f", "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9", "0x912ce59144191c1204e64559fe8253a0e49e6548"]
+          token1_in: ["0x82af49447d8a07e3bd95bd0d56f35241523fbab1", "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f", "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9", "0x912ce59144191c1204e64559fe8253a0e49e6548"]
+          volumeUSD_gte: 500000,
+          totalValueLockedUSD_gt: 1000000,
+          id_not: "0x14af1804dbbf7d621ecc2901eef292a24a0260ea"
         }
+        first:30,
+        orderBy: totalValueLockedUSD,
+        orderDirection: desc
 ```
 
-Currently it will get any pools that include the tokens WETH, USDC and USDT, with an amount locked in USD greater than 1,000,000 USD
+Currently it will get any pools that include the tokens WETH, WBTC, ARB and USDT, with an amount locked in USD greater than 1,000,000 USD
 
-As it is right now, outputs 10 pools.
+As it is right now, outputs 9 pools.
+
 
 ```bash
 yarn hardhat run src/utils/getPools.js
+```
+
+poolInformation returns the tokenInfo object that includes tokenAmountsIn, profitThreshhold and the token price in usd.
+
+```
+  Token Info:  {
+  WBTC: {
+    amountIn: 166903n,
+    profitThreshold: 1669n,
+    priceInUsd: 59914.82248207332
+  },
+  WETH: {
+    amountIn: 30460466625198356n,
+    profitThreshold: 304604666251983n,
+    priceInUsd: 3282.943798282959
+  },
+  USDT: {
+    amountIn: 100107620n,
+    profitThreshold: 1001076n,
+    priceInUsd: 0.9989249520599842
+  },
+  ARB: {
+    amountIn: 134395064363054137344n,
+    profitThreshold: 1343950643630541373n,
+    priceInUsd: 0.7440749440757773
+  }
 ```
 
 ## Scan for Arbitrage
@@ -207,7 +232,7 @@ Calculates all possible routes and runs **quoteExactInput()** on all of them.
 This is done in batches, to save on compute units for API calls. you can toggle how big batches are and how often a batch of quotes is executed, near the top of **dualArbScan.js** by changing the following two variables:
 ```javascript
 // Set the batch size and interval to give control over the number of promises executed per second.
-const BATCH_SIZE = 10 // Number of promises to execute in each batch
+const BATCH_SIZE = 5 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 ```
@@ -215,61 +240,99 @@ const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 
 Then calculates wether there is an arbitrage opportunity
 
+**IMPORTANT TO NOTE** - at current configuration, it is very possible the user could lose money, if flashswap is called. This is because the gas fee would be about 0.02$. with a 10$ input the profit threshhold is 0.10$ making the gasfee 20% of the profit threshhold. If you are going to try to run this I would highly recomend going into utilities.js and using the conversion functions to account for this in the profit calculation.
+
 ```javascript
-if (amountOut > amountIn + gasFeesUsd + ProfitThreshhold) {
-    arbitrageOpportunity = true
-}
+ if (profit > profitThresholdToken)
 ```
 
-This loop repeats every 72 seconds with the current configuration.
+This loop repeats every 88 seconds with the current configuration.
 
 ```bash
-yarn hardhat run src/utils/dualArbScan.js --network mainnet
+yarn hardhat run src/utils/dualArbScan.js --network arbitrum
 
-Found 10 pools
-
-WETH/USDT - Fee tier(500) - Price: 3683.979235
-WETH/USDT - Amount locked in USD: 100760125.67 $ - Address: 0x11b815efb8f581194ae79006d24e0d814b7697f6
+Found 9 pools
+List of pools to scan
 -----------------------
 
-USDC/USDT - Fee tier(100) - Price: 1.000150
-USDC/USDT - Amount locked in USD: 30193284.41 $ - Address: 0x3416cf6c708da44db2624d63ea0aaef7113527c6
+WBTC/WETH - Fee tier(500)
+WBTC/WETH - Amount locked in USD: 49372582.82 $ - Address: 0x2f5e87c9312fa29aed5c179e456625d79015299c
 -----------------------
 
-WETH/USDT - Fee tier(3000) - Price: 3676.444186
-WETH/USDT - Amount locked in USD: 230225576.56 $ - Address: 0x4e68ccd3e89f51c3074ca5072bbac773960dfa36
+WETH/USDT - Fee tier(500)
+WETH/USDT - Amount locked in USD: 26470899.27 $ - Address: 0x641c00a822e8b671738d32a431a4fb6074e5c79d
 -----------------------
 
-USDC/USDT - Fee tier(500) - Price: 1.000596
-USDC/USDT - Amount locked in USD: 12786375.87 $ - Address: 0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf
+WETH/ARB - Fee tier(500)
+WETH/ARB - Amount locked in USD: 15298051.98 $ - Address: 0xc6f780497a95e246eb9449f5e4770916dcd6396a
 -----------------------
 
-USDC/WETH - Fee tier(10000) - Price: 3681.791061
-USDC/WETH - Amount locked in USD: 14977472.77 $ - Address: 0x7bea39867e4169dbe237d55c8242a8f2fcdcc387
+WBTC/WETH - Fee tier(3000)
+WBTC/WETH - Amount locked in USD: 10719887.95 $ - Address: 0x149e36e72726e0bcea5c59d40df2c43f60f5a22d
 -----------------------
 
-USDC/WETH - Fee tier(500) - Price: 3683.627422
-USDC/WETH - Amount locked in USD: 522066599.23 $ - Address: 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640
+WETH/ARB - Fee tier(3000)
+WETH/ARB - Amount locked in USD: 9213728.99 $ - Address: 0x92c63d0e701caae670c9415d91c474f686298f00
 -----------------------
 
-USDC/WETH - Fee tier(3000) - Price: 3682.603332
-USDC/WETH - Amount locked in USD: 393639206.66 $ - Address: 0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8
+WBTC/USDT - Fee tier(500)
+WBTC/USDT - Amount locked in USD: 3560736.68 $ - Address: 0x5969efdde3cf5c0d9a88ae51e47d721096a97203
 -----------------------
 
-WETH/USDT - Fee tier(10000) - Price: 3649.355457
-WETH/USDT - Amount locked in USD: 4344656.51 $ - Address: 0xc5af84701f98fa483ece78af83f11b6c38aca71d
+WETH/USDT - Fee tier(3000)
+WETH/USDT - Amount locked in USD: 2603095.00 $ - Address: 0xc82819f72a9e77e2c0c3a69b3196478f44303cf4
 -----------------------
 
-WETH/USDT - Fee tier(100) - Price: 3682.322619
-WETH/USDT - Amount locked in USD: 4477751.18 $ - Address: 0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b
+WETH/ARB - Fee tier(10000)
+WETH/ARB - Amount locked in USD: 2459193.76 $ - Address: 0x92fd143a8fa0c84e016c2765648b9733b0aa519e
 -----------------------
 
-USDC/WETH - Fee tier(100) - Price: 3691.331420
-USDC/WETH - Amount locked in USD: 1605078.75 $ - Address: 0xe0554a476a092703abdb3ef35c80e0d76d32939f
+WBTC/USDT - Fee tier(3000)
+WBTC/USDT - Amount locked in USD: 1198369.45 $ - Address: 0x53c6ca2597711ca7a73b6921faf4031eedf71339
 -----------------------
+{
+  WBTC: {
+    address: '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f',
+    decimals: '8'
+  },
+  WETH: {
+    address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    decimals: '18'
+  },
+  USDT: {
+    address: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
+    decimals: '6'
+  },
+  ARB: {
+    address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+    decimals: '18'
+  }
+}
+Token Info:  {
+  WBTC: {
+    amountIn: 16719n,
+    profitThreshold: 167n,
+    priceInUsd: 59811.84378093867
+  },
+  WETH: {
+    amountIn: 3050381186871911n,
+    profitThreshold: 30503811868719n,
+    priceInUsd: 3278.278807592157
+  },
+  USDT: {
+    amountIn: 10009675n,
+    profitThreshold: 100096n,
+    priceInUsd: 0.9990334034040314
+  },
+  ARB: {
+    amountIn: 13478363823712176128n,
+    profitThreshold: 134783638237121761n,
+    priceInUsd: 0.7419298166152207
+  }
+}
 
-Scanning 84 routes for arbitrage opportunities
- every 72 seconds
+Scanning 52 routes for arbitrage opportunities
+ every 88 seconds
 
 Scan run number:  1
 Batch number:  1
