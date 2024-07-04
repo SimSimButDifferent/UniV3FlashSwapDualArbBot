@@ -18,7 +18,7 @@ This project is broken down into 2 main parts.
 
 The idea is for the script to scan the pools for current prices and execute flashswap arbitrage with a given amountIn.
 
-You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information. 
+You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/explorer/subgraphs/FbCGRftH4a3yZugY7TnbYgPJVEv2LvMT6oF1fxPe9aJM?view=Query&chain=arbitrum-one) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information. 
 
 Right now it is configured to pool for pools that include WETH, WBTC, ARB and USDT, that have atotalValueLocked in USD of above $1,000,000. 
 
