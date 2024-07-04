@@ -1,5 +1,7 @@
 ![image](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/assets/88177427/f4872696-36f5-429f-8cf2-70f87d911abf)
 
+The working prototype is now on the **[arbitrum branch](https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot/tree/arbitrum)**
+
 ## Uniswap V3 Flashswap Arbitrage bot.
 
 This project is broken down into 2 main parts.
