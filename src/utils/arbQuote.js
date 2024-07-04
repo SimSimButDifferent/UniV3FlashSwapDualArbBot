@@ -7,7 +7,7 @@ const {
     abi: flashSwapAbi,
 } = require("../../ignition/deployments/chain-31337/artifacts/FlashSwapV3#FlashSwapV3.json")
 const { getProvider } = require("./getProvider.js")
-const { gasEstimateToUsd } = require("./utilities")
+
 const { getGasPrice } = require("./getGasPrice")
 
 const quoter2Address = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
