@@ -31,7 +31,7 @@ const getTokenInfo = async (tokens, amountInUsd) => {
             priceInUsd: priceInUsd,
         }
     }
-    console.log("Token Info: ", result)
+    // console.log("Token Info: ", result)
     return result
 }
 

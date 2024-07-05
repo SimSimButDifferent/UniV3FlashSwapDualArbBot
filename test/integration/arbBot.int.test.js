@@ -24,6 +24,7 @@ const {
     abi: PoolAbi,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json")
 const { weth9Abi, UsdtAbi } = require("../mainnetTokens.json")
+const { ethers } = require("ethers")
 
 const pools = poolsData.pools
 const amountInUsd = "10"
@@ -44,7 +45,8 @@ let weth,
     whaleSigner,
     poolsArray,
     routesArray,
-    tokenAmountsIn
+    tokenInfo,
+    tokenIn
 
 describe("DualArbBot Tests", function () {
     it("runs tests", async function () {
@@ -70,7 +72,7 @@ describe("DualArbBot Tests", function () {
         console.log(`Found ${poolsArray.length} pools`)
 
         // Output pool information and token amounts in for each token included in query.
-        tokenAmountsIn = await poolInformation(pools, amountInUsd)
+        tokenInfo = await poolInformation(pools, amountInUsd)
 
         // Impersonate a whale account
         whale = "0xC3E5607Cd4ca0D5Fe51e09B60Ed97a0Ae6F874dd" // Replace with a WETH or USDT whale address
@@ -116,9 +118,9 @@ describe("DualArbBot Tests", function () {
             amountIn: wethAmount,
             amountOutMinimum: 0,
             sqrtPriceLimitX96: 0,
-            // gasLimit: ethers.utils.hexlify(1000000), // Set a high gas limit
-            maxFeePerGas: 9470890005, // Set max fee per gas
-            maxPriorityFeePerGas: 3000000000, // Set priority fee
+            // gasLimit: ethers.hexlify(1000000), // Set a high gas limit
+            // maxFeePerGas: 9470890005, // Set max fee per gas
+            // maxPriorityFeePerGas: 3000000000, // Set priority fee
         }
 
         try {
@@ -149,31 +151,30 @@ describe("DualArbBot Tests", function () {
         )
 
         // Get possible arbitrage routes where tokenIn and tokenOut are the same.
-        routesArray = await findArbitrageRoutes(
-            pools,
-            tokenAmountsIn,
-            amountInUsd,
-        )
+        routesArray = await findArbitrageRoutes(pools, tokenInfo)
 
-        console.log("token amounts in: ", tokenAmountsIn)
+        // console.log("token amounts in: ", tokenInfo)
         console.log("amount in usd: ", amountInUsd)
 
-        let route
-        for (let i = 0; i < routesArray.length; i++) {
-            if (
-                routesArray[i][0] === WETH_ADDRESS &&
-                routesArray[i][1] === "3000" &&
-                routesArray[i][2] === USDT_ADDRESS &&
-                routesArray[i][3] === "500"
-            ) {
-                route = routesArray[i]
-            }
-        }
-        // console.log("test route: ", route)
+        const route = [
+            "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+            "500",
+            "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+            "3000",
+            "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+            18,
+            6,
+            3478515065841014n,
+            34785150658410n,
+            "WETH",
+            "0x641c00a822e8b671738d32a431a4fb6074e5c79d",
+            10001175n,
+        ]
 
-        const amountInFromArray = route[7]
+        console.log("test route: ", route)
+
+        const amountInFlash = route[11]
         const routeNumber = 0
-        const profitThreshold = route[8]
 
         console.log("Calling Flashswap...")
 
@@ -190,22 +191,12 @@ describe("DualArbBot Tests", function () {
                 feePool1,
                 tokenIn,
                 tokenOut,
-                hre.ethers.parseUnits(amountInUsd, 6), // Make sure any amountIn inputs are formatted like this.
+                amountInFlash, // Make sure any amountIn inputs are formatted like this.
                 0,
             )
 
-            // Log the smart contract profit of each token
-            const wethProfit = hre.ethers.formatUnits(
-                await flashSwapContract.connect(deployer).getWethProfit(),
-                18,
-            )
-            const usdtProfit = hre.ethers.formatUnits(
-                await flashSwapContract.connect(deployer).getUsdtProfit(),
-                6,
-            )
-
             console.log(`Route ${routeNumber} Info:`)
-            console.log(`amountIn - ${amountInUsd} ${route[9]}`)
+            console.log(`amountIn - ${amountInFlash} USDT`)
 
             console.log(
                 `Path - ${route[0]} -> ${route[1]} -> ${route[2]} -> ${route[3]} -> ${route[4]}`,
@@ -214,22 +205,26 @@ describe("DualArbBot Tests", function () {
             // Get transaction receipt
             const txReceipt = await tx.wait()
             console.log("Transaction Receipt: ", txReceipt)
+
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+
+            const deployerUsdtBalance = await usdt.balanceOf(deployer.address)
+            // Wait for the HRE to mine a block
+            await hre.network.provider.send("evm_mine")
+
+            // Perform the checks here
+            console.log(
+                "Deployer Weth balance after Arb",
+                await weth.balanceOf(deployer.address),
+            )
+            console.log(
+                "Deployer Usdt balance after Arb",
+                await usdt.balanceOf(deployer.address),
+            )
+
+            expect(deployerUsdtBalance).to.be.greaterThan(0n)
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
-
-        const deployerUsdtBalance = await usdt.balanceOf(deployer.address)
-
-        expect(deployerUsdtBalance).to.be.greaterThan(0)
-
-        console.log(
-            "Deployer Weth balance after Arb",
-            await weth.balanceOf(deployer.address),
-        )
-        console.log(
-            "Deployer Usdt balance after Arb",
-            await usdt.balanceOf(deployer.address),
-        )
-        console.log("usdt profit: ", usdtProfit)
     })
 })

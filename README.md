@@ -4,7 +4,7 @@
 
 The contract is now deployed to on arbitrum at the address - [0xf812197dbdbcd0f80cd003c20f695dc8d06bc3b0](https://arbiscan.io/address/0xf812197dbdbcd0f80cd003c20f695dc8d06bc3b0)
 
-As it stands the script spends about 1,400,000 compute units per day, roughly 42,000,000 per month. 
+As it stands the script spends about 1,400,000 compute units per day, roughly 42,000,000 per month.
 
 I am currently testing it with an input of 10 usd value. the amountIn for each token is calculated using this value.
 
@@ -13,13 +13,15 @@ Testing still continuing.
 ## Uniswap V3 Flashswap Arbitrage bot.
 
 #### Project Overview
-This project is merely a working prototype, that can search for and carry out dual-arb trades. 
+
+This project is merely a working prototype, that can search for and carry out dual-arb trades.
 
 I feel that a more suitable description for this project would be boilerplate code for anybody that wishes to explore flashswap arbitrage. That being said, this is uniswap v3 flashswap arbitrage seems a difficult game to get right, Probably due to the concentrated liquidity. With uniswap V2 it was relatively simple to calculate the exact optimal amount in for a trade. Whereas with V3, I have not yet been able to find a way to do this accuratly or efficiently.
 
 That being said, I only explored arbitrage between the same tokens on 2 different pools. The real money is made when one utilizes multiple hops through different tokens, for example triangular-arbitrage (trading a 3 token route) or more.
 
 #### Ideas for Future Development
+
 1. implement a 3 or more token hope strategy.
 2. Listen to the memepool for large trades then quote exactly when the transaction has been confirmed. Alternatively you could just directly call flashswap instead.
 3. Is there a more accurate way to quote this type of arbitrage?
@@ -30,9 +32,9 @@ That being said, I only explored arbitrage between the same tokens on 2 differen
 
 The idea is for the script to scan the pools for current prices and execute flashswap arbitrage with a given amountIn.
 
-You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/explorer/subgraphs/FbCGRftH4a3yZugY7TnbYgPJVEv2LvMT6oF1fxPe9aJM?view=Query&chain=arbitrum-one) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information. 
+You do this my first running **getPools.js**, which queries the [uniswapV3 subgraph](https://thegraph.com/explorer/subgraphs/FbCGRftH4a3yZugY7TnbYgPJVEv2LvMT6oF1fxPe9aJM?view=Query&chain=arbitrum-one) and writes a json file to ./src/jsonPoolData/ that is an object containing all of the pools neccesary information.
 
-Right now it is configured to pool for pools that include WETH, WBTC, ARB and USDT, that have atotalValueLocked in USD of above $1,000,000. 
+Right now it is configured to pool for pools that include WETH, WBTC, ARB and USDT, that have atotalValueLocked in USD of above $1,000,000.
 
 You can configure the query how you like, the script should still run the same way.
 
@@ -42,7 +44,6 @@ You can configure the query how you like, the script should still run the same w
 -   Is the route profitable? (minimum amount out = amount in + profit threshhold(currently 1%))
 -   Format the route for input into the flashswap function.
 -   Execute Flashswap smart contract function and log profits.
-
 
 **Created using both:**
 
@@ -90,11 +91,13 @@ You can go to arbscan.io if you want to get a more recent block number.
 ```bash
 anvil --fork-url FORK_URL --fork-block-number 225459063 --fork-chain-id 42161 --chain-id 42161
 ```
+
 Split the terminal and deploy flashSwapV3.sol to the forked mainnet: 🚀
 
 ```bash
 forge script script/DeployFlashSwapV3.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --legacy
 ```
+
 ```bash
 [⠊] Compiling...
 [⠰] Compiling 33 files with Solc 0.7.6
@@ -133,6 +136,7 @@ Paid: 0.000006401956463304 ETH (731652 gas * 0.008750002 gwei)
 ```bash
 forge test -vv --rpc-url http://127.0.0.1:8545
 ```
+
 ```bash
 [⠒] Compiling...
 No files changed, compilation skipped
@@ -164,17 +168,21 @@ yarn hardhat node --fork FORK_URL --fork-block-number 20066221 --network hardhat
 ```
 
 Split the terminal and deploy flashSwapV3.sol to the forked mainnet:
+
 ```bash
 yarn hardhat ignition deploy ignition/modules/igniteFlashSwap.js --network localhost
 ```
-**IF YOU GET AN ERROR** - delete the deployments folder for 31337 in the ignition folder, then run ```yarn hardhat clean```. Then run the ignition command above again.
+
+**IF YOU GET AN ERROR** - delete the deployments folder for 31337 in the ignition folder, then run `yarn hardhat clean`. Then run the ignition command above again.
 
 **Unit tests** - For all the dependincies for the dualArbScan script.
+
 ```bash
 yarn hardhat test test/unit/arbBot.unit.test.js --network localhost
 ```
 
 **Integration test** - for the dualArbScan script itself
+
 ```bash
 yarn hardhat test test/integration/arbBot.int.test.js --network localhost
 ```
@@ -211,7 +219,6 @@ async function getPools() {
 Currently it will get any pools that include the tokens WETH, WBTC, ARB and USDT, with an amount locked in USD greater than 1,000,000 USD
 
 As it is right now, outputs 9 pools.
-
 
 ```bash
 yarn hardhat run src/utils/getPools.js
@@ -250,13 +257,13 @@ poolInformation returns the tokenInfo object that includes tokenAmountsIn, profi
 Calculates all possible routes and runs **quoteExactInput()** on all of them.
 
 This is done in batches, to save on compute units for API calls. you can toggle how big batches are and how often a batch of quotes is executed, near the top of **dualArbScan.js** by changing the following two variables:
+
 ```javascript
 // Set the batch size and interval to give control over the number of promises executed per second.
 const BATCH_SIZE = 5 // Number of promises to execute in each batch
 // Interval between batches in milliseconds
 const BATCH_INTERVAL = 8000 // Interval between batches in milliseconds
 ```
-
 
 Then calculates wether there is an arbitrage opportunity
 
