@@ -206,11 +206,12 @@ describe("DualArbBot Tests", function () {
             const txReceipt = await tx.wait()
             console.log("Transaction Receipt: ", txReceipt)
 
+            // Wait for the HRE to mine a block
+            await hre.network.provider.send("evm_mine")
+
             await new Promise((resolve) => setTimeout(resolve, 2000))
 
             const deployerUsdtBalance = await usdt.balanceOf(deployer.address)
-            // Wait for the HRE to mine a block
-            await hre.network.provider.send("evm_mine")
 
             // Perform the checks here
             console.log(
@@ -222,7 +223,7 @@ describe("DualArbBot Tests", function () {
                 await usdt.balanceOf(deployer.address),
             )
 
-            expect(deployerUsdtBalance).to.be.greaterThan(0n)
+            expect(deployerUsdtBalance).to.be.greaterThan("0")
         } catch (error) {
             console.error("Error executing flashswap:", error)
         }
