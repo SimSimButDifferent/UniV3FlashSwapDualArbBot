@@ -126,7 +126,7 @@ async function arbQuote(route, routeNumber, amountInUsd) {
             throw new Error("Invalid tokenOut address")
 
         const gasPrice = await getGasPrice()
-        const gasLimit = 500000n
+        const gasLimit = 2000000n
 
         try {
             // Call flashswap
