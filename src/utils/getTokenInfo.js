@@ -27,7 +27,7 @@ const getTokenInfo = async (tokens, amountInUsd) => {
         )
         result[tokenSymbol] = {
             amountIn: baseUnit,
-            profitThreshold: baseUnit / 100n,
+            profitThreshold: baseUnit / 100000n,
             priceInUsd: priceInUsd,
         }
     }

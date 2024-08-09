@@ -12,7 +12,7 @@ const { poolInformation } = require("./utils/poolInformation")
 const pools = poolsData.pools
 // Set the amount in usd for each trade
 // For different erc-20 tokens this amount will be converted to the token amount
-const amountInUsd = "10"
+const amountInUsd = "2000000"
 
 /**
  * @dev You can use BATCH_SIZE and BATCH_INTERVAL to control the number of compute units that you use with your provider API key.
