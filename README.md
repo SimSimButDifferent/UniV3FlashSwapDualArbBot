@@ -70,7 +70,18 @@ foundryup
 forge install
 forge build
 
-yarn hardhat init
+```
+### Populate .env File
+
+These are all of the Api keys neccesary to leave the bot running right now.
+```
+// example .env
+ALCHEMY_MAINNET_API="..."
+ARBITRUM_MAINNET_API="..."
+BOT_PRIVATE_kEY="..."
+ARBSCAN_API_KEY="..."
+COINMARKETCAP_API_KEY="..."
+SUBGRAPH_API_KEY="..."
 ```
 
 ## Testing
@@ -277,6 +288,13 @@ Then calculates wether there is an arbitrage opportunity
 This loop repeats every 88 seconds with the current configuration.
 
 ```bash
+--------------------------------------------------------------------------------
+NOTE: The abi is currently imported from the ignition deployments folder, so you have to deploy it to local chain to output it. Follow the steps below, if you have not already.
+
+yarn hardhat node --fork FORK_URL --fork-block-number 20066221 --network hardhat
+yarn hardhat ignition deploy ignition/modules/igniteFlashSwap.js --network localhost
+--------------------------------------------------------------------------------
+
 yarn hardhat run src/utils/dualArbScan.js --network arbitrum
 
 Found 9 pools
