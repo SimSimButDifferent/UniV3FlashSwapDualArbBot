@@ -67,7 +67,7 @@ git clone https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot
 yarn
 
 foundryup
-foundry init
+forge init
 
 yarn hardhat init
 ```
