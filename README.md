@@ -62,7 +62,7 @@ If you would like to contribute to this project, please send me an email @ simsi
 ## Installation
 
 ```bash
-git clone https://github.com/SimSimButDifferent/L7-UniV3FlashSwapDualArbBot
+git clone https://github.com/SimSimButDifferent/UniV3FlashSwapDualArbBot.git
 
 yarn
 
