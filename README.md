@@ -22,7 +22,7 @@ That being said, I only explored arbitrage between the same tokens on 2 differen
 
 #### Ideas for Future Development
 
-1. implement a 3 or more token hope strategy.
+1. implement a 3 or more token hop strategy.
 2. Listen to the memepool for large trades then quote exactly when the transaction has been confirmed. Alternatively you could just directly call flashswap instead.
 3. Is there a more accurate way to quote this type of arbitrage?
 
